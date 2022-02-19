@@ -41,8 +41,8 @@ services:
     build:
       context: ./
       dockerfile: .
-    image: petapp-be
-    container_name: petapp-be
+    image: petcare-be
+    container_name: petcare-be
     restart: always
     depends_on:
       - "postgres"
