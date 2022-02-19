@@ -19,5 +19,6 @@ module.exports = {
     "no-console": "error",
     "no-eval": "warn",
     "no-proto": 2,
+    quotes: ["error", "double"],
   },
 };

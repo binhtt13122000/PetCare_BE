@@ -38,10 +38,6 @@ class ConfigService {
     return this.getValue("HASURA_ROOT_URL", true);
   }
 
-  public getGoogleClientID(): string {
-    return this.getValue("GOOGLE_CLIENT_ID", true);
-  }
-
   public getGoogleAuthURI(): string {
     return this.getValue("GOOGLE_AUTH_URI", true);
   }
@@ -74,7 +70,6 @@ const configService = new ConfigService({
   "API_ROOT_URL",
   "WEB_ADMIN_ROOT_URL",
   "HASURA_ROOT_URL",
-  "GOOGLE_CLIENT_ID",
   "POSTGRES_USER",
   "POSTGRES_PASSWORD",
   "POSTGRES_DB",
