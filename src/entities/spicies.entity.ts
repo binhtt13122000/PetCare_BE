@@ -5,13 +5,13 @@ import { Category } from "./category.entity";
 export class Species {
   @PrimaryGeneratedColumn("increment")
   spiciesId: number;
-  @Column({ type: "text", length: 32, nullable: false })
+  @Column({ type: "text", nullable: false })
   name: string;
-  @Column({ type: "text", length: 128, nullable: true })
+  @Column({ type: "text", nullable: true })
   description: string;
-  @Column({ type: "bool", default: () => true })
+  @Column({ type: "bool" })
   isActive: string;
-  @Column({ type: "bool", default: () => true })
+  @Column({ type: "bool" })
   isBreeding: string;
   @OneToMany(() => Category, (category) => category.spiciesId)
   categories: Category[];
