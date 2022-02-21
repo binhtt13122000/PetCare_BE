@@ -7,6 +7,7 @@ import {
 } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
 import { configService } from "./config/dbConfig.service";
 import { HttpExceptionFilter } from "./filters/http-exception.filter";
 import { ResponseDataInterceptor } from "./interceptors/response-data.interceptor";
@@ -33,6 +34,7 @@ const routes: Routes = [
       provide: APP_INTERCEPTOR,
       useClass: ResponseDataInterceptor,
     },
+    AppService,
   ],
 })
 export class AppModule {}
