@@ -1,4 +1,11 @@
-import { Column, Entity, JoinColumn, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { Spicies } from "./spicies.entity";
 
 @Entity("category")
 export class Category {
@@ -10,6 +17,7 @@ export class Category {
   description: string;
   @Column({ type: "bool" })
   isActive: string;
+  @ManyToOne(() => Spicies, (spicies) => spicies.categories, {})
   @JoinColumn({ name: "spiciesId", referencedColumnName: "spiciesId" })
   spiciesId: number;
 }
