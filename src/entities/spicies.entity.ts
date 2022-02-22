@@ -10,9 +10,9 @@ export class Spicies {
   @Column({ type: "text", nullable: true })
   description: string;
   @Column({ type: "bool" })
-  isActive: string;
+  isActive: boolean;
   @Column({ type: "bool" })
-  isBreeding: string;
+  isBreeding: boolean;
   @OneToMany(() => Category, (category) => category.spiciesId)
   categories: Category[];
 }
