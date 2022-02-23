@@ -1,6 +1,7 @@
 import {
   Column,
   Double,
+  Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -8,6 +9,7 @@ import {
 import { Account } from "./account.entity";
 import { Pet } from "./pet.entity";
 
+@Entity("post")
 export class Post {
   @PrimaryGeneratedColumn("increment")
   postId: number;
@@ -17,9 +19,13 @@ export class Post {
   price: Double;
   @Column({ type: "float" })
   deposit: Double;
-  @Column({ type: "timestamp with time zone", nullable: false })
+  @Column({
+    type: "timestamp without time zone",
+    nullable: false,
+    default: () => "CURRENT_TIMESTAMP",
+  })
   createTime: Date;
-  @Column({ type: "timestamp with time zone", nullable: false })
+  @Column({ type: "timestamp without time zone", nullable: false })
   effectiveTime: Date;
   @Column({ type: "text", nullable: false })
   type: string;

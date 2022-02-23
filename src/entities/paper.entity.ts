@@ -1,6 +1,13 @@
-import { Column, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Pet } from "./pet.entity";
 
+@Entity("paper")
 export class Paper {
   @PrimaryGeneratedColumn("increment")
   paperId: number;

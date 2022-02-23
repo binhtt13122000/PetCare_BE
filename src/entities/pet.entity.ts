@@ -1,5 +1,6 @@
 import {
   Column,
+  Entity,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -14,6 +15,7 @@ import { Post } from "./post.entity";
 import { SaleTransaction } from "./sale-transaction.entity";
 import { Vaccine } from "./vaccine.entity";
 
+@Entity("pet")
 export class Pet {
   @PrimaryGeneratedColumn("increment")
   petId: number;

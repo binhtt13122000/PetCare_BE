@@ -1,6 +1,7 @@
-import { Column, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Account } from "./account.entity";
 
+@Entity("role")
 export class Role {
   @PrimaryGeneratedColumn("increment")
   roleId: number;

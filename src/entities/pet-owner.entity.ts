@@ -1,7 +1,14 @@
-import { Column, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Account } from "./account.entity";
 import { Pet } from "./pet.entity";
 
+@Entity("pet_owner")
 export class PetOwner {
   @PrimaryGeneratedColumn("increment")
   petOwnerId: number;

@@ -1,6 +1,7 @@
 import {
   Column,
   Double,
+  Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -8,6 +9,7 @@ import {
 import { Account } from "./account.entity";
 import { Pet } from "./pet.entity";
 
+@Entity("sale_transaction")
 export class SaleTransaction {
   @PrimaryGeneratedColumn("increment")
   saleTransactionId: number;
@@ -27,9 +29,9 @@ export class SaleTransaction {
   status: boolean;
   @Column({ type: "text", nullable: true })
   description: string;
-  @Column({ type: "timestamp with time zone", nullable: true })
+  @Column({ type: "timestamp without time zone", nullable: true })
   payForSellerTime: Date;
-  @Column({ type: "timestamp with time zone", nullable: true })
+  @Column({ type: "timestamp without time zone", nullable: true })
   payFromBuyerTime: Date;
   @ManyToOne(() => Pet, (pet) => pet.saleTransactions, {})
   @JoinColumn({ name: "petId", referencedColumnName: "petId" })

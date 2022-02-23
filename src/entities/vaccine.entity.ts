@@ -1,5 +1,6 @@
 import {
   Column,
+  Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -7,12 +8,13 @@ import {
 } from "typeorm";
 import { Pet } from "./pet.entity";
 
+@Entity("vaccine")
 export class Vaccine {
   @PrimaryGeneratedColumn("increment")
   vaccineId: number;
   @Column({ type: "text", nullable: false })
   name: string;
-  @Column({ type: "timestamp with time zone" })
+  @Column({ type: "timestamp without time zone" })
   dateOfInjection: Timestamp;
   @Column({ type: "text", nullable: false })
   evidence: string;

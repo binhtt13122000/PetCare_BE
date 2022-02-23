@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Pet } from "./pet.entity";
-import { Spicies } from "./spicies.entity";
+import { Species } from "./species.entity";
 
 @Entity("category")
 export class Category {
@@ -19,9 +19,9 @@ export class Category {
   description: string;
   @Column({ type: "bool" })
   isActive: boolean;
-  @ManyToOne(() => Spicies, (spicies) => spicies.categories, {})
-  @JoinColumn({ name: "spiciesId", referencedColumnName: "spiciesId" })
-  spiciesId: number;
+  @ManyToOne(() => Species, (species) => species.categories, {})
+  @JoinColumn({ name: "speciesId", referencedColumnName: "speciesId" })
+  speciesId: number;
   @OneToMany(() => Pet, (pet) => pet.petId)
   pets: [];
 }

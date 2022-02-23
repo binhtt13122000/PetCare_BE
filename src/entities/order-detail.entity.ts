@@ -1,6 +1,7 @@
 import {
   Column,
   Double,
+  Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -8,6 +9,7 @@ import {
 import { Order } from "./order.entity";
 import { Service } from "./service.entity";
 
+@Entity("order_detail")
 export class OrderDetail {
   @PrimaryGeneratedColumn("increment")
   orderDetailId: number;

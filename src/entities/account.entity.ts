@@ -1,5 +1,6 @@
 import {
   Column,
+  Entity,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -12,6 +13,7 @@ import { Post } from "./post.entity";
 import { Role } from "./role.entity";
 import { SaleTransaction } from "./sale-transaction.entity";
 
+@Entity("account")
 export class Account {
   @PrimaryGeneratedColumn("increment")
   accountId: number;
@@ -27,7 +29,11 @@ export class Account {
   address: string;
   @Column({ type: "bool", nullable: false })
   isMale: boolean;
-  @Column({ type: "datetime", nullable: false, default: new Date() })
+  @Column({
+    type: "timestamp without time zone",
+    nullable: false,
+    default: () => "CURRENT_TIMESTAMP",
+  })
   registerTime: Date;
   @ManyToOne(() => Role, (role) => role.accounts, {})
   @JoinColumn({ name: "roleId", referencedColumnName: "roleId" })

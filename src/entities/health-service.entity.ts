@@ -1,6 +1,7 @@
 import {
   Column,
   Double,
+  Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -8,6 +9,7 @@ import {
 import { HealthRecord } from "./health-record.entity";
 import { Service } from "./service.entity";
 
+@Entity("health_service")
 export class HealthService {
   @PrimaryGeneratedColumn("increment")
   healthServiceId: number;

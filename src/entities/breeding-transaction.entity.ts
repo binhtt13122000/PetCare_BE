@@ -1,6 +1,7 @@
 import {
   Column,
   Double,
+  Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -8,6 +9,7 @@ import {
 import { Account } from "./account.entity";
 import { Pet } from "./pet.entity";
 
+@Entity("breeding_transaction")
 export class BreedingTransaction {
   @PrimaryGeneratedColumn("increment")
   breedingTransactionId: number;

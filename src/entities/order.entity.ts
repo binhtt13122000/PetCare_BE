@@ -1,6 +1,7 @@
 import {
   Column,
   Double,
+  Entity,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -9,6 +10,7 @@ import {
 import { Account } from "./account.entity";
 import { OrderDetail } from "./order-detail.entity";
 
+@Entity("order")
 export class Order {
   @PrimaryGeneratedColumn("increment")
   orderId: number;
