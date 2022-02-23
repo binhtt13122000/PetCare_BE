@@ -48,6 +48,6 @@ export class Account {
     (breedingTransaction) => breedingTransaction.breedingTransactionId,
   )
   breedingTransactions: [];
-  @Column({ type: "bool", nullable: false })
-  status: boolean;
+  @Column({ nullable: false })
+  status: "abc" | "xxxx";
 }
