@@ -40,7 +40,7 @@ services:
   petapp-backend:
     build:
       context: ./
-      dockerfile: .
+      # dockerfile: .
     image: petcare-be
     container_name: petcare-be
     restart: always

@@ -3,9 +3,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Spicies } from "./spicies.entity";
+import { Pet } from "./pet.entity";
+import { Species } from "./species.entity";
 
 @Entity("category")
 export class Category {
@@ -16,8 +18,10 @@ export class Category {
   @Column({ type: "text", nullable: true })
   description: string;
   @Column({ type: "bool" })
-  isActive: string;
-  @ManyToOne(() => Spicies, (spicies) => spicies.categories, {})
-  @JoinColumn({ name: "spiciesId", referencedColumnName: "spiciesId" })
-  spiciesId: number;
+  isActive: boolean;
+  @ManyToOne(() => Species, (species) => species.categories, {})
+  @JoinColumn({ name: "speciesId", referencedColumnName: "speciesId" })
+  speciesId: number;
+  @OneToMany(() => Pet, (pet) => pet.petId)
+  pets: [];
 }
