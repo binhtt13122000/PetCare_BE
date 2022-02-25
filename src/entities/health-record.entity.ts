@@ -13,7 +13,7 @@ import { Pet } from "./pet.entity";
 @Entity("health_record")
 export class HealthRecord {
   @PrimaryGeneratedColumn("increment")
-  healthRecordId: number;
+  id: number;
   @Column({ type: "date", nullable: false })
   dateOfExam: Date;
   @Column({ type: "float", nullable: false })
@@ -33,11 +33,8 @@ export class HealthRecord {
   @Column({ type: "bool", default: true })
   status: boolean;
   @ManyToOne(() => Pet, (pet) => pet.healthRecords, {})
-  @JoinColumn({ name: "petId", referencedColumnName: "petId" })
+  @JoinColumn({ name: "petId", referencedColumnName: "id" })
   petId: number;
-  @OneToMany(
-    () => HealthService,
-    (healthService) => healthService.healthServiceId,
-  )
+  @OneToMany(() => HealthService, (healthService) => healthService.id)
   healthServices: [];
 }

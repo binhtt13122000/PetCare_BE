@@ -4,9 +4,9 @@ import { Account } from "./account.entity";
 @Entity("role")
 export class Role {
   @PrimaryGeneratedColumn("increment")
-  roleId: number;
+  id: number;
   @Column({ type: "text", nullable: false })
   name: string;
-  @OneToMany(() => Account, (account) => account.accountId)
+  @OneToMany(() => Account, (account) => account.id)
   accounts: [];
 }

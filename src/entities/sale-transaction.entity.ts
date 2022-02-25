@@ -12,7 +12,7 @@ import { Pet } from "./pet.entity";
 @Entity("sale_transaction")
 export class SaleTransaction {
   @PrimaryGeneratedColumn("increment")
-  saleTransactionId: number;
+  id: number;
   @Column({ type: "text", nullable: true })
   sellerContract: string;
   @Column({ type: "text", nullable: true })
@@ -34,12 +34,12 @@ export class SaleTransaction {
   @Column({ type: "timestamp without time zone", nullable: true })
   payFromBuyerTime: Date;
   @ManyToOne(() => Pet, (pet) => pet.saleTransactions, {})
-  @JoinColumn({ name: "petId", referencedColumnName: "petId" })
+  @JoinColumn({ name: "petId", referencedColumnName: "id" })
   petId: number;
   @ManyToOne(() => Account, (account) => account.saleTransactions, {})
-  @JoinColumn({ name: "sellerId", referencedColumnName: "accountId" })
+  @JoinColumn({ name: "sellerId", referencedColumnName: "id" })
   sellerId: number;
   @ManyToOne(() => Account, (account) => account.saleTransactions, {})
-  @JoinColumn({ name: "buyerId", referencedColumnName: "accountId" })
+  @JoinColumn({ name: "buyerId", referencedColumnName: "id" })
   buyerId: number;
 }

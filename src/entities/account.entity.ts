@@ -16,7 +16,7 @@ import { SaleTransaction } from "./sale-transaction.entity";
 @Entity("account")
 export class Account {
   @PrimaryGeneratedColumn("increment")
-  accountId: number;
+  id: number;
   @Column({ type: "text" })
   email: string;
   @Column({ type: "text", nullable: false })
@@ -36,22 +36,19 @@ export class Account {
   })
   registerTime: Date;
   @ManyToOne(() => Role, (role) => role.accounts, {})
-  @JoinColumn({ name: "roleId", referencedColumnName: "roleId" })
+  @JoinColumn({ name: "roleId", referencedColumnName: "id" })
   roleId: number;
-  @OneToMany(() => PetOwner, (petOwner) => petOwner.petOwnerId)
+  @OneToMany(() => PetOwner, (petOwner) => petOwner.id)
   petOwners: [];
-  @OneToMany(() => Order, (order) => order.orderId)
+  @OneToMany(() => Order, (order) => order.id)
   orders: [];
-  @OneToMany(() => Post, (post) => post.postId)
+  @OneToMany(() => Post, (post) => post.id)
   posts: [];
-  @OneToMany(
-    () => SaleTransaction,
-    (saleTransaction) => saleTransaction.saleTransactionId,
-  )
+  @OneToMany(() => SaleTransaction, (saleTransaction) => saleTransaction.id)
   saleTransactions: [];
   @OneToMany(
     () => BreedingTransaction,
-    (breedingTransaction) => breedingTransaction.breedingTransactionId,
+    (breedingTransaction) => breedingTransaction.id,
   )
   breedingTransactions: [];
   @Column({ nullable: false })

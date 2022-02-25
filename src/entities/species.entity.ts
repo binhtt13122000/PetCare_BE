@@ -4,7 +4,7 @@ import { Category } from "./category.entity";
 @Entity("species")
 export class Species {
   @PrimaryGeneratedColumn("increment")
-  speciesId: number;
+  id: number;
   @Column({ type: "text", nullable: false })
   name: string;
   @Column({ type: "text", nullable: true })
@@ -13,6 +13,6 @@ export class Species {
   isActive: boolean;
   @Column({ type: "bool" })
   isBreeding: boolean;
-  @OneToMany(() => Category, (category) => category.speciesId)
+  @OneToMany(() => Category, (category) => category.id)
   categories: Category[];
 }
