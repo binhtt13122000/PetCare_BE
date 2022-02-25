@@ -3,7 +3,7 @@ import { Column, Double, Entity, PrimaryGeneratedColumn } from "typeorm";
 @Entity("promotion")
 export class Promotion {
   @PrimaryGeneratedColumn("increment")
-  promotionId: number;
+  id: number;
   @Column({ type: "text", nullable: false })
   name: string;
   @Column({ type: "float", nullable: false })

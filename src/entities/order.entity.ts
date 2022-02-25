@@ -13,16 +13,16 @@ import { OrderDetail } from "./order-detail.entity";
 @Entity("order")
 export class Order {
   @PrimaryGeneratedColumn("increment")
-  orderId: number;
+  id: number;
   @Column({ type: "float", nullable: false })
   totalPrice: Double;
   @Column({ type: "bool", default: true })
   status: boolean;
   @Column({ type: "text", nullable: true })
   description: string;
-  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.orderDetailId)
+  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.id)
   orderDetails: [];
   @ManyToOne(() => Account, (account) => account.orders, {})
-  @JoinColumn({ name: "accountId", referencedColumnName: "accountId" })
+  @JoinColumn({ name: "accountId", referencedColumnName: "id" })
   accountId: number;
 }

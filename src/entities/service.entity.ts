@@ -12,7 +12,7 @@ import { OrderDetail } from "./order-detail.entity";
 @Entity("service")
 export class Service {
   @PrimaryGeneratedColumn("increment")
-  serviceId: number;
+  id: number;
   @Column({ type: "text", nullable: false })
   name: string;
   @Column({ type: "float", nullable: false })
@@ -22,11 +22,8 @@ export class Service {
   @Column({ type: "bool", default: true })
   status: boolean;
 
-  @OneToMany(
-    () => HealthService,
-    (healthService) => healthService.healthServiceId,
-  )
+  @OneToMany(() => HealthService, (healthService) => healthService.id)
   healthServices: [];
-  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.orderDetailId)
+  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.id)
   orderDetails: [];
 }

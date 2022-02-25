@@ -12,7 +12,7 @@ import { Pet } from "./pet.entity";
 @Entity("breeding_transaction")
 export class BreedingTransaction {
   @PrimaryGeneratedColumn("increment")
-  breedingTransactionId: number;
+  id: number;
   @Column({ type: "float", nullable: false })
   totalPrice: number;
   @Column({ type: "bool", default: false })
@@ -32,15 +32,15 @@ export class BreedingTransaction {
   @Column({ type: "date", nullable: true })
   dateOfUltrasound: Date;
   @ManyToOne(() => Pet, (pet) => pet.breedingTransactions, {})
-  @JoinColumn({ name: "petMaleId", referencedColumnName: "petId" })
+  @JoinColumn({ name: "petMaleId", referencedColumnName: "id" })
   petMaleId: number;
   @ManyToOne(() => Pet, (pet) => pet.breedingTransactions, {})
-  @JoinColumn({ name: "petFemaleId", referencedColumnName: "petId" })
+  @JoinColumn({ name: "petFemaleId", referencedColumnName: "id" })
   petFemaleId: number;
   @ManyToOne(() => Account, (account) => account.breedingTransactions, {})
-  @JoinColumn({ name: "ownerMaleId", referencedColumnName: "accountId" })
+  @JoinColumn({ name: "ownerMaleId", referencedColumnName: "id" })
   ownerMaleId: number;
   @ManyToOne(() => Account, (account) => account.breedingTransactions, {})
-  @JoinColumn({ name: "ownerFemaleId", referencedColumnName: "accountId" })
+  @JoinColumn({ name: "ownerFemaleId", referencedColumnName: "id" })
   ownerFemaleId: number;
 }

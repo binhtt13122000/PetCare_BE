@@ -12,7 +12,7 @@ import { Service } from "./service.entity";
 @Entity("health_service")
 export class HealthService {
   @PrimaryGeneratedColumn("increment")
-  healthServiceId: number;
+  id: number;
   @Column({ type: "float", nullable: false })
   price: Double;
   @Column({ type: "date", nullable: false })
@@ -30,10 +30,10 @@ export class HealthService {
   )
   @JoinColumn({
     name: "healthRecordId",
-    referencedColumnName: "healthRecordId",
+    referencedColumnName: "id",
   })
   healthRecordId: number;
   @ManyToOne(() => Service, (service) => service.healthServices, {})
-  @JoinColumn({ name: "serviceId", referencedColumnName: "serviceId" })
+  @JoinColumn({ name: "serviceId", referencedColumnName: "id" })
   serviceId: number;
 }

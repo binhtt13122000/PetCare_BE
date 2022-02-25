@@ -11,15 +11,15 @@ import { Pet } from "./pet.entity";
 @Entity("pet_owner")
 export class PetOwner {
   @PrimaryGeneratedColumn("increment")
-  petOwnerId: number;
+  id: number;
   @Column({ type: "bool", default: true })
   isCurrentOwner: boolean;
   @Column({ type: "date", nullable: false })
   date: Date;
   @ManyToOne(() => Pet, (pet) => pet.petOwners, {})
-  @JoinColumn({ name: "petId", referencedColumnName: "petId" })
+  @JoinColumn({ name: "petId", referencedColumnName: "id" })
   petId: number;
   @ManyToOne(() => Account, (account) => account.petOwners, {})
-  @JoinColumn({ name: "accountId", referencedColumnName: "accountId" })
+  @JoinColumn({ name: "accountId", referencedColumnName: "id" })
   accountId: number;
 }

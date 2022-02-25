@@ -11,7 +11,7 @@ import { Pet } from "./pet.entity";
 @Entity("vaccine")
 export class Vaccine {
   @PrimaryGeneratedColumn("increment")
-  vaccineId: number;
+  id: number;
   @Column({ type: "text", nullable: false })
   name: string;
   @Column({ type: "timestamp without time zone" })
@@ -23,6 +23,6 @@ export class Vaccine {
   @Column({ type: "bool", default: true })
   status: boolean;
   @ManyToOne(() => Pet, (pet) => pet.vaccines, {})
-  @JoinColumn({ name: "petId", referencedColumnName: "petId" })
+  @JoinColumn({ name: "petId", referencedColumnName: "id" })
   petId: number;
 }
