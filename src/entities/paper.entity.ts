@@ -10,7 +10,7 @@ import { Pet } from "./pet.entity";
 @Entity("paper")
 export class Paper {
   @PrimaryGeneratedColumn("increment")
-  paperId: number;
+  id: number;
   @Column({ type: "text", nullable: false })
   name: string;
   @Column({ type: "date", nullable: false })
@@ -24,6 +24,6 @@ export class Paper {
   @Column({ type: "text" })
   description: string;
   @ManyToOne(() => Pet, (pet) => pet.papers, {})
-  @JoinColumn({ name: "petId", referencedColumnName: "petId" })
+  @JoinColumn({ name: "petId", referencedColumnName: "id" })
   petId: number;
 }

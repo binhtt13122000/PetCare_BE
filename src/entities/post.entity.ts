@@ -12,7 +12,7 @@ import { Pet } from "./pet.entity";
 @Entity("post")
 export class Post {
   @PrimaryGeneratedColumn("increment")
-  postId: number;
+  id: number;
   @Column({ type: "text", nullable: false })
   title: string;
   @Column({ type: "float", nullable: false })
@@ -40,12 +40,12 @@ export class Post {
   @Column({ type: "text", nullable: true })
   sellerContract: string;
   @ManyToOne(() => Pet, (pet) => pet.posts, {})
-  @JoinColumn({ name: "petId", referencedColumnName: "petId" })
+  @JoinColumn({ name: "petId", referencedColumnName: "id" })
   petId: number;
   @ManyToOne(() => Account, (account) => account.posts, {})
-  @JoinColumn({ name: "staffId", referencedColumnName: "accountId" })
+  @JoinColumn({ name: "staffId", referencedColumnName: "id" })
   staffId: number;
   @ManyToOne(() => Account, (account) => account.posts, {})
-  @JoinColumn({ name: "sellerId", referencedColumnName: "accountId" })
+  @JoinColumn({ name: "sellerId", referencedColumnName: "id" })
   sellerId: number;
 }

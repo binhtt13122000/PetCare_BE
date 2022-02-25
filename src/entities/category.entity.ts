@@ -12,7 +12,7 @@ import { Species } from "./species.entity";
 @Entity("category")
 export class Category {
   @PrimaryGeneratedColumn("increment")
-  categoryId: number;
+  id: number;
   @Column({ type: "text", nullable: false })
   name: string;
   @Column({ type: "text", nullable: true })
@@ -20,8 +20,8 @@ export class Category {
   @Column({ type: "bool" })
   isActive: boolean;
   @ManyToOne(() => Species, (species) => species.categories, {})
-  @JoinColumn({ name: "speciesId", referencedColumnName: "speciesId" })
+  @JoinColumn({ name: "speciesId", referencedColumnName: "id" })
   speciesId: number;
-  @OneToMany(() => Pet, (pet) => pet.petId)
+  @OneToMany(() => Pet, (pet) => pet.id)
   pets: [];
 }

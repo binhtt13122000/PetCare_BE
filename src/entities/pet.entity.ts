@@ -18,7 +18,7 @@ import { Vaccine } from "./vaccine.entity";
 @Entity("pet")
 export class Pet {
   @PrimaryGeneratedColumn("increment")
-  petId: number;
+  id: number;
   @Column({ type: "text", nullable: false })
   name: string;
   @Column({ type: "date", nullable: false })
@@ -40,26 +40,23 @@ export class Pet {
   @Column({ type: "text", nullable: true })
   bloodGroup: string;
   @ManyToOne(() => Category, (category) => category.pets, {})
-  @JoinColumn({ name: "categoryId", referencedColumnName: "categoryId" })
+  @JoinColumn({ name: "categoryId", referencedColumnName: "id" })
   categoryId: number;
-  @OneToMany(() => Paper, (paper) => paper.paperId)
+  @OneToMany(() => Paper, (paper) => paper.id)
   papers: [];
-  @OneToMany(() => Vaccine, (vaccine) => vaccine.vaccineId)
+  @OneToMany(() => Vaccine, (vaccine) => vaccine.id)
   vaccines: [];
-  @OneToMany(
-    () => SaleTransaction,
-    (saleTransaction) => saleTransaction.saleTransactionId,
-  )
+  @OneToMany(() => SaleTransaction, (saleTransaction) => saleTransaction.id)
   saleTransactions: [];
-  @OneToMany(() => Post, (post) => post.postId)
+  @OneToMany(() => Post, (post) => post.id)
   posts: [];
-  @OneToMany(() => HealthRecord, (healthRecord) => healthRecord.healthRecordId)
+  @OneToMany(() => HealthRecord, (healthRecord) => healthRecord.id)
   healthRecords: [];
-  @OneToMany(() => PetOwner, (petOwner) => petOwner.petOwnerId)
+  @OneToMany(() => PetOwner, (petOwner) => petOwner.id)
   petOwners: [];
   @OneToMany(
     () => BreedingTransaction,
-    (breedingTransaction) => breedingTransaction.breedingTransactionId,
+    (breedingTransaction) => breedingTransaction.id,
   )
   breedingTransactions: [];
 }
