@@ -5,6 +5,7 @@ COPY tsconfig*.json ./
 RUN yarn install
 COPY src ./src
 RUN yarn build
+# RUN npx typeorm migration:run
 FROM build as runner
 RUN yarn add pm2 -g
 WORKDIR /app

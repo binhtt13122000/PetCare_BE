@@ -8,7 +8,7 @@ import {
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { configService } from "./config/dbConfig.service";
+import * as ormconfig from "./ormconfig";
 import { HttpExceptionFilter } from "./filters/http-exception.filter";
 import { ResponseDataInterceptor } from "./interceptors/response-data.interceptor";
 import { AuthModule } from "./modules/auth/auth.module";
@@ -20,7 +20,7 @@ const routes: Routes = [
 ];
 @Module({
   imports: [
-    TypeOrmModule.forRoot(configService.getTypeOrmConfig()),
+    TypeOrmModule.forRoot(ormconfig),
     RouterModule.register(routes),
     AuthModule,
   ],
