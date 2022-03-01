@@ -1,10 +1,5 @@
 import { Module } from "@nestjs/common";
-import {
-  APP_FILTER,
-  APP_INTERCEPTOR,
-  RouterModule,
-  Routes,
-} from "@nestjs/core";
+import { APP_FILTER, APP_INTERCEPTOR, RouterModule } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
@@ -16,19 +11,12 @@ import { AuthController } from "./modules/auth/auth.controller";
 import { AuthService } from "./modules/auth/auth.service";
 import { Account } from "./entities/account.entity";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import Joi = require("joi");
 import { UserModule } from "./modules/users/user.module";
 import { UserService } from "./modules/users/user.service";
-import { UserRepository } from "./modules/users/user.repository";
 import appConfig from "./config/app.config";
 import authConfig from "./config/auth.config";
 import { JwtModule } from "@nestjs/jwt";
-// const routes: Routes = [
-//   {
-//     path: "auth",
-//     module: AuthModule,
-//   },
-// ];
+
 @Module({
   imports: [
     // ConfigModule.forRoot({

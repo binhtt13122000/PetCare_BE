@@ -2,23 +2,15 @@ import {
   BadRequestException,
   Body,
   Controller,
-  Get,
   Post,
-  Req,
   Request,
-  Res,
   UnauthorizedException,
-  UseGuards,
 } from "@nestjs/common";
-import { Response } from "express";
 import * as firebase from "firebase-admin";
 import { ServiceAccount } from "firebase-admin";
-import { DecodedIdToken } from "firebase-admin/lib/auth/token-verifier";
 import { Account } from "src/entities/account.entity";
 import { AuthService } from "./auth.service";
 import firebase_admin_config from "../../keys/firebase_admin_sdk.json";
-import { LocalAuthGuard } from "./guards/local-auth.guard";
-import { isEmpty } from "rxjs";
 import _ from "lodash";
 
 @Controller("auth")
