@@ -32,9 +32,13 @@ export class HealthRecord {
   promotion: Double;
   @Column({ type: "bool", default: true })
   status: boolean;
+
+  @Column({ name: "petId" })
+  petId: number;
   @ManyToOne(() => Pet, (pet) => pet.healthRecords, {})
   @JoinColumn({ name: "petId", referencedColumnName: "id" })
-  petId: number;
+  pet: Pet;
+
   @OneToMany(() => HealthService, (healthService) => healthService.id)
   healthServices: [];
 }

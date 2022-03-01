@@ -16,10 +16,16 @@ export class PetOwner {
   isCurrentOwner: boolean;
   @Column({ type: "date", nullable: false })
   date: Date;
+
+  @Column({ name: "petId" })
+  petId: number;
   @ManyToOne(() => Pet, (pet) => pet.petOwners, {})
   @JoinColumn({ name: "petId", referencedColumnName: "id" })
-  petId: number;
+  pet: Pet;
+
+  @Column({ name: "accountId" })
+  accountId: number;
   @ManyToOne(() => Account, (account) => account.petOwners, {})
   @JoinColumn({ name: "accountId", referencedColumnName: "id" })
-  accountId: number;
+  account: Account;
 }

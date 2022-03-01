@@ -33,13 +33,22 @@ export class SaleTransaction {
   payForSellerTime: Date;
   @Column({ type: "timestamp without time zone", nullable: true })
   payFromBuyerTime: Date;
+
+  @Column({ name: "petId" })
+  petId: number;
   @ManyToOne(() => Pet, (pet) => pet.saleTransactions, {})
   @JoinColumn({ name: "petId", referencedColumnName: "id" })
-  petId: number;
-  @ManyToOne(() => Account, (account) => account.saleTransactions, {})
-  @JoinColumn({ name: "sellerId", referencedColumnName: "id" })
+  pet: Pet;
+
+  @Column({ name: "sellerId" })
   sellerId: number;
   @ManyToOne(() => Account, (account) => account.saleTransactions, {})
-  @JoinColumn({ name: "buyerId", referencedColumnName: "id" })
+  @JoinColumn({ name: "sellerId", referencedColumnName: "id" })
+  seller: Account;
+
+  @Column({ name: "buyerId" })
   buyerId: number;
+  @ManyToOne(() => Account, (account) => account.saleTransactions, {})
+  @JoinColumn({ name: "buyerId", referencedColumnName: "id" })
+  buyer: Account;
 }

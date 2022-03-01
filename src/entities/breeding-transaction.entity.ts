@@ -31,16 +31,28 @@ export class BreedingTransaction {
   evidenceAfterUltrasound: string;
   @Column({ type: "date", nullable: true })
   dateOfUltrasound: Date;
-  @ManyToOne(() => Pet, (pet) => pet.breedingTransactions, {})
-  @JoinColumn({ name: "petMaleId", referencedColumnName: "id" })
+
+  @Column({ name: "petMaleId" })
   petMaleId: number;
   @ManyToOne(() => Pet, (pet) => pet.breedingTransactions, {})
-  @JoinColumn({ name: "petFemaleId", referencedColumnName: "id" })
+  @JoinColumn({ name: "petMaleId", referencedColumnName: "id" })
+  petMale: Pet;
+
+  @Column({ name: "petFemaleId" })
   petFemaleId: number;
-  @ManyToOne(() => Account, (account) => account.breedingTransactions, {})
-  @JoinColumn({ name: "ownerMaleId", referencedColumnName: "id" })
+  @ManyToOne(() => Pet, (pet) => pet.breedingTransactions, {})
+  @JoinColumn({ name: "petFemaleId", referencedColumnName: "id" })
+  petFemale: Pet;
+
+  @Column({ name: "ownerMaleId" })
   ownerMaleId: number;
   @ManyToOne(() => Account, (account) => account.breedingTransactions, {})
-  @JoinColumn({ name: "ownerFemaleId", referencedColumnName: "id" })
+  @JoinColumn({ name: "ownerMaleId", referencedColumnName: "id" })
+  ownerMale: Account;
+
+  @Column({ name: "ownerFemaleId" })
   ownerFemaleId: number;
+  @ManyToOne(() => Account, (account) => account.breedingTransactions, {})
+  @JoinColumn({ name: "ownerFemaleId", referencedColumnName: "id" })
+  ownerFemale: Account;
 }

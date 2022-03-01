@@ -19,9 +19,13 @@ export class Category {
   description: string;
   @Column({ type: "bool" })
   isActive: boolean;
+
+  @Column({ name: "speciesId" })
+  speciesId: number;
   @ManyToOne(() => Species, (species) => species.categories, {})
   @JoinColumn({ name: "speciesId", referencedColumnName: "id" })
-  speciesId: number;
+  species: Species;
+
   @OneToMany(() => Pet, (pet) => pet.id)
   pets: [];
 }

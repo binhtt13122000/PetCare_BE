@@ -39,13 +39,22 @@ export class Post {
   petImage: string;
   @Column({ type: "text", nullable: true })
   sellerContract: string;
+
+  @Column({ name: "petId" })
+  petId: number;
   @ManyToOne(() => Pet, (pet) => pet.posts, {})
   @JoinColumn({ name: "petId", referencedColumnName: "id" })
-  petId: number;
-  @ManyToOne(() => Account, (account) => account.posts, {})
-  @JoinColumn({ name: "staffId", referencedColumnName: "id" })
+  pet: Pet;
+
+  @Column({ name: "staffId" })
   staffId: number;
   @ManyToOne(() => Account, (account) => account.posts, {})
-  @JoinColumn({ name: "sellerId", referencedColumnName: "id" })
+  @JoinColumn({ name: "staffId", referencedColumnName: "id" })
+  staff: Account;
+
+  @Column({ name: "sellerId" })
   sellerId: number;
+  @ManyToOne(() => Account, (account) => account.posts, {})
+  @JoinColumn({ name: "sellerId", referencedColumnName: "id" })
+  seller: Account;
 }

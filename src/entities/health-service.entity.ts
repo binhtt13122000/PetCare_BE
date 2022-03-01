@@ -23,17 +23,20 @@ export class HealthService {
   description: string;
   @Column({ type: "bool", default: true })
   status: boolean;
+
+  @Column({ name: "healthRecordId" })
+  healthRecordId: number;
   @ManyToOne(
     () => HealthRecord,
     (healthRecord) => healthRecord.healthServices,
     {},
   )
-  @JoinColumn({
-    name: "healthRecordId",
-    referencedColumnName: "id",
-  })
-  healthRecordId: number;
+  @JoinColumn({ name: "healthRecordId", referencedColumnName: "id" })
+  healthRecord: HealthRecord;
+
+  @Column({ name: "serviceId" })
+  serviceId: number;
   @ManyToOne(() => Service, (service) => service.healthServices, {})
   @JoinColumn({ name: "serviceId", referencedColumnName: "id" })
-  serviceId: number;
+  service: Service;
 }
