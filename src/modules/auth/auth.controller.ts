@@ -13,6 +13,15 @@ import { AuthService } from "./auth.service";
 import firebase_admin_config from "../../keys/firebase_admin_sdk.json";
 import _ from "lodash";
 
+type HasuraRole = {
+  "https://hasura.io/jwt/claims": {
+    "x-hasura-default-role": number;
+    "x-hasura-allowed-roles": number[];
+    "x-hasura-user-id": number;
+  };
+  audience?: string;
+  issuer?: string;
+};
 @Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {
@@ -33,7 +42,7 @@ export class AuthController {
   ): Promise<
     | {
         accessToken?: string;
-        user?: Account;
+        user?: Account & HasuraRole;
         status: "SUCCESS" | "BANNED" | "NEWER" | "UNAUTHORIZED";
       }
     | UnauthorizedException
@@ -54,8 +63,18 @@ export class AuthController {
               };
             }
             const payload = await this.authService.generateJwtToken(account);
-            return {
+            const signedUser: Partial<Account> & HasuraRole = {
               ...payload,
+              "https://hasura.io/jwt/claims": {
+                "x-hasura-default-role": account.roleId,
+                "x-hasura-allowed-roles": [account.roleId],
+                "x-hasura-user-id": account.id,
+              },
+              audience: "pet-store-storybook",
+              issuer: "pet-store-storybook-backend",
+            };
+            return {
+              ...signedUser,
               status: "SUCCESS",
             };
           } else {
