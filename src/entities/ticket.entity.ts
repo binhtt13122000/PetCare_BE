@@ -14,8 +14,8 @@ export class Ticket {
   type: string;
   @Column({ type: "text", nullable: true })
   title: string;
-  @Column({ type: "timestamp without time zone", nullable: true })
-  meetingTime: Date;
+  @Column({ type: "time without time zone", nullable: true })
+  meetingTime: string;
   @Column({ type: "text" })
   evidence: string;
   @Column({ type: "date", default: new Date() })

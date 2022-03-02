@@ -1,4 +1,4 @@
-import { Column, Double, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("promotion")
 export class Promotion {
@@ -6,8 +6,8 @@ export class Promotion {
   id: number;
   @Column({ type: "text", nullable: false })
   name: string;
-  @Column({ type: "float", nullable: false })
-  promo: Double;
+  @Column({ type: "integer", nullable: false })
+  promo: number;
   @Column({ type: "date", nullable: false })
   startTime: Date;
   @Column({ type: "date", nullable: false })

@@ -1,6 +1,5 @@
 import {
   Column,
-  Double,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -14,8 +13,8 @@ import { OrderDetail } from "./order-detail.entity";
 export class Order {
   @PrimaryGeneratedColumn("increment")
   id: number;
-  @Column({ type: "float", nullable: false })
-  totalPrice: Double;
+  @Column({ type: "integer", nullable: false })
+  totalPrice: number;
   @Column({ type: "bool", default: true })
   status: boolean;
   @Column({ type: "text", nullable: true })

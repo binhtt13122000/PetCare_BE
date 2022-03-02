@@ -1,7 +1,7 @@
 version: "3.6"
 services:
-  postgres:
-    image: postgres:12
+  postgres-db:
+    image: postgres:13
     restart: always
     volumes:
       - db_data:/var/lib/postgresql/data
@@ -22,13 +22,13 @@ services:
     ports:
       - "16543:80"
     depends_on:
-      - "postgres"
+      - "postgres-db"
   graphql-engine:
-    image: hasura/graphql-engine:v1.3.3
+    image: hasura/graphql-engine:v2.2.1
     ports:
       - "8080:8080"
     depends_on:
-      - "postgres"
+      - "postgres-db"
     restart: always
     environment:
       - HASURA_GRAPHQL_ADMIN_SECRET
@@ -45,7 +45,7 @@ services:
     container_name: petcare-be
     restart: always
     depends_on:
-      - "postgres"
+      - "postgres-db"
     ports:
       - "4000:4000"
     expose:

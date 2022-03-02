@@ -1,6 +1,5 @@
 import {
   Column,
-  Double,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -16,20 +15,20 @@ export class HealthRecord {
   id: number;
   @Column({ type: "date", nullable: false })
   dateOfExam: Date;
-  @Column({ type: "float", nullable: false })
-  weight: Double;
-  @Column({ type: "float", nullable: false })
-  height: Double;
-  @Column({ type: "float", nullable: false })
-  totalPrice: Double;
+  @Column({ type: "integer", nullable: false })
+  weight: number;
+  @Column({ type: "integer", nullable: false })
+  height: number;
+  @Column({ type: "integer", nullable: false })
+  totalPrice: number;
   @Column({ type: "text", nullable: false })
   evidence: string;
   @Column({ type: "text", nullable: true })
   description: string;
   @Column({ type: "bool", default: true })
   isPeriodical: boolean;
-  @Column({ type: "float", nullable: true })
-  promotion: Double;
+  @Column({ type: "integer", nullable: true })
+  promotion: number;
   @Column({ type: "bool", default: true })
   status: boolean;
 

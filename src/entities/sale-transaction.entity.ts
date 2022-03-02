@@ -1,6 +1,5 @@
 import {
   Column,
-  Double,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -19,12 +18,12 @@ export class SaleTransaction {
   buyerContract: string;
   @Column({ type: "text", nullable: false })
   type: string;
-  @Column({ type: "float", nullable: false })
-  totalPrice: Double;
-  @Column({ type: "float", nullable: false })
-  payForSeller: Double;
-  @Column({ type: "float", nullable: false })
-  deposit: Double;
+  @Column({ type: "integer", nullable: false })
+  totalPrice: number;
+  @Column({ type: "integer", nullable: false })
+  payForSeller: number;
+  @Column({ type: "integer", nullable: false })
+  deposit: number;
   @Column({ type: "bool", default: true })
   status: boolean;
   @Column({ type: "text", nullable: true })
