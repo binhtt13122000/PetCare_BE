@@ -39,9 +39,13 @@ export class Pet {
   color: string;
   @Column({ type: "text", nullable: true })
   bloodGroup: string;
+
+  @Column({ name: "categoryId" })
+  categoryId: number;
   @ManyToOne(() => Category, (category) => category.pets, {})
   @JoinColumn({ name: "categoryId", referencedColumnName: "id" })
-  categoryId: number;
+  category: Category;
+
   @OneToMany(() => Paper, (paper) => paper.id)
   papers: [];
   @OneToMany(() => Vaccine, (vaccine) => vaccine.id)
