@@ -1,6 +1,5 @@
 import {
   Column,
-  Double,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -15,10 +14,10 @@ export class Post {
   id: number;
   @Column({ type: "text", nullable: false })
   title: string;
-  @Column({ type: "float", nullable: false })
-  price: Double;
-  @Column({ type: "float" })
-  deposit: Double;
+  @Column({ type: "integer", nullable: false })
+  price: number;
+  @Column({ type: "integer" })
+  deposit: number;
   @Column({
     type: "timestamp without time zone",
     nullable: false,

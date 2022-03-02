@@ -1,6 +1,5 @@
 import {
   Column,
-  Double,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -13,7 +12,7 @@ import { Pet } from "./pet.entity";
 export class BreedingTransaction {
   @PrimaryGeneratedColumn("increment")
   id: number;
-  @Column({ type: "float", nullable: false })
+  @Column({ type: "integer", nullable: false })
   totalPrice: number;
   @Column({ type: "bool", default: false })
   status: boolean;
@@ -21,8 +20,8 @@ export class BreedingTransaction {
   breedingContract: string;
   @Column({ type: "date", nullable: true })
   dateOfBreeding: Date;
-  @Column({ type: "float", nullable: true })
-  deposit: Double;
+  @Column({ type: "integer", nullable: true })
+  deposit: number;
   @Column({ type: "bool", default: false })
   statusAfterUltrasound: boolean;
   @Column({ type: "text", nullable: true })
