@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -14,7 +15,7 @@ import { Role } from "./role.entity";
 import { SaleTransaction } from "./sale-transaction.entity";
 
 @Entity("account")
-export class Account {
+export class Account extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
   @Column({ type: "text" })
@@ -35,9 +36,16 @@ export class Account {
     default: () => "CURRENT_TIMESTAMP",
   })
   registerTime: Date;
+
+  @Column({ type: "bool", default: true })
+  isActive: boolean;
+
+  @Column({ name: "roleId" })
+  roleId: number;
+
   @ManyToOne(() => Role, (role) => role.accounts, {})
   @JoinColumn({ name: "roleId", referencedColumnName: "id" })
-  roleId: number;
+  role: Role;
   @OneToMany(() => PetOwner, (petOwner) => petOwner.id)
   petOwners: [];
   @OneToMany(() => Order, (order) => order.id)
@@ -51,6 +59,9 @@ export class Account {
     (breedingTransaction) => breedingTransaction.id,
   )
   breedingTransactions: [];
-  @Column({ nullable: false })
-  status: "abc" | "xxxx";
+
+  constructor(partial: Partial<Account>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

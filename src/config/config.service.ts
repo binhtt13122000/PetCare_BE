@@ -1,6 +1,3 @@
-import { TypeOrmModuleOptions } from "@nestjs/typeorm";
-import path = require("path");
-
 import dotenv = require("dotenv");
 
 dotenv.config();
@@ -40,26 +37,6 @@ class ConfigService {
 
   public getGoogleAuthURI(): string {
     return this.getValue("GOOGLE_AUTH_URI", true);
-  }
-
-  public getTypeOrmConfig(): TypeOrmModuleOptions {
-    return {
-      type: "postgres",
-      host: this.getValue("POSTGRES_HOST"),
-      port: parseInt(this.getValue("POSTGRES_PORT")),
-      username: this.getValue("POSTGRES_USER"),
-      password: this.getValue("POSTGRES_PASSWORD"),
-      database: this.getValue("POSTGRES_DB"),
-      logging: true,
-      synchronize: true,
-
-      entities: ["dist/entities/*.entity{.ts,.js}"],
-      migrations: [path.join(__dirname, "../migrations/*{.ts}")],
-      cli: {
-        migrationsDir: "src/migrations",
-      },
-      ssl: false,
-    };
   }
 }
 

@@ -23,7 +23,10 @@ export class Paper {
   status: boolean;
   @Column({ type: "text" })
   description: string;
+
+  @Column({ name: "petId" })
+  petId: number;
   @ManyToOne(() => Pet, (pet) => pet.papers, {})
   @JoinColumn({ name: "petId", referencedColumnName: "id" })
-  petId: number;
+  pet: Pet;
 }

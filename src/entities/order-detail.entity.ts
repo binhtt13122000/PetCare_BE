@@ -23,10 +23,16 @@ export class OrderDetail {
   status: boolean;
   @Column({ type: "text", nullable: true })
   description: string;
+
+  @Column({ name: "orderId" })
+  orderId: number;
   @ManyToOne(() => Order, (order) => order.orderDetails, {})
   @JoinColumn({ name: "orderId", referencedColumnName: "id" })
-  orderId: number;
+  order: Order;
+
+  @Column({ name: "serviceId" })
+  serviceId: number;
   @ManyToOne(() => Service, (service) => service.orderDetails, {})
   @JoinColumn({ name: "serviceId", referencedColumnName: "id" })
-  serviceId: number;
+  service: Service;
 }

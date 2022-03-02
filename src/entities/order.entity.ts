@@ -22,7 +22,10 @@ export class Order {
   description: string;
   @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.id)
   orderDetails: [];
+
+  @Column({ name: "accountId" })
+  accountId: number;
   @ManyToOne(() => Account, (account) => account.orders, {})
   @JoinColumn({ name: "accountId", referencedColumnName: "id" })
-  accountId: number;
+  account: Account;
 }
