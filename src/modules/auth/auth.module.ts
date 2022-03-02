@@ -6,15 +6,12 @@ import { AuthService } from "./auth.service";
 import { JwtModule } from "@nestjs/jwt";
 import { UserModule } from "../users/user.module";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import { PassportModule } from "@nestjs/passport";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Account]),
-    // PassportModule,
-    // JwtModule.register({
-    //   secret: "PET-STORE-JWT-JWT_SECRET_KEY",
-    //   signOptions: { expiresIn: "3600s" },
-    // }),
+    PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
