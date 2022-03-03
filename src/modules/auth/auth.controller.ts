@@ -5,13 +5,17 @@ import {
   Post,
   Request,
   UnauthorizedException,
+  UploadedFile,
+  UseInterceptors,
 } from "@nestjs/common";
 import * as firebase from "firebase-admin";
-import { ServiceAccount } from "firebase-admin";
+import { getStorage } from "firebase-admin/storage";
 import { Account } from "src/entities/account.entity";
 import { AuthService } from "./auth.service";
-import firebase_admin_config from "../../keys/firebase_admin_sdk.json";
 import _ from "lodash";
+import { v4 } from "uuid";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { configService } from "src/config/config.service";
 
 type HasuraRole = {
   "https://hasura.io/jwt/claims": {
@@ -24,17 +28,37 @@ type HasuraRole = {
 };
 @Controller("auth")
 export class AuthController {
-  constructor(private readonly authService: AuthService) {
-    if (!firebase.apps.length) {
-      firebase.initializeApp({
-        credential: firebase.credential.cert(
-          <ServiceAccount>firebase_admin_config,
-        ),
+  constructor(private readonly authService: AuthService) {}
+
+  @Post("upload")
+  @UseInterceptors(FileInterceptor("file"))
+  uploadFile(@UploadedFile() file: Express.Multer.File): string {
+    const BUCKET = configService.getBucket();
+    const uuidKey = v4();
+    const firebaseStorage = getStorage();
+    firebaseStorage
+      .bucket()
+      .upload(file.path, {
+        contentType: "image/jpeg",
+        metadata: {
+          firebaseStorageDownloadTokens: uuidKey,
+        },
+      })
+      .then((data) => {
+        const value = data[0];
+        // eslint-disable-next-line no-console
+        console.log(
+          "https://firebasestorage.googleapis.com/v0/b/" +
+            BUCKET +
+            "/o/" +
+            encodeURIComponent(value.name) +
+            "?alt=media&token=" +
+            uuidKey,
+        );
       });
-    }
+    return "null";
   }
 
-  // @UseGuards(LocalAuthGuard)
   @Post("login")
   async login(
     @Request() req: Request,

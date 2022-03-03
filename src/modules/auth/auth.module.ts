@@ -7,11 +7,17 @@ import { JwtModule } from "@nestjs/jwt";
 import { UserModule } from "../users/user.module";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { PassportModule } from "@nestjs/passport";
+import { MulterModule } from "@nestjs/platform-express";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Account]),
     PassportModule,
+    MulterModule.registerAsync({
+      useFactory: () => ({
+        dest: "./upload",
+      }),
+    }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
