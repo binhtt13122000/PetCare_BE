@@ -13,11 +13,7 @@ import { MulterModule } from "@nestjs/platform-express";
   imports: [
     TypeOrmModule.forFeature([Account]),
     PassportModule,
-    MulterModule.registerAsync({
-      useFactory: () => ({
-        dest: "./upload",
-      }),
-    }),
+    MulterModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
