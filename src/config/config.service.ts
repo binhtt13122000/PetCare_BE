@@ -38,6 +38,10 @@ class ConfigService {
   public getGoogleAuthURI(): string {
     return this.getValue("GOOGLE_AUTH_URI", true);
   }
+
+  public getBucket(): string {
+    return this.getValue("BUCKET", true);
+  }
 }
 
 const configService = new ConfigService({
@@ -52,6 +56,7 @@ const configService = new ConfigService({
   "POSTGRES_DB",
   "POSTGRES_HOST",
   "POSTGRES_PORT",
+  "BUCKET",
 ]);
 
 export { configService };

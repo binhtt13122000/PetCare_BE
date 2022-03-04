@@ -5,13 +5,15 @@ import {
   Post,
   Request,
   UnauthorizedException,
+  UploadedFile,
+  UseInterceptors,
 } from "@nestjs/common";
 import * as firebase from "firebase-admin";
-import { ServiceAccount } from "firebase-admin";
 import { Account } from "src/entities/account.entity";
 import { AuthService } from "./auth.service";
-import firebase_admin_config from "../../keys/firebase_admin_sdk.json";
 import _ from "lodash";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { uploadService } from "src/external/uploadFile.service";
 
 type HasuraRole = {
   "https://hasura.io/jwt/claims": {
@@ -24,17 +26,14 @@ type HasuraRole = {
 };
 @Controller("auth")
 export class AuthController {
-  constructor(private readonly authService: AuthService) {
-    if (!firebase.apps.length) {
-      firebase.initializeApp({
-        credential: firebase.credential.cert(
-          <ServiceAccount>firebase_admin_config,
-        ),
-      });
-    }
+  constructor(private readonly authService: AuthService) {}
+
+  @Post("demo-upload")
+  @UseInterceptors(FileInterceptor("file"))
+  async uploadFile(@UploadedFile() file: Express.Multer.File): Promise<string> {
+    return await uploadService.uploadFile(file);
   }
 
-  // @UseGuards(LocalAuthGuard)
   @Post("login")
   async login(
     @Request() req: Request,
