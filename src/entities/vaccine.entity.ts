@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -9,7 +10,7 @@ import {
 import { Pet } from "./pet.entity";
 
 @Entity("vaccine")
-export class Vaccine {
+export class Vaccine extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
   @Column({ type: "text", nullable: false })
@@ -28,4 +29,9 @@ export class Vaccine {
   @ManyToOne(() => Pet, (pet) => pet.vaccines, {})
   @JoinColumn({ name: "petId", referencedColumnName: "id" })
   pet: Pet;
+
+  constructor(partial: Partial<Vaccine>) {
+    super();
+    Object.assign(this, partial);
+  }
 }
