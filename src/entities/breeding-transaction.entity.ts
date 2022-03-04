@@ -3,9 +3,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Account } from "./account.entity";
+import { Media } from "./media.entity";
 import { Pet } from "./pet.entity";
 
 @Entity("breeding_transaction")
@@ -30,6 +32,10 @@ export class BreedingTransaction {
   evidenceAfterUltrasound: string;
   @Column({ type: "date", nullable: true })
   dateOfUltrasound: Date;
+  @OneToMany(() => Media, (media) => media.id)
+  sellerBreedingContractImages: Media[];
+  @OneToMany(() => Media, (media) => media.id)
+  buyerBreedingContractImages: Media[];
 
   @Column({ name: "petMaleId" })
   petMaleId: number;

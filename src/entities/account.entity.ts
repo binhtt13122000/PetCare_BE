@@ -11,6 +11,7 @@ import { BreedingTransaction } from "./breeding-transaction.entity";
 import { Order } from "./order.entity";
 import { PetOwner } from "./pet-owner.entity";
 import { Post } from "./post.entity";
+import { Promotion } from "./promotion.entity";
 import { Role } from "./role.entity";
 import { SaleTransaction } from "./sale-transaction.entity";
 
@@ -59,6 +60,9 @@ export class Account extends BaseEntity {
     (breedingTransaction) => breedingTransaction.id,
   )
   breedingTransactions: [];
+
+  @OneToMany(() => Promotion, (promotion) => promotion.id)
+  promotions: [];
 
   constructor(partial: Partial<Account>) {
     super();

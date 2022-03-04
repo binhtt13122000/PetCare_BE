@@ -10,4 +10,6 @@ export class VerificationCenter {
   status: boolean;
   @Column({ type: "text", nullable: true })
   description: string;
+  @Column({ type: "text", nullable: false })
+  address: string;
 }
