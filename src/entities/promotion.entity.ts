@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { Account } from "./account.entity";
 
 @Entity("promotion")
 export class Promotion {
@@ -16,4 +23,10 @@ export class Promotion {
   description: string;
   @Column({ type: "bool", nullable: false, default: true })
   status: boolean;
+
+  @Column({ name: "accountId", nullable: true })
+  accountId: number;
+  @ManyToOne(() => Account, (account) => account.promotions, {})
+  @JoinColumn({ name: "accountId", referencedColumnName: "id" })
+  account: Account;
 }

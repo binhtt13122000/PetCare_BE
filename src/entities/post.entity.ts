@@ -3,9 +3,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Account } from "./account.entity";
+import { Media } from "./media.entity";
 import { Pet } from "./pet.entity";
 
 @Entity("post")
@@ -33,11 +35,12 @@ export class Post {
   @Column({ type: "bool", default: true })
   status: boolean;
   @Column({ type: "text", nullable: false })
-  evidence: string;
-  @Column({ type: "text", nullable: false })
   petImage: string;
-  @Column({ type: "text", nullable: true })
-  sellerContract: string;
+  @OneToMany(() => Media, (media) => media.id)
+  sellerContractImages: Media[];
+
+  @OneToMany(() => Media, (media) => media.id)
+  evidences: Media[];
 
   @Column({ name: "petId" })
   petId: number;

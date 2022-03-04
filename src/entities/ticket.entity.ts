@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Media } from "./media.entity";
 
 @Entity("ticket")
 export class Ticket {
@@ -24,4 +25,6 @@ export class Ticket {
   description: string;
   @Column({ type: "text" })
   status: string;
+  @OneToMany(() => Media, (media) => media.id)
+  medias: [];
 }
