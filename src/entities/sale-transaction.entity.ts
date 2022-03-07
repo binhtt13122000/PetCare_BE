@@ -3,19 +3,17 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Account } from "./account.entity";
+import { Media } from "./media.entity";
 import { Pet } from "./pet.entity";
 
 @Entity("sale_transaction")
 export class SaleTransaction {
   @PrimaryGeneratedColumn("increment")
   id: number;
-  @Column({ type: "text", nullable: true })
-  sellerContract: string;
-  @Column({ type: "text", nullable: true })
-  buyerContract: string;
   @Column({ type: "text", nullable: false })
   type: string;
   @Column({ type: "integer", nullable: false })
@@ -32,6 +30,10 @@ export class SaleTransaction {
   payForSellerTime: Date;
   @Column({ type: "timestamp without time zone", nullable: true })
   payFromBuyerTime: Date;
+  @OneToMany(() => Media, (media) => media.id)
+  sellerContractImages: Media[];
+  @OneToMany(() => Media, (media) => media.id)
+  buyerContractImages: Media[];
 
   @Column({ name: "petId" })
   petId: number;

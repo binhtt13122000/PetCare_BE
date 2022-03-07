@@ -8,5 +8,6 @@ import { PapersRepository } from "./papers.repository";
   imports: [TypeOrmModule.forFeature([PapersRepository])],
   controllers: [PapersController],
   providers: [PapersService],
+  exports: [PapersService],
 })
 export class PapersModule {}
