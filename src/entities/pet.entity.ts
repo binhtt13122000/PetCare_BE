@@ -14,9 +14,10 @@ import { PetOwner } from "./pet-owner.entity";
 import { Post } from "./post.entity";
 import { SaleTransaction } from "./sale-transaction.entity";
 import { Vaccine } from "./vaccine.entity";
+import { BaseEntity } from "typeorm";
 
 @Entity("pet")
-export class Pet {
+export class Pet extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
   @Column({ type: "text", nullable: false })
