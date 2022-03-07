@@ -60,5 +60,14 @@ services:
       - API_ROOT_URL
       - WEB_ADMIN_ROOT_URL
       - HASURA_ROOT_URL
+  redis-server:
+    image: redis
+    command: redis-server --appendonly yes
+    ports:
+      - 6379:6379
+    volumes:
+      - redis-data:/data
+    restart: always
 volumes:
   db_data:
+  redis-data:
