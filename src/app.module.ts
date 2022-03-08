@@ -10,6 +10,7 @@ import { AuthModule } from "./modules/auth/auth.module";
 import { UserModule } from "./modules/users/user.module";
 import { VaccineModule } from "./modules/vaccine/vaccine.module";
 import { PapersModule } from "./modules/papers/papers.module";
+import { PetsModule } from "./modules/pets/pets.module";
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { PapersModule } from "./modules/papers/papers.module";
     UserModule,
     VaccineModule,
     PapersModule,
+    PetsModule,
   ],
   controllers: [AppController],
   providers: [

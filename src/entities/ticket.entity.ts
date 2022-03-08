@@ -1,3 +1,4 @@
+import { TicketEnum } from "src/enum";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Media } from "./media.entity";
 
@@ -23,8 +24,10 @@ export class Ticket {
   date: Date;
   @Column({ type: "text", nullable: true })
   description: string;
-  @Column({ type: "text" })
-  status: string;
+  @Column({ type: "enum", enum: TicketEnum })
+  status: TicketEnum;
   @OneToMany(() => Media, (media) => media.id)
   medias: [];
+  @Column({ type: "text", nullable: true })
+  cancelReason: string;
 }

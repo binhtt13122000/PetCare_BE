@@ -15,9 +15,11 @@ import { PetOwner } from "./pet-owner.entity";
 import { Post } from "./post.entity";
 import { SaleTransaction } from "./sale-transaction.entity";
 import { Vaccine } from "./vaccine.entity";
+import { BaseEntity } from "typeorm";
+import { PetEnum } from "../enum/index";
 
 @Entity("pet")
-export class Pet {
+export class Pet extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
   @Column({ type: "text", nullable: false })
@@ -34,8 +36,8 @@ export class Pet {
   avatar: string;
   @Column({ type: "bool", default: true })
   isSeed: boolean;
-  @Column({ type: "bool", default: true })
-  status: boolean;
+  @Column({ type: "enum", enum: PetEnum })
+  status: PetEnum;
   @Column({ type: "text", nullable: true })
   color: string;
   @Column({ type: "text", nullable: true })
@@ -48,23 +50,20 @@ export class Pet {
   category: Category;
 
   @OneToMany(() => Paper, (paper) => paper.id)
-  papers: [];
+  papers: Paper[];
   @OneToMany(() => Vaccine, (vaccine) => vaccine.id)
-  vaccines: [];
+  vaccines: Vaccine[];
   @OneToMany(() => SaleTransaction, (saleTransaction) => saleTransaction.id)
-  saleTransactions: [];
+  saleTransactions: SaleTransaction[];
   @OneToMany(() => Post, (post) => post.id)
-  posts: [];
+  posts: Post[];
   @OneToMany(() => HealthRecord, (healthRecord) => healthRecord.id)
-  healthRecords: [];
-  @OneToMany(() => PetOwner, (petOwner) => petOwner.id)
-  petOwners: [];
+  healthRecords: HealthRecord[];
+  @OneToMany(() => PetOwner, (petOwner) => petOwner.pet, {})
+  petOwners: PetOwner[];
   @OneToMany(
     () => BreedingTransaction,
     (breedingTransaction) => breedingTransaction.id,
   )
-  breedingTransactions: [];
-
-  @OneToMany(() => Media, (media) => media.id)
-  medias: Media[];
+  breedingTransactions: BreedingTransaction[];
 }

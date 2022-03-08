@@ -26,7 +26,7 @@ export class BaseService<T extends BaseEntity, R extends Repository<T>>
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async update(id: EntityId, data: any): Promise<T> {
-    await this.repository.update(id, data);
+    await this.repository.save(data);
     return this.repository.findOne(id);
   }
 

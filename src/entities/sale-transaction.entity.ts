@@ -1,3 +1,4 @@
+import { SaleTransactionEnum } from "src/enum";
 import {
   Column,
   Entity,
@@ -22,8 +23,10 @@ export class SaleTransaction {
   payForSeller: number;
   @Column({ type: "integer", nullable: false })
   deposit: number;
-  @Column({ type: "bool", default: true })
-  status: boolean;
+  @Column({ type: "enum", enum: SaleTransactionEnum })
+  status: SaleTransactionEnum;
+  @Column({ type: "text" })
+  reasonCancel: string;
   @Column({ type: "text", nullable: true })
   description: string;
   @Column({ type: "timestamp without time zone", nullable: true })

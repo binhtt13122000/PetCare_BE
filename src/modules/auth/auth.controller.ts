@@ -14,6 +14,7 @@ import { AuthService } from "./auth.service";
 import _ from "lodash";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { uploadService } from "src/external/uploadFile.service";
+import { sendNotificationService } from "src/external/sendNotification.service";
 
 type HasuraRole = {
   "https://hasura.io/jwt/claims": {
@@ -32,6 +33,17 @@ export class AuthController {
   @UseInterceptors(FileInterceptor("file"))
   async uploadFile(@UploadedFile() file: Express.Multer.File): Promise<string> {
     return await uploadService.uploadFile(file);
+  }
+
+  @Post("demo-noti")
+  async sendNoti(): Promise<string> {
+    return await sendNotificationService.sendNotification(
+      "ek6wGpjBjwJvC9wwrZFa_6:APA91bEm639ntvmz_43jiGMO_D9RGsLJGc-U9h3zMlHswKbLENZrALUclfj6ZsqM9b_JFQRNpYN-vqmNHUHJrL4gWUguTK_94Utu5aTNb7JT36dkpw4jzKI8Trk5B6vQWoC6NAXfMOmr",
+      {
+        body: "vlcc",
+        title: "mmttttt",
+      },
+    );
   }
 
   @Post("login")

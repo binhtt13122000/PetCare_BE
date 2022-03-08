@@ -9,6 +9,7 @@ import {
 import { Account } from "./account.entity";
 import { Media } from "./media.entity";
 import { Pet } from "./pet.entity";
+import { PostEnum } from "../enum/index";
 
 @Entity("post")
 export class Post {
@@ -32,12 +33,14 @@ export class Post {
   type: string;
   @Column({ type: "text", nullable: true })
   description: string;
-  @Column({ type: "bool", default: true })
-  status: boolean;
+  @Column({ type: "enum", enum: PostEnum })
+  status: PostEnum;
   @Column({ type: "text", nullable: false })
   petImage: string;
   @OneToMany(() => Media, (media) => media.id)
   sellerContractImages: Media[];
+  @Column({ type: "text" })
+  reasonCancel: string;
 
   @OneToMany(() => Media, (media) => media.id)
   evidences: Media[];
