@@ -58,13 +58,13 @@ export class PetsController {
       let avatar = null;
       if (file) {
         avatar = await uploadService.uploadFile(file);
-        await uploadService.removeImage(body.avatar);
+        // await uploadService.removeImage(body.avatar);
       }
       const pet: Partial<Pet> = {
         ...body,
         avatar: file ? avatar : body.avatar,
       };
-      return await this.petsService.store(pet);
+      return await this.petsService.update(pet.id, pet);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
