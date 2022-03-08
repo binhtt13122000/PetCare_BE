@@ -4,6 +4,7 @@ import {
   HttpException,
   HttpStatus,
   Post,
+  Put,
   UploadedFile,
   UseInterceptors,
 } from "@nestjs/common";
@@ -40,6 +41,28 @@ export class PetsController {
         ...data,
         avatar,
         petOwners: [petOwner],
+      };
+      return await this.petsService.store(pet);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Put()
+  @UseInterceptors(FileInterceptor("file"))
+  async update(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: Pet,
+  ): Promise<Pet> {
+    try {
+      let avatar = null;
+      if (file) {
+        avatar = await uploadService.uploadFile(file);
+        await uploadService.removeImage(body.avatar);
+      }
+      const pet: Partial<Pet> = {
+        ...body,
+        avatar: file ? avatar : body.avatar,
       };
       return await this.petsService.store(pet);
     } catch (error) {
