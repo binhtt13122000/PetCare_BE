@@ -59,7 +59,9 @@ export class Pet extends BaseEntity {
   posts: Post[];
   @OneToMany(() => HealthRecord, (healthRecord) => healthRecord.id)
   healthRecords: HealthRecord[];
-  @OneToMany(() => PetOwner, (petOwner) => petOwner.pet, {})
+  @OneToMany(() => PetOwner, (petOwner) => petOwner.pet, {
+    cascade: true,
+  })
   petOwners: PetOwner[];
   @OneToMany(
     () => BreedingTransaction,
