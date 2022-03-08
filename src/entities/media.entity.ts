@@ -61,13 +61,6 @@ export class Media {
   })
   postEvidenceId: number;
 
-  @ManyToOne(() => Pet, (pet) => pet.medias, {})
-  @JoinColumn({
-    name: "petId",
-    referencedColumnName: "id",
-  })
-  petId: number;
-
   @ManyToOne(
     () => BreedingTransaction,
     (breedingTransaction) => breedingTransaction.sellerBreedingContractImages,

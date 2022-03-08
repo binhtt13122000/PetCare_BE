@@ -1,3 +1,4 @@
+import { BreedingTransactionEnum, StatusMalePetEnum } from "src/enum";
 import {
   Column,
   Entity,
@@ -9,6 +10,7 @@ import {
 import { Account } from "./account.entity";
 import { Media } from "./media.entity";
 import { Pet } from "./pet.entity";
+import { StatusFemalePetEnum } from "../enum/index";
 
 @Entity("breeding_transaction")
 export class BreedingTransaction {
@@ -16,16 +18,32 @@ export class BreedingTransaction {
   id: number;
   @Column({ type: "integer", nullable: false })
   totalPrice: number;
-  @Column({ type: "bool", default: false })
-  status: boolean;
+  @Column({
+    type: "enum",
+    enum: BreedingTransactionEnum,
+    default: BreedingTransactionEnum.NOT_STARTED,
+  })
+  status: BreedingTransactionEnum;
+  @Column({
+    type: "enum",
+    enum: StatusMalePetEnum,
+    default: StatusMalePetEnum.NOT_AVAILABLE,
+  })
+  statusMalePet: StatusMalePetEnum;
+  @Column({
+    type: "enum",
+    enum: StatusFemalePetEnum,
+    default: StatusFemalePetEnum.NOT_AVAILABLE,
+  })
+  statusFemalePet: StatusFemalePetEnum;
+  @Column({ type: "text" })
+  reasonCancel: string;
   @Column({ type: "text", nullable: true })
   breedingContract: string;
   @Column({ type: "date", nullable: true })
   dateOfBreeding: Date;
   @Column({ type: "integer", nullable: true })
   deposit: number;
-  @Column({ type: "bool", default: false })
-  statusAfterUltrasound: boolean;
   @Column({ type: "text", nullable: true })
   evidenceBreeding: string;
   @Column({ type: "text", nullable: true })

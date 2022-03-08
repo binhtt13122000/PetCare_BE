@@ -1,3 +1,4 @@
+import { OrderEnum } from "src/enum";
 import {
   Column,
   Entity,
@@ -15,8 +16,8 @@ export class Order {
   id: number;
   @Column({ type: "integer", nullable: false })
   totalPrice: number;
-  @Column({ type: "bool", default: true })
-  status: boolean;
+  @Column({ type: "enum", enum: OrderEnum })
+  status: OrderEnum; //truong hop nhap sai khach hang hoac lam sai bill
   @Column({ type: "text", nullable: true })
   description: string;
   @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.id)
