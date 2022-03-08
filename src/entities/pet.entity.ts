@@ -9,7 +9,6 @@ import {
 import { BreedingTransaction } from "./breeding-transaction.entity";
 import { Category } from "./category.entity";
 import { HealthRecord } from "./health-record.entity";
-import { Media } from "./media.entity";
 import { Paper } from "./paper.entity";
 import { PetOwner } from "./pet-owner.entity";
 import { Post } from "./post.entity";

@@ -8,7 +8,6 @@ import {
 import { SaleTransaction } from "./sale-transaction.entity";
 import { Ticket } from "./ticket.entity";
 import { Post } from "./post.entity";
-import { Pet } from "./pet.entity";
 import { BreedingTransaction } from "./breeding-transaction.entity";
 
 @Entity("media")
