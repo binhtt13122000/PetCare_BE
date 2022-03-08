@@ -47,9 +47,9 @@ export class Account extends BaseEntity {
   @ManyToOne(() => Role, (role) => role.accounts, {})
   @JoinColumn({ name: "roleId", referencedColumnName: "id" })
   role: Role;
-  @OneToMany(() => PetOwner, (petOwner) => petOwner.id)
+  @OneToMany(() => PetOwner, (petOwner) => petOwner.account)
   petOwners: [];
-  @OneToMany(() => Order, (order) => order.id)
+  @OneToMany(() => Order, (order) => order.account)
   orders: [];
   @OneToMany(() => Post, (post) => post.id)
   posts: [];
@@ -61,7 +61,7 @@ export class Account extends BaseEntity {
   )
   breedingTransactions: [];
 
-  @OneToMany(() => Promotion, (promotion) => promotion.id)
+  @OneToMany(() => Promotion, (promotion) => promotion.account)
   promotions: [];
 
   constructor(partial: Partial<Account>) {

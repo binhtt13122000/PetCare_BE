@@ -27,25 +27,21 @@ export class PetsController {
     try {
       const { ownerId, ...data } = body;
       const avatar = await uploadService.uploadFile(file);
-      const pet: Partial<Pet> = {
-        ...data,
-        avatar,
-      };
-      const currentPet = await this.petsService.store(pet);
       const petOwner: PetOwner = {
         id: undefined,
         accountId: ownerId,
         isCurrentOwner: true,
-        petId: currentPet.id,
+        petId: undefined,
         date: new Date(),
         pet: undefined,
         account: undefined,
       };
-      if (!currentPet.petOwners) {
-        currentPet.petOwners = [];
-      }
-      currentPet.petOwners.push(petOwner);
-      return await this.petsService.update(currentPet.id, currentPet);
+      const pet: Partial<Pet> = {
+        ...data,
+        avatar,
+        petOwners: [petOwner],
+      };
+      return await this.petsService.store(pet);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
