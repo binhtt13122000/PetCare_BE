@@ -4,6 +4,8 @@
         "hasura",
         "nestjs",
         "noti",
+        "originalname",
+        "typeorm",
         "webpush"
     ]
 }

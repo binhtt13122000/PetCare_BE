@@ -4,6 +4,7 @@ import { configService } from "src/config/config.service";
 import { FileProducerService } from "./file/file.producer.service";
 import { NotificationProducerService } from "./notification.producer/notification.producer.service";
 import { NotificationConsumer } from "./notification.producer/notification.consumer";
+import { FileConsumer } from "./file/file.consumer";
 
 @Module({
   imports: [
@@ -24,11 +25,13 @@ import { NotificationConsumer } from "./notification.producer/notification.consu
   ],
   providers: [
     FileProducerService,
+    FileConsumer,
     NotificationProducerService,
     NotificationConsumer,
   ],
   exports: [
     FileProducerService,
+    FileConsumer,
     NotificationProducerService,
     NotificationConsumer,
   ],

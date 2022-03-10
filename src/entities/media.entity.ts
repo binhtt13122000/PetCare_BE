@@ -9,9 +9,10 @@ import { SaleTransaction } from "./sale-transaction.entity";
 import { Ticket } from "./ticket.entity";
 import { Post } from "./post.entity";
 import { BreedingTransaction } from "./breeding-transaction.entity";
+import { BaseEntity } from "typeorm";
 
 @Entity("media")
-export class Media {
+export class Media extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
   @Column({ type: "text", nullable: false })
@@ -81,4 +82,9 @@ export class Media {
     referencedColumnName: "id",
   })
   breedingTransactionBuyerContractId: number;
+
+  constructor(partial: Partial<Media>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

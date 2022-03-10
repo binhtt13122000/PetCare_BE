@@ -13,10 +13,14 @@ import { VaccineService } from "./vaccine.service";
 import { CreateVaccine } from "./dto/create-vaccine.dto";
 import { Vaccine } from "../../entities/vaccine.entity";
 import { uploadService } from "src/external/uploadFile.service";
+import { FileProducerService } from "src/shared/file/file.producer.service";
 
 @Controller("vaccine")
 export class VaccineController {
-  constructor(private readonly vaccineService: VaccineService) {}
+  constructor(
+    private readonly vaccineService: VaccineService,
+    private fileProducerService: FileProducerService,
+  ) {}
 
   @Post()
   @UseInterceptors(FileInterceptor("file"))
@@ -28,7 +32,7 @@ export class VaccineController {
       const evidence = await uploadService.uploadFile(file);
       const vaccine = {
         ...body,
-        evidence,
+        evidence: evidence.url,
       };
       return this.vaccineService.store(vaccine);
     } catch (error) {
@@ -46,11 +50,11 @@ export class VaccineController {
       let evidence = null;
       if (file) {
         evidence = await uploadService.uploadFile(file);
-        await uploadService.removeImage(body.evidence);
+        await this.fileProducerService.deleteFile(body.evidence);
       }
       const vaccine = {
         ...body,
-        evidence: file ? evidence : body.evidence,
+        evidence: file ? evidence.url : body.evidence,
       };
       return await this.vaccineService.update(vaccine.id, vaccine);
     } catch (error) {

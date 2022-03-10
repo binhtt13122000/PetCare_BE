@@ -5,15 +5,11 @@ import {
   Post,
   Request,
   UnauthorizedException,
-  UploadedFile,
-  UseInterceptors,
 } from "@nestjs/common";
 import * as firebase from "firebase-admin";
 import { Account } from "src/entities/account.entity";
 import { AuthService } from "./auth.service";
 import _ from "lodash";
-import { FileInterceptor } from "@nestjs/platform-express";
-import { uploadService } from "src/external/uploadFile.service";
 import { NotificationProducerService } from "../../shared/notification.producer/notification.producer.service";
 import { getFirestore } from "firebase-admin/firestore";
 
@@ -32,12 +28,6 @@ export class AuthController {
     private readonly authService: AuthService,
     private notificationProducerService: NotificationProducerService,
   ) {}
-
-  @Post("demo-upload")
-  @UseInterceptors(FileInterceptor("file"))
-  async uploadFile(@UploadedFile() file: Express.Multer.File): Promise<string> {
-    return await uploadService.uploadFile(file);
-  }
 
   @Post("demo-noti")
   async sendNoti(): Promise<string> {

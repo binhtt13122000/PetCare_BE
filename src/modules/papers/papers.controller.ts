@@ -13,10 +13,14 @@ import { uploadService } from "src/external/uploadFile.service";
 import { PapersService } from "./papers.service";
 import { CreatePaper } from "./dto/create-paper.dto";
 import { Paper } from "src/entities/paper.entity";
+import { FileProducerService } from "../../shared/file/file.producer.service";
 
 @Controller("papers")
 export class PapersController {
-  constructor(private readonly papersService: PapersService) {}
+  constructor(
+    private readonly papersService: PapersService,
+    private fileProducerService: FileProducerService,
+  ) {}
 
   @Post()
   @UseInterceptors(FileInterceptor("file"))
@@ -25,7 +29,7 @@ export class PapersController {
     @Body() body: CreatePaper,
   ): Promise<Paper> {
     try {
-      const evidence = await uploadService.uploadFile(file);
+      const { url: evidence } = await uploadService.uploadFile(file);
       const paper = {
         ...body,
         evidence,
@@ -46,11 +50,11 @@ export class PapersController {
       let evidence = null;
       if (file) {
         evidence = await uploadService.uploadFile(file);
-        await uploadService.removeImage(body.evidence);
+        await this.fileProducerService.deleteFile(body.evidence);
       }
       const vaccine = {
         ...body,
-        evidence: file ? evidence : body.evidence,
+        evidence: file ? evidence.url : body.evidence,
       };
       return await this.papersService.update(vaccine.id, vaccine);
     } catch (error) {

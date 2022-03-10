@@ -12,6 +12,7 @@ import { VaccineModule } from "./modules/vaccine/vaccine.module";
 import { PapersModule } from "./modules/papers/papers.module";
 import { PetsModule } from "./modules/pets/pets.module";
 import { SharedModule } from "./shared/shared.module";
+import { PostsModule } from "./modules/posts/posts.module";
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { SharedModule } from "./shared/shared.module";
     PapersModule,
     PetsModule,
     SharedModule,
+    PostsModule,
   ],
   controllers: [AppController],
   providers: [

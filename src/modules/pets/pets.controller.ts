@@ -27,7 +27,7 @@ export class PetsController {
   ): Promise<Pet> {
     try {
       const { ownerId, ...data } = body;
-      const avatar = await uploadService.uploadFile(file);
+      const { url: avatar } = await uploadService.uploadFile(file);
       const petOwner: PetOwner = {
         id: undefined,
         accountId: ownerId,

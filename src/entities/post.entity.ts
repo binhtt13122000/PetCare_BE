@@ -28,20 +28,24 @@ export class Post extends BaseEntity {
     default: () => "CURRENT_TIMESTAMP",
   })
   createTime: Date;
-  @Column({ type: "int", nullable: false })
-  effectiveTime: number;
+  @Column({ type: "timestamp without time zone", nullable: false })
+  effectiveTime: Date;
   @Column({ type: "text", nullable: false })
   type: string;
   @Column({ type: "text", nullable: true })
   description: string;
   @Column({ type: "enum", enum: PostEnum })
   status: PostEnum;
-  @OneToMany(() => Media, (media) => media.id)
+  @OneToMany(() => Media, (media) => media.id, {
+    cascade: true,
+  })
   sellerContractImages: Media[];
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   reasonCancel: string;
 
-  @OneToMany(() => Media, (media) => media.id)
+  @OneToMany(() => Media, (media) => media.id, {
+    cascade: true,
+  })
   evidences: Media[];
 
   @Column({ name: "petId" })
@@ -62,7 +66,7 @@ export class Post extends BaseEntity {
   @JoinColumn({ name: "sellerId", referencedColumnName: "id" })
   seller: Account;
 
-  constructor(partial: Partial<Pet>) {
+  constructor(partial: Partial<Post>) {
     super();
     Object.assign(this, partial);
   }
