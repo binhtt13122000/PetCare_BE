@@ -42,6 +42,10 @@ class ConfigService {
   public getBucket(): string {
     return this.getValue("BUCKET", true);
   }
+
+  public getRedisServer(): string {
+    return this.getValue("REDIS_SERVER", true);
+  }
 }
 
 const configService = new ConfigService({
@@ -57,6 +61,7 @@ const configService = new ConfigService({
   "POSTGRES_HOST",
   "POSTGRES_PORT",
   "BUCKET",
+  "REDIS_SERVER",
 ]);
 
 export { configService };

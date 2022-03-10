@@ -1,19 +1,22 @@
-import { getMessaging } from "firebase-admin/messaging";
+import { BatchResponse, getMessaging } from "firebase-admin/messaging";
 
-interface Message {
+export interface Message {
   title: string;
   body: string;
   requireInteraction?: boolean;
   link?: string;
 }
 export class SendNotificationService {
-  async sendNotification(fcmToken: string, msg: Message): Promise<string> {
+  async sendNotification(
+    fcmTokens: string[],
+    msg: Message,
+  ): Promise<BatchResponse> {
     try {
-      const res = await getMessaging().send({
+      const res = await getMessaging().sendMulticast({
         webpush: {
           notification: {
             ...msg,
-            icon: "https://your-website.com/favicon.png",
+            icon: "https://sc04.alicdn.com/kf/Hb9c51d5d61074e2d8d0f9c4b3fe2df0bw.jpg_Q55.jpg",
             requireInteraction: msg.requireInteraction ?? false,
             actions: [
               {
@@ -26,7 +29,7 @@ export class SendNotificationService {
             },
           },
         },
-        token: fcmToken,
+        tokens: [...fcmTokens],
       });
       return res;
     } catch (e) {

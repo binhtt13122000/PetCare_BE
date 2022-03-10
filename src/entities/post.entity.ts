@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -12,7 +13,7 @@ import { Pet } from "./pet.entity";
 import { PostEnum } from "../enum/index";
 
 @Entity("post")
-export class Post {
+export class Post extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
   @Column({ type: "text", nullable: false })
@@ -27,16 +28,14 @@ export class Post {
     default: () => "CURRENT_TIMESTAMP",
   })
   createTime: Date;
-  @Column({ type: "timestamp without time zone", nullable: false })
-  effectiveTime: Date;
+  @Column({ type: "int", nullable: false })
+  effectiveTime: number;
   @Column({ type: "text", nullable: false })
   type: string;
   @Column({ type: "text", nullable: true })
   description: string;
   @Column({ type: "enum", enum: PostEnum })
   status: PostEnum;
-  @Column({ type: "text", nullable: false })
-  petImage: string;
   @OneToMany(() => Media, (media) => media.id)
   sellerContractImages: Media[];
   @Column({ type: "text" })
@@ -62,4 +61,9 @@ export class Post {
   @ManyToOne(() => Account, (account) => account.posts, {})
   @JoinColumn({ name: "sellerId", referencedColumnName: "id" })
   seller: Account;
+
+  constructor(partial: Partial<Pet>) {
+    super();
+    Object.assign(this, partial);
+  }
 }
