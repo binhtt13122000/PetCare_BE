@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -12,7 +13,7 @@ import { Pet } from "./pet.entity";
 import { PostEnum } from "../enum/index";
 
 @Entity("post")
-export class Post {
+export class Post extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
   @Column({ type: "text", nullable: false })
@@ -35,14 +36,16 @@ export class Post {
   description: string;
   @Column({ type: "enum", enum: PostEnum })
   status: PostEnum;
-  @Column({ type: "text", nullable: false })
-  petImage: string;
-  @OneToMany(() => Media, (media) => media.id)
+  @OneToMany(() => Media, (media) => media.id, {
+    cascade: true,
+  })
   sellerContractImages: Media[];
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   reasonCancel: string;
 
-  @OneToMany(() => Media, (media) => media.id)
+  @OneToMany(() => Media, (media) => media.id, {
+    cascade: true,
+  })
   evidences: Media[];
 
   @Column({ name: "petId" })
@@ -62,4 +65,9 @@ export class Post {
   @ManyToOne(() => Account, (account) => account.posts, {})
   @JoinColumn({ name: "sellerId", referencedColumnName: "id" })
   seller: Account;
+
+  constructor(partial: Partial<Post>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

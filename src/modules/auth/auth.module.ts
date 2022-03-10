@@ -8,6 +8,7 @@ import { UserModule } from "../users/user.module";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { PassportModule } from "@nestjs/passport";
 import { MulterModule } from "@nestjs/platform-express";
+import { SharedModule } from "src/shared/shared.module";
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { MulterModule } from "@nestjs/platform-express";
     }),
     UserModule,
     ConfigModule,
+    SharedModule,
   ],
   controllers: [AuthController],
   providers: [AuthService],

@@ -5,16 +5,13 @@ import {
   Post,
   Request,
   UnauthorizedException,
-  UploadedFile,
-  UseInterceptors,
 } from "@nestjs/common";
 import * as firebase from "firebase-admin";
 import { Account } from "src/entities/account.entity";
 import { AuthService } from "./auth.service";
 import _ from "lodash";
-import { FileInterceptor } from "@nestjs/platform-express";
-import { uploadService } from "src/external/uploadFile.service";
-import { sendNotificationService } from "src/external/sendNotification.service";
+import { NotificationProducerService } from "../../shared/notification.producer/notification.producer.service";
+import { getFirestore } from "firebase-admin/firestore";
 
 type HasuraRole = {
   "https://hasura.io/jwt/claims": {
@@ -27,29 +24,27 @@ type HasuraRole = {
 };
 @Controller("auth")
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
-
-  @Post("demo-upload")
-  @UseInterceptors(FileInterceptor("file"))
-  async uploadFile(@UploadedFile() file: Express.Multer.File): Promise<string> {
-    return await uploadService.uploadFile(file);
-  }
+  constructor(
+    private readonly authService: AuthService,
+    private notificationProducerService: NotificationProducerService,
+  ) {}
 
   @Post("demo-noti")
   async sendNoti(): Promise<string> {
-    return await sendNotificationService.sendNotification(
-      "ek6wGpjBjwJvC9wwrZFa_6:APA91bEm639ntvmz_43jiGMO_D9RGsLJGc-U9h3zMlHswKbLENZrALUclfj6ZsqM9b_JFQRNpYN-vqmNHUHJrL4gWUguTK_94Utu5aTNb7JT36dkpw4jzKI8Trk5B6vQWoC6NAXfMOmr",
+    await this.notificationProducerService.sendMessage(
       {
-        body: "vlcc",
-        title: "mmttttt",
+        body: "Hello",
+        title: "Hello",
       },
+      0,
     );
+    return "ok";
   }
 
   @Post("login")
   async login(
     @Request() req: Request,
-    @Body() data: { accessToken: string; loginType: number },
+    @Body() data: { accessToken: string; loginType: number; fcmToken: string },
   ): Promise<
     | {
         accessToken?: string;
@@ -62,7 +57,6 @@ export class AuthController {
     if (data !== null && !_.isEmpty(data)) {
       try {
         const auth = await firebase.auth().verifyIdToken(data.accessToken);
-
         phoneNumber = auth.phone_number;
         const account = await this.authService.validateUser(phoneNumber);
 
@@ -84,6 +78,10 @@ export class AuthController {
               audience: "pet-store-storybook",
               issuer: "pet-store-storybook-backend",
             };
+            await getFirestore().collection("fcm").doc().set({
+              id: account.id,
+              fcm: data.fcmToken,
+            });
             return {
               ...signedUser,
               status: "SUCCESS",

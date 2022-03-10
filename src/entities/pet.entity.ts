@@ -67,4 +67,9 @@ export class Pet extends BaseEntity {
     (breedingTransaction) => breedingTransaction.id,
   )
   breedingTransactions: BreedingTransaction[];
+
+  constructor(partial: Partial<Pet>) {
+    super();
+    Object.assign(this, partial);
+  }
 }
