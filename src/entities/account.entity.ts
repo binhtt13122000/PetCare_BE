@@ -25,7 +25,7 @@ export class Account extends BaseEntity {
   firstName: string;
   @Column({ type: "text", nullable: false })
   lastName: string;
-  @Column({ type: "text", nullable: false })
+  @Column({ type: "text", nullable: false, unique: true })
   phoneNumber: string;
   @Column({ type: "text", nullable: false })
   address: string;
