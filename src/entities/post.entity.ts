@@ -11,6 +11,8 @@ import { Account } from "./account.entity";
 import { Media } from "./media.entity";
 import { Pet } from "./pet.entity";
 import { PostEnum } from "../enum/index";
+import { BreedingTransaction } from "./breeding-transaction.entity";
+import { SaleTransaction } from "./sale-transaction.entity";
 
 @Entity("post")
 export class Post extends BaseEntity {
@@ -65,6 +67,12 @@ export class Post extends BaseEntity {
   @ManyToOne(() => Account, (account) => account.posts, {})
   @JoinColumn({ name: "sellerId", referencedColumnName: "id" })
   seller: Account;
+
+  @OneToMany(() => Post, (post) => post.id, {})
+  breedingTransactions: BreedingTransaction[];
+
+  @OneToMany(() => Post, (post) => post.id, {})
+  saleTransactions: SaleTransaction[];
 
   constructor(partial: Partial<Post>) {
     super();

@@ -11,6 +11,7 @@ import { Account } from "./account.entity";
 import { Media } from "./media.entity";
 import { Pet } from "./pet.entity";
 import { StatusFemalePetEnum } from "../enum/index";
+import { Post } from "./post.entity";
 
 @Entity("breeding_transaction")
 export class BreedingTransaction {
@@ -50,6 +51,12 @@ export class BreedingTransaction {
   evidenceAfterUltrasound: string;
   @Column({ type: "date", nullable: true })
   dateOfUltrasound: Date;
+  @Column({
+    type: "timestamp without time zone",
+    nullable: false,
+    default: () => "CURRENT_TIMESTAMP",
+  })
+  createTime: Date;
   @OneToMany(() => Media, (media) => media.id)
   sellerBreedingContractImages: Media[];
   @OneToMany(() => Media, (media) => media.id)
@@ -78,4 +85,8 @@ export class BreedingTransaction {
   @ManyToOne(() => Account, (account) => account.breedingTransactions, {})
   @JoinColumn({ name: "ownerFemaleId", referencedColumnName: "id" })
   ownerFemale: Account;
+
+  @ManyToOne(() => Post, (post) => post.breedingTransactions, {})
+  @JoinColumn({ name: "postId", referencedColumnName: "id" })
+  post: Post;
 }

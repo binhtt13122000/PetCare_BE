@@ -10,6 +10,7 @@ import {
 import { Account } from "./account.entity";
 import { Media } from "./media.entity";
 import { Pet } from "./pet.entity";
+import { Post } from "./post.entity";
 
 @Entity("sale_transaction")
 export class SaleTransaction {
@@ -38,6 +39,13 @@ export class SaleTransaction {
   @OneToMany(() => Media, (media) => media.id)
   buyerContractImages: Media[];
 
+  @Column({
+    type: "timestamp without time zone",
+    nullable: false,
+    default: () => "CURRENT_TIMESTAMP",
+  })
+  createTime: Date;
+
   @Column({ name: "petId" })
   petId: number;
   @ManyToOne(() => Pet, (pet) => pet.saleTransactions, {})
@@ -55,4 +63,8 @@ export class SaleTransaction {
   @ManyToOne(() => Account, (account) => account.saleTransactions, {})
   @JoinColumn({ name: "buyerId", referencedColumnName: "id" })
   buyer: Account;
+
+  @ManyToOne(() => Post, (post) => post.saleTransactions, {})
+  @JoinColumn({ name: "postId", referencedColumnName: "id" })
+  post: Post;
 }
