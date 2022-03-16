@@ -59,7 +59,6 @@ export class AuthController {
         const auth = await firebase.auth().verifyIdToken(data.accessToken);
         phoneNumber = auth.phone_number;
         const account = await this.authService.validateUser(phoneNumber);
-
         if (!_.isEmpty(account)) {
           if (account.isActive) {
             if (account.roleId !== data.loginType) {

@@ -19,7 +19,7 @@ import { SharedModule } from "src/shared/shared.module";
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get("JWT_SECRET_KEY"),
-        signOptions: { expiresIn: "3600s" },
+        signOptions: { expiresIn: "7d" },
       }),
       inject: [ConfigService],
     }),

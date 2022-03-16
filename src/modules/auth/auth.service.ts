@@ -24,11 +24,8 @@ export class AuthService {
     const payload = {
       user,
     };
-
     return {
-      accessToken: await this.jwtService.signAsync(payload, {
-        expiresIn: this.configService.get<string>("jwtExpiresIn"),
-      }),
+      accessToken: await this.jwtService.signAsync(payload),
       user: user,
     };
   }
