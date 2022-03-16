@@ -24,6 +24,8 @@ export class Post extends BaseEntity {
   price: number;
   @Column({ type: "integer" })
   deposit: number;
+  @Column({ type: "integer" })
+  refund: number;
   @Column({
     type: "timestamp without time zone",
     nullable: false,
