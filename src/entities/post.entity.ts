@@ -40,14 +40,14 @@ export class Post extends BaseEntity {
   description: string;
   @Column({ type: "enum", enum: PostEnum })
   status: PostEnum;
-  @OneToMany(() => Media, (media) => media.id, {
+  @OneToMany(() => Media, (media) => media.postSellerContractId, {
     cascade: true,
   })
   sellerContractImages: Media[];
   @Column({ type: "text", nullable: true })
   reasonCancel: string;
 
-  @OneToMany(() => Media, (media) => media.id, {
+  @OneToMany(() => Media, (media) => media.postEvidenceId, {
     cascade: true,
   })
   evidences: Media[];
