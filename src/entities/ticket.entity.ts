@@ -1,9 +1,15 @@
 import { TicketEnum } from "src/enum";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  BaseEntity,
+} from "typeorm";
 import { Media } from "./media.entity";
 
 @Entity("ticket")
-export class Ticket {
+export class Ticket extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
   @Column({ type: "text", nullable: false })
@@ -26,8 +32,15 @@ export class Ticket {
   description: string;
   @Column({ type: "enum", enum: TicketEnum })
   status: TicketEnum;
-  @OneToMany(() => Media, (media) => media.id)
-  medias: [];
+  @OneToMany(() => Media, (media) => media.ticketId, {
+    cascade: true,
+  })
+  medias: Media[];
   @Column({ type: "text", nullable: true })
   cancelReason: string;
+
+  constructor(partial: Partial<Ticket>) {
+    super();
+    Object.assign(this, partial);
+  }
 }
