@@ -10,10 +10,15 @@ import { Media } from "src/entities/media.entity";
 import { Post as PostEntity } from "src/entities/post.entity";
 import { uploadService } from "src/external/uploadFile.service";
 import { PostsService } from "./posts.service";
+import { PetsService } from "../pets/pets.service";
+import { PetEnum } from "src/enum";
 
 @Controller("posts")
 export class PostsController {
-  constructor(private readonly postsService: PostsService) {}
+  constructor(
+    private readonly postsService: PostsService,
+    private readonly petsService: PetsService,
+  ) {}
 
   @Post()
   @UseInterceptors(
@@ -41,7 +46,6 @@ export class PostsController {
       }),
     );
     body.evidences = evidences;
-
     const sellerContractImages: Media[] = await Promise.all(
       files.sellerContractImageFiles?.map(async (value) => {
         const { url } = await uploadService.uploadFile(value);
@@ -53,6 +57,9 @@ export class PostsController {
       }),
     );
     body.sellerContractImages = sellerContractImages;
+    const pet = await this.petsService.findById(body.petId);
+    pet.status = PetEnum.IN_POST;
+    await this.petsService.update(body.petId, pet);
     return await this.postsService.store(new PostEntity(body));
   }
 
