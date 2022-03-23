@@ -3,6 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { Account } from "src/entities/account.entity";
 import { UserService } from "../users/user.service";
+import { HasuraRole } from "./auth.controller";
 @Injectable()
 export class AuthService {
   constructor(
@@ -17,12 +18,16 @@ export class AuthService {
     return user;
   }
 
-  async generateJwtToken(user: Account): Promise<{
+  async generateJwtToken(
+    user: Account,
+    hasuraRole: HasuraRole,
+  ): Promise<{
     accessToken: string;
     user: Account;
   }> {
     const payload = {
       user,
+      hasuraRole,
     };
     return {
       accessToken: await this.jwtService.signAsync(payload),

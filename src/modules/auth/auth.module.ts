@@ -9,6 +9,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { PassportModule } from "@nestjs/passport";
 import { MulterModule } from "@nestjs/platform-express";
 import { SharedModule } from "src/shared/shared.module";
+import { RolesModule } from "../roles/roles.module";
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { SharedModule } from "src/shared/shared.module";
     UserModule,
     ConfigModule,
     SharedModule,
+    RolesModule,
   ],
   controllers: [AuthController],
   providers: [AuthService],

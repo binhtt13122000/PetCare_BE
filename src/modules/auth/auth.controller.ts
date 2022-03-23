@@ -12,12 +12,14 @@ import { AuthService } from "./auth.service";
 import _ from "lodash";
 import { NotificationProducerService } from "../../shared/notification.producer/notification.producer.service";
 import { getFirestore } from "firebase-admin/firestore";
+import { RolesService } from "../roles/roles.service";
+import { Role } from "src/entities/role.entity";
 
-type HasuraRole = {
+export type HasuraRole = {
   "https://hasura.io/jwt/claims": {
-    "x-hasura-default-role": number;
-    "x-hasura-allowed-roles": number[];
-    "x-hasura-user-id": number;
+    "x-hasura-default-role": string;
+    "x-hasura-allowed-roles": string[];
+    "x-hasura-user-id": string;
   };
   audience?: string;
   issuer?: string;
@@ -27,6 +29,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private notificationProducerService: NotificationProducerService,
+    private rolesService: RolesService,
   ) {}
 
   @Post("demo-noti")
@@ -66,16 +69,27 @@ export class AuthController {
                 status: "UNAUTHORIZED",
               };
             }
-            const payload = await this.authService.generateJwtToken(account);
+            const role: Role = await this.rolesService.findById(account.roleId);
+            const hasuraRole: HasuraRole = {
+              "https://hasura.io/jwt/claims": {
+                "x-hasura-default-role": role.name,
+                "x-hasura-allowed-roles": [role.name],
+                "x-hasura-user-id": role.name,
+              },
+            };
+            const payload = await this.authService.generateJwtToken(
+              account,
+              hasuraRole,
+            );
             const signedUser: Partial<Account> & HasuraRole = {
               ...payload,
               "https://hasura.io/jwt/claims": {
-                "x-hasura-default-role": account.roleId,
-                "x-hasura-allowed-roles": [account.roleId],
-                "x-hasura-user-id": account.id,
+                "x-hasura-default-role": role.name,
+                "x-hasura-allowed-roles": [role.name],
+                "x-hasura-user-id": role.name,
               },
-              audience: "pet-store-storybook",
-              issuer: "pet-store-storybook-backend",
+              audience: "pet-store",
+              issuer: "pet-store",
             };
             await getFirestore().collection("fcm").doc().set({
               id: account.id,
