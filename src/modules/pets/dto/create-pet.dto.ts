@@ -8,7 +8,7 @@ export type CreatePetDto = Pick<
   | "color"
   | "description"
   | "dob"
-  | "isMale"
+  | "gender"
   | "isSeed"
   | "name"
 > & { ownerId: number };

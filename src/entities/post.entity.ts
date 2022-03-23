@@ -10,7 +10,7 @@ import {
 import { Account } from "./account.entity";
 import { Media } from "./media.entity";
 import { Pet } from "./pet.entity";
-import { PostEnum } from "../enum/index";
+import { PostEnum, ServiceEnum } from "../enum/index";
 import { BreedingTransaction } from "./breeding-transaction.entity";
 import { SaleTransaction } from "./sale-transaction.entity";
 
@@ -24,7 +24,7 @@ export class Post extends BaseEntity {
   price: number;
   @Column({ type: "integer" })
   deposit: number;
-  @Column({ type: "integer", nullable: true })
+  @Column({ type: "integer", nullable: false })
   refund: number;
   @Column({
     type: "timestamp without time zone",
@@ -34,33 +34,38 @@ export class Post extends BaseEntity {
   createTime: Date;
   @Column({ type: "timestamp without time zone", nullable: false })
   effectiveTime: Date;
-  @Column({ type: "text", nullable: false })
-  type: string;
+  @Column({ type: "enum", enum: ServiceEnum })
+  type: ServiceEnum;
   @Column({ type: "text", nullable: true })
   description: string;
   @Column({ type: "enum", enum: PostEnum })
   status: PostEnum;
+  @Column({ type: "timestamp without time zone", nullable: true })
+  meetingTime: Date;
+  @Column({ type: "timestamp without time zone", nullable: true })
+  healthCheckTime: Date;
   @OneToMany(() => Media, (media) => media.postSellerContractId, {
     cascade: true,
   })
   sellerContractImages: Media[];
   @Column({ type: "text", nullable: true })
   reasonCancel: string;
-
   @OneToMany(() => Media, (media) => media.postEvidenceId, {
     cascade: true,
   })
   evidences: Media[];
-
+  @OneToMany(() => Media, (media) => media.postHeathCheckId, {
+    cascade: true,
+  })
+  healthCheckMedias: Media[];
   @Column({ name: "petId" })
   petId: number;
   @ManyToOne(() => Pet, (pet) => pet.posts, {})
   @JoinColumn({ name: "petId", referencedColumnName: "id" })
   pet: Pet;
-
-  @Column({ name: "staffId" })
+  @Column({ name: "staffId", nullable: true })
   staffId: number;
-  @ManyToOne(() => Account, (account) => account.posts, {})
+  @ManyToOne(() => Account, (account) => account.staffPosts, {})
   @JoinColumn({ name: "staffId", referencedColumnName: "id" })
   staff: Account;
 

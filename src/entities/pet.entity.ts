@@ -15,7 +15,7 @@ import { Post } from "./post.entity";
 import { SaleTransaction } from "./sale-transaction.entity";
 import { Vaccine } from "./vaccine.entity";
 import { BaseEntity } from "typeorm";
-import { PetEnum } from "../enum/index";
+import { GenderEnum, PetEnum } from "../enum/index";
 
 @Entity("pet")
 export class Pet extends BaseEntity {
@@ -27,8 +27,8 @@ export class Pet extends BaseEntity {
   dob: Date;
   @Column({ type: "integer", nullable: true })
   ageRange: number;
-  @Column({ type: "bool", default: true })
-  isMale: boolean;
+  @Column({ type: "enum", enum: GenderEnum })
+  gender: GenderEnum;
   @Column({ type: "text", nullable: true })
   description: string;
   @Column({ type: "text", nullable: false })

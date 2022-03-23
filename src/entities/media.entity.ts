@@ -6,7 +6,6 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { SaleTransaction } from "./sale-transaction.entity";
-import { Ticket } from "./ticket.entity";
 import { Post } from "./post.entity";
 import { BreedingTransaction } from "./breeding-transaction.entity";
 import { BaseEntity } from "typeorm";
@@ -21,9 +20,6 @@ export class Media extends BaseEntity {
   type: "image" | "video";
   @Column({ type: "bool", default: true })
   status: boolean;
-  @ManyToOne(() => Ticket, (ticket) => ticket.medias, {})
-  @JoinColumn({ name: "ticketId", referencedColumnName: "id" })
-  ticketId: number;
 
   @ManyToOne(
     () => SaleTransaction,
@@ -60,6 +56,13 @@ export class Media extends BaseEntity {
     referencedColumnName: "id",
   })
   postEvidenceId: number;
+
+  @ManyToOne(() => Post, (post) => post.healthCheckMedias, {})
+  @JoinColumn({
+    name: "postHeathCheckId",
+    referencedColumnName: "id",
+  })
+  postHeathCheckId: number;
 
   @ManyToOne(
     () => BreedingTransaction,

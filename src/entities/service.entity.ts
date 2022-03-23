@@ -14,7 +14,6 @@ export class Service {
   description: string;
   @Column({ type: "bool", default: true })
   status: boolean;
-
   @OneToMany(() => HealthService, (healthService) => healthService.id)
   healthServices: [];
   @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.id)

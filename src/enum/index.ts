@@ -43,6 +43,7 @@ export enum PetEnum {
 }
 
 export enum PostEnum {
+  REQUESTED = "REQUESTED",
   CANCELED = "CANCELED",
   PUBLISHED = "PUBLISHED",
   EXPIRED = "EXPIRED",
@@ -57,8 +58,13 @@ export enum SaleTransactionEnum {
   PAYMENTED = "PAYMENTED",
 }
 
-export enum TicketEnum {
-  REQUESTED = "REQUESTED",
-  CANCELLED = "CANCELLED",
-  CONFIRMED = "CONFIRMED",
+export enum GenderEnum {
+  MALE = "MALE",
+  FEMALE = "FEMALE",
+  UNKNOWN = "UNKNOWN",
+}
+
+export enum ServiceEnum {
+  PURCHASE = "PURCHASE",
+  BREED = "BREED",
 }

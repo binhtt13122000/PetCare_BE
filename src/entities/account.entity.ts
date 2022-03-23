@@ -19,7 +19,7 @@ import { SaleTransaction } from "./sale-transaction.entity";
 export class Account extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
-  @Column({ type: "text" })
+  @Column({ type: "text", nullable: true })
   email: string;
   @Column({ type: "text", nullable: false })
   firstName: string;
@@ -27,7 +27,7 @@ export class Account extends BaseEntity {
   lastName: string;
   @Column({ type: "text", nullable: false, unique: true })
   phoneNumber: string;
-  @Column({ type: "text", nullable: false })
+  @Column({ type: "text", nullable: true })
   address: string;
   @Column({ type: "bool", nullable: false })
   isMale: boolean;
@@ -48,21 +48,24 @@ export class Account extends BaseEntity {
   @JoinColumn({ name: "roleId", referencedColumnName: "id" })
   role: Role;
   @OneToMany(() => PetOwner, (petOwner) => petOwner.account)
-  petOwners: [];
+  petOwners: PetOwner[];
   @OneToMany(() => Order, (order) => order.account)
-  orders: [];
-  @OneToMany(() => Post, (post) => post.id)
-  posts: [];
+  orders: Order[];
+  @OneToMany(() => Post, (post) => post.seller)
+  posts: Post[];
+
+  @OneToMany(() => Post, (post) => post.staff)
+  staffPosts: Post[];
   @OneToMany(() => SaleTransaction, (saleTransaction) => saleTransaction.id)
-  saleTransactions: [];
+  saleTransactions: SaleTransaction[];
   @OneToMany(
     () => BreedingTransaction,
     (breedingTransaction) => breedingTransaction.id,
   )
-  breedingTransactions: [];
+  breedingTransactions: BreedingTransaction[];
 
   @OneToMany(() => Promotion, (promotion) => promotion.account)
-  promotions: [];
+  promotions: Promotion[];
 
   constructor(partial: Partial<Account>) {
     super();
