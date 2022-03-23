@@ -4,6 +4,7 @@ import {
   Post,
   UseInterceptors,
   UploadedFiles,
+  Put,
 } from "@nestjs/common";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { Media } from "src/entities/media.entity";
@@ -24,14 +25,14 @@ export class PostsController {
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: "evidenceFiles", maxCount: 4 },
-      { name: "sellerContractImageFiles", maxCount: 4 },
+      { name: "healthCheckFiles", maxCount: 4 },
     ]),
   )
   async createPost(
     @UploadedFiles()
     files: {
       evidenceFiles?: Express.Multer.File[];
-      sellerContractImageFiles?: Express.Multer.File[];
+      healthCheckFiles?: Express.Multer.File[];
     },
     @Body() body: Partial<PostEntity>,
   ): Promise<PostEntity> {
@@ -46,6 +47,34 @@ export class PostsController {
       }),
     );
     body.evidences = evidences;
+    const healthCheckImages: Media[] = await Promise.all(
+      files.healthCheckFiles?.map(async (value) => {
+        const { url, type } = await uploadService.uploadFile(value);
+        return new Media({
+          url: url,
+          status: true,
+          type: type === "image/jpeg" ? "image" : "video",
+        });
+      }),
+    );
+    body.healthCheckMedias = healthCheckImages;
+    const pet = await this.petsService.findById(body.petId);
+    pet.status = PetEnum.IN_POST;
+    await this.petsService.update(body.petId, pet);
+    return await this.postsService.store(new PostEntity(body));
+  }
+
+  @Put()
+  @UseInterceptors(
+    FileFieldsInterceptor([{ name: "sellerContractImageFiles", maxCount: 4 }]),
+  )
+  async updatePost(
+    @UploadedFiles()
+    files: {
+      sellerContractImageFiles?: Express.Multer.File[];
+    },
+    @Body() body: Partial<PostEntity>,
+  ): Promise<PostEntity> {
     const sellerContractImages: Media[] = await Promise.all(
       files.sellerContractImageFiles?.map(async (value) => {
         const { url } = await uploadService.uploadFile(value);
@@ -57,13 +86,6 @@ export class PostsController {
       }),
     );
     body.sellerContractImages = sellerContractImages;
-    const pet = await this.petsService.findById(body.petId);
-    pet.status = PetEnum.IN_POST;
-    await this.petsService.update(body.petId, pet);
-    return await this.postsService.store(new PostEntity(body));
-  }
-
-  async updatePost(@Body() body: Partial<PostEntity>): Promise<PostEntity> {
     return this.postsService.update(body.id, new PostEntity(body));
   }
 }
