@@ -13,6 +13,7 @@ import { PapersModule } from "./modules/papers/papers.module";
 import { PetsModule } from "./modules/pets/pets.module";
 import { SharedModule } from "./shared/shared.module";
 import { PostsModule } from "./modules/posts/posts.module";
+import { RolesModule } from "./modules/roles/roles.module";
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { PostsModule } from "./modules/posts/posts.module";
     PetsModule,
     SharedModule,
     PostsModule,
+    RolesModule,
   ],
   controllers: [AppController],
   providers: [

@@ -32,6 +32,16 @@ export class Post extends BaseEntity {
     default: () => "CURRENT_TIMESTAMP",
   })
   createTime: Date;
+  @Column({
+    type: "timestamp without time zone",
+    nullable: false,
+  })
+  approveTime: Date;
+  @Column({
+    type: "timestamp without time zone",
+    nullable: false,
+  })
+  cancelTime: Date;
   @Column({ type: "timestamp without time zone", nullable: false })
   effectiveTime: Date;
   @Column({ type: "enum", enum: ServiceEnum })
