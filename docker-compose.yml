@@ -60,6 +60,14 @@ services:
       - API_ROOT_URL
       - WEB_ADMIN_ROOT_URL
       - HASURA_ROOT_URL
+      - BUCKET
+      - REDIS_SERVER
+      - BCRYPT_SALT
+      - API_PREFIX
+      - JWT_SECRET_KEY
+      - JWT_EXPIRES_IN
+      - ACCESS_TOKEN_SECRET
+      - ACCESS_TOKEN_EXPIRATION
   redis-server:
     image: redis
     command: redis-server --appendonly yes
