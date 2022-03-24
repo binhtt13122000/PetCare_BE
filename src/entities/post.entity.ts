@@ -34,12 +34,12 @@ export class Post extends BaseEntity {
   createTime: Date;
   @Column({
     type: "timestamp without time zone",
-    nullable: false,
+    nullable: true,
   })
   approveTime: Date;
   @Column({
     type: "timestamp without time zone",
-    nullable: false,
+    nullable: true,
   })
   cancelTime: Date;
   @Column({ type: "timestamp without time zone", nullable: false })
