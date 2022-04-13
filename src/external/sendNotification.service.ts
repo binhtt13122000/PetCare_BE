@@ -29,6 +29,11 @@ export class SendNotificationService {
             },
           },
         },
+        android: {
+          notification: {
+            ...msg,
+          },
+        },
         tokens: [...fcmTokens],
       });
       return res;

@@ -14,13 +14,13 @@ export class NotificationConsumer {
   ): Promise<void> {
     const query = getFirestore()
       .collection("fcm")
-      .where("userId", "==", job.data.userId);
-    const fcmTokens: string[] = await (
-      await query.get()
-    ).docs.map((doc) => {
+      .where("id", "==", job.data.userId);
+    const fcmTokens: string[] = (await query.get()).docs.map((doc) => {
       const data = doc.data();
       return data?.fcm;
     });
-    sendNotificationService.sendNotification(fcmTokens, job.data.message);
+    if (fcmTokens.length > 0) {
+      sendNotificationService.sendNotification(fcmTokens, job.data.message);
+    }
   }
 }
