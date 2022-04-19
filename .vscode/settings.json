@@ -1,11 +1,16 @@
 {
     "cSpell.words": [
         "Firestore",
+        "followeds",
         "hasura",
+        "momo",
         "nestjs",
         "noti",
         "originalname",
+        "PAYMENTED",
+        "reporteds",
         "typeorm",
+        "VNPAY",
         "webpush"
     ]
 }

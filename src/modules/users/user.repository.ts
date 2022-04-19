@@ -1,4 +1,4 @@
-import { Account } from "src/entities/account.entity";
+import { Account } from "src/entities/authenticate_service/account.entity";
 import { EntityRepository, Repository } from "typeorm";
 
 @EntityRepository(Account)

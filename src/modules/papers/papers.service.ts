@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { BaseService } from "src/base/base.service";
-import { Paper } from "src/entities/paper.entity";
+import { Paper } from "src/entities/pet_service/paper.entity";
 import { PapersRepository } from "./papers.repository";
 
 @Injectable()

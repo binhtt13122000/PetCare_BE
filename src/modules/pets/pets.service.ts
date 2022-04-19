@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { BaseService } from "src/base/base.service";
-import { Pet } from "src/entities/pet.entity";
+import { Pet } from "src/entities/pet_service/pet.entity";
 import { PetsRepository } from "./pets.repository";
 
 @Injectable()

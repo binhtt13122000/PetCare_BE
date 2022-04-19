@@ -3,33 +3,28 @@ import {
   Body,
   Controller,
   Post,
-  Request,
   UnauthorizedException,
 } from "@nestjs/common";
 import * as firebase from "firebase-admin";
-import { Account } from "src/entities/account.entity";
 import { AuthService } from "./auth.service";
 import _ from "lodash";
 import { NotificationProducerService } from "../../shared/notification.producer/notification.producer.service";
 import { getFirestore } from "firebase-admin/firestore";
-import { RolesService } from "../roles/roles.service";
-import { Role } from "src/entities/role.entity";
+import { ApiTags } from "@nestjs/swagger";
+import { LoginBodyDTO, LoginResponseDTO } from "./auth.dto";
+import { StaffService } from "../staff/staff.service";
+import { CustomerService } from "../customer/customer.service";
+import { Staff } from "src/entities/user_management_service/staff.entity";
+import { Customer } from "../../entities/user_management_service/customer.entity";
 
-export type HasuraRole = {
-  "https://hasura.io/jwt/claims": {
-    "x-hasura-default-role": string;
-    "x-hasura-allowed-roles": string[];
-    "x-hasura-user-id": string;
-  };
-  audience?: string;
-  issuer?: string;
-};
+@ApiTags("authenticate")
 @Controller("auth")
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private notificationProducerService: NotificationProducerService,
-    private rolesService: RolesService,
+    private staffService: StaffService,
+    private customerService: CustomerService,
   ) {}
 
   @Post("demo-noti")
@@ -46,16 +41,8 @@ export class AuthController {
 
   @Post("login")
   async login(
-    @Request() req: Request,
-    @Body() data: { accessToken: string; loginType: number; fcmToken: string },
-  ): Promise<
-    | {
-        accessToken?: string;
-        user?: Account & HasuraRole;
-        status: "SUCCESS" | "BANNED" | "NEWER" | "UNAUTHORIZED";
-      }
-    | UnauthorizedException
-  > {
+    @Body() data: LoginBodyDTO,
+  ): Promise<LoginResponseDTO | UnauthorizedException> {
     let phoneNumber: string;
     if (data !== null && !_.isEmpty(data)) {
       try {
@@ -69,34 +56,22 @@ export class AuthController {
                 status: "UNAUTHORIZED",
               };
             }
-            const role: Role = await this.rolesService.findById(account.roleId);
-            const hasuraRole: HasuraRole = {
-              "https://hasura.io/jwt/claims": {
-                "x-hasura-default-role": role.name,
-                "x-hasura-allowed-roles": [role.name],
-                "x-hasura-user-id": role.name,
-              },
-            };
-            const payload = await this.authService.generateJwtToken(
-              account,
-              hasuraRole,
-            );
-            const signedUser: Partial<Account> & HasuraRole = {
-              ...payload,
-              "https://hasura.io/jwt/claims": {
-                "x-hasura-default-role": role.name,
-                "x-hasura-allowed-roles": [role.name],
-                "x-hasura-user-id": role.name,
-              },
-              audience: "pet-store",
-              issuer: "pet-store",
-            };
+            // const payload = await this.authService.generateJwtToken(account);
             await getFirestore().collection("fcm").doc().set({
               id: account.id,
               fcm: data.fcmToken,
             });
+            let information: Partial<Customer | Staff> = null;
+            if (data.role === "CUSTOMER") {
+              information = await this.customerService.findByAccountId(
+                account.id,
+              );
+            } else if (data.role === "STAFF") {
+              information = await this.staffService.findByAccountId(account.id);
+            }
             return {
-              ...signedUser,
+              user: account,
+              information: information,
               status: "SUCCESS",
             };
           } else {

@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Account } from "src/entities/account.entity";
+import { Account } from "src/entities/authenticate_service/account.entity";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { JwtModule } from "@nestjs/jwt";
@@ -9,7 +9,8 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { PassportModule } from "@nestjs/passport";
 import { MulterModule } from "@nestjs/platform-express";
 import { SharedModule } from "src/shared/shared.module";
-import { RolesModule } from "../roles/roles.module";
+import { StaffModule } from "../staff/staff.module";
+import { CustomerModule } from "../customer/customer.module";
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { RolesModule } from "../roles/roles.module";
     UserModule,
     ConfigModule,
     SharedModule,
-    RolesModule,
+    StaffModule,
+    CustomerModule,
   ],
   controllers: [AuthController],
   providers: [AuthService],

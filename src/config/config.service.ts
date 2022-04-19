@@ -46,6 +46,22 @@ class ConfigService {
   public getRedisServer(): string {
     return this.getValue("REDIS_SERVER", true);
   }
+
+  public getVnPayTmn(): string {
+    return this.getValue("VNPAY_TMN_CODE", true);
+  }
+
+  public getVnPayHashSecret(): string {
+    return this.getValue("VNPAY_HASH_SECRET", true);
+  }
+
+  public getVnPayUrl(): string {
+    return this.getValue("VNPAY_URL", true);
+  }
+
+  public getVnVersion(): string {
+    return this.getValue("VNPAY_VERSION", true);
+  }
 }
 
 const configService = new ConfigService({
@@ -62,6 +78,10 @@ const configService = new ConfigService({
   "POSTGRES_PORT",
   "BUCKET",
   "REDIS_SERVER",
+  "VNPAY_TMN_CODE",
+  "VNPAY_HASH_SECRET",
+  "VNPAY_URL",
+  "VNPAY_VERSION",
 ]);
 
 export { configService };

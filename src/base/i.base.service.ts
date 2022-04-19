@@ -1,4 +1,5 @@
-import { DeleteResult } from "typeorm";
+import { DeepPartial, DeleteResult } from "typeorm";
+import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 import { EntityId } from "typeorm/repository/EntityId";
 export interface IBaseService<T> {
   index(): Promise<T[]>;
@@ -7,11 +8,9 @@ export interface IBaseService<T> {
 
   findByIds(id: [EntityId]): Promise<T[]>;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  store(data: any): Promise<T>;
+  store<K extends DeepPartial<T>>(data: K): Promise<T & K>;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  update(id: EntityId, data: any): Promise<T>;
+  update(id: EntityId, data: QueryDeepPartialEntity<T>): Promise<T>;
 
   delete(id: EntityId): Promise<DeleteResult>;
 }

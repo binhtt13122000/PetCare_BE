@@ -3,10 +3,9 @@ import { VaccineController } from "./vaccine.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { VaccineRepository } from "./vaccine.repository";
 import { VaccineService } from "./vaccine.service";
-import { SharedModule } from "src/shared/shared.module";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([VaccineRepository]), SharedModule],
+  imports: [TypeOrmModule.forFeature([VaccineRepository])],
   controllers: [VaccineController],
   providers: [VaccineService],
   exports: [VaccineService],

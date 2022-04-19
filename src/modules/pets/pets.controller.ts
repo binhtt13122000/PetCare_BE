@@ -9,40 +9,44 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 import { PetsService } from "./pets.service";
-import { CreatePetDto } from "./dto/create-pet.dto";
-import { Pet } from "src/entities/pet.entity";
+import { CreatePetDTO } from "./dto/create-pet.dto";
+import { Pet } from "src/entities/pet_service/pet.entity";
 import { uploadService } from "src/external/uploadFile.service";
-import { PetOwner } from "../../entities/pet-owner.entity";
+import { PetOwner } from "../../entities/pet_service/pet-owner.entity";
 import { FileInterceptor } from "@nestjs/platform-express";
+import { ApiConsumes, ApiTags } from "@nestjs/swagger";
+import { UpdatePetDTO } from "./dto/update-pet.dto";
 
 @Controller("pets")
+@ApiTags("pets")
 export class PetsController {
   constructor(private readonly petsService: PetsService) {}
 
+  @ApiConsumes("multipart/form-data")
   @Post()
   @UseInterceptors(FileInterceptor("file"))
   async create(
     @UploadedFile() file: Express.Multer.File,
-    @Body() body: CreatePetDto,
+    @Body() body: CreatePetDTO,
   ): Promise<Pet> {
     try {
       const { ownerId, ...data } = body;
       const { url: avatar } = await uploadService.uploadFile(file);
       const petOwner: PetOwner = {
         id: undefined,
-        accountId: ownerId,
+        customerId: ownerId,
         isCurrentOwner: true,
         petId: undefined,
         date: new Date(),
         pet: undefined,
-        account: undefined,
+        customer: undefined,
       };
       const pet: Partial<Pet> = {
         ...data,
         avatar,
         petOwners: [petOwner],
       };
-      return await this.petsService.store(pet);
+      return await this.petsService.store(new Pet(pet));
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -52,7 +56,7 @@ export class PetsController {
   @UseInterceptors(FileInterceptor("file"))
   async update(
     @UploadedFile() file: Express.Multer.File,
-    @Body() body: Pet,
+    @Body() body: UpdatePetDTO,
   ): Promise<Pet> {
     try {
       let avatar = null;

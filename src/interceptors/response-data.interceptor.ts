@@ -13,24 +13,29 @@ import { map } from "rxjs/operators";
 @Injectable()
 export class ResponseDataInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
-    return next.handle().pipe(
-      map((data) => {
-        if (data != 0 && !data) {
-          throw new HttpException(
-            "The data you requested is not found",
-            HttpStatus.NOT_FOUND,
+    const ctx = context.switchToHttp();
+    const response = ctx.getResponse();
+    if (response.req.url !== "/payment") {
+      return next.handle().pipe(
+        map((data) => {
+          if (data != 0 && !data) {
+            throw new HttpException(
+              "The data you requested is not found",
+              HttpStatus.NOT_FOUND,
+            );
+          }
+          Logger.debug(
+            `Response: \n ${JSON.stringify(data)}`,
+            "ResponseDataInterceptor",
           );
-        }
-        Logger.debug(
-          `Response: \n ${JSON.stringify(data)}`,
-          "ResponseDataInterceptor",
-        );
-        return {
-          success: true,
-          message: "Retrieved data successfully",
-          data: data,
-        };
-      }),
-    );
+          return {
+            success: true,
+            message: "Retrieved data successfully",
+            data: data,
+          };
+        }),
+      );
+    }
+    return next.handle();
   }
 }

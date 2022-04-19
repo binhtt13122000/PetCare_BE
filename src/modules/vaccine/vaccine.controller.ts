@@ -2,61 +2,34 @@ import {
   Controller,
   Post,
   Body,
-  UseInterceptors,
-  UploadedFile,
   Put,
   HttpException,
   HttpStatus,
 } from "@nestjs/common";
-import { FileInterceptor } from "@nestjs/platform-express";
 import { VaccineService } from "./vaccine.service";
-import { CreateVaccine } from "./dto/create-vaccine.dto";
-import { Vaccine } from "../../entities/vaccine.entity";
-import { uploadService } from "src/external/uploadFile.service";
-import { FileProducerService } from "src/shared/file/file.producer.service";
+import { Vaccine } from "../../entities/pet_service/vaccine.entity";
+import { ApiTags } from "@nestjs/swagger";
+import { CreateVaccineDTO } from "./dto/create-vaccine.dto";
+import { UpdateVaccineDTO } from "./dto/update-vaccine.dto";
 
+@ApiTags("vaccine")
 @Controller("vaccine")
 export class VaccineController {
-  constructor(
-    private readonly vaccineService: VaccineService,
-    private fileProducerService: FileProducerService,
-  ) {}
+  constructor(private readonly vaccineService: VaccineService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor("file"))
-  async create(
-    @UploadedFile() file: Express.Multer.File,
-    @Body() body: CreateVaccine,
-  ): Promise<Vaccine> {
+  async create(@Body() body: CreateVaccineDTO): Promise<Vaccine> {
     try {
-      const evidence = await uploadService.uploadFile(file);
-      const vaccine = {
-        ...body,
-        evidence: evidence.url,
-      };
-      return this.vaccineService.store(vaccine);
+      return this.vaccineService.store(body);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
 
   @Put()
-  @UseInterceptors(FileInterceptor("file"))
-  async update(
-    @UploadedFile() file: Express.Multer.File,
-    @Body() body: Vaccine,
-  ): Promise<Vaccine> {
+  async update(@Body() body: UpdateVaccineDTO): Promise<Vaccine> {
     try {
-      let evidence = null;
-      if (file) {
-        evidence = await uploadService.uploadFile(file);
-        await this.fileProducerService.deleteFile(body.evidence);
-      }
-      const vaccine = {
-        ...body,
-        evidence: file ? evidence.url : body.evidence,
-      };
-      return await this.vaccineService.update(vaccine.id, vaccine);
+      return await this.vaccineService.update(body.id, body);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
