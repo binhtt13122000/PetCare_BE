@@ -18,7 +18,7 @@ export class Paper extends BaseEntity {
   @IsString()
   @Length(8, 32)
   name: string;
-  @Column({ type: "date", nullable: false })
+  @Column({ type: "timestamp without time zone", nullable: false })
   @IsDate()
   date: Date;
   @Column({ type: "text", nullable: true })

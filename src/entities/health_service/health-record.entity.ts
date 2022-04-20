@@ -14,11 +14,11 @@ import { IsDate, IsInt } from "class-validator";
 export class HealthRecord {
   @PrimaryGeneratedColumn("increment")
   id: number;
-  @Column({ type: "date", nullable: false })
+  @Column({ type: "timestamp without time zone", nullable: false })
   @IsDate()
   dateOfExam: Date;
   @IsDate()
-  @Column({ type: "date", nullable: true })
+  @Column({ type: "timestamp without time zone", nullable: true })
   nextHealthCheck: Date;
   @Column({ type: "integer", nullable: false })
   @IsInt()

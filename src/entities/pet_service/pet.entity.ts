@@ -26,7 +26,7 @@ export class Pet extends BaseEntity {
   @IsString()
   @Length(0, 32)
   name: string;
-  @Column({ type: "date", nullable: false })
+  @Column({ type: "timestamp without time zone", nullable: false })
   @IsDate()
   dob: Date;
   @Column({ type: "integer", nullable: true })

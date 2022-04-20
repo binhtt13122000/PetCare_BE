@@ -57,3 +57,15 @@ export enum ReportEnum {
   WAITING = "WAITING",
   REJECT = "REJECT",
 }
+
+export enum RoleEnum {
+  STAFF = "STAFF",
+  CUSTOMER = "CUSTOMER",
+}
+
+export enum LoginStatusEnum {
+  SUCCESS = "SUCCESS",
+  BANNED = "BANNED",
+  NEWER = "NEWER",
+  UNAUTHORIZED = "UNAUTHORIZED",
+}

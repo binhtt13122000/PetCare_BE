@@ -1,4 +1,4 @@
-import { Controller, Res, Get, Header, Req } from "@nestjs/common";
+import { Controller, Res, Get, Req } from "@nestjs/common";
 import { Response, Request } from "express";
 import { vnpayService } from "src/external/vnpay.service";
 import { PaymentService } from "./payment.service";
@@ -11,7 +11,7 @@ export class PaymentController {
   generatePaymentUrl(@Res() res: Response, @Req() req: Request): void {
     const ipAddr: string = req.socket.remoteAddress;
     const url = vnpayService.generatePaymentUrl(
-      "2345",
+      "2342",
       "https://www.google.com.vn/",
       2000000,
       ipAddr.split(":").pop() || "127.0.0.1",

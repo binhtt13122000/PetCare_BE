@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   HttpException,
   HttpStatus,
   Post,
@@ -16,6 +17,7 @@ import { PetOwner } from "../../entities/pet_service/pet-owner.entity";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { UpdatePetDTO } from "./dto/update-pet.dto";
+import { PetEnum } from "src/enum";
 
 @Controller("pets")
 @ApiTags("pets")
@@ -52,6 +54,7 @@ export class PetsController {
     }
   }
 
+  @ApiConsumes("multipart/form-data")
   @Put()
   @UseInterceptors(FileInterceptor("file"))
   async update(
@@ -69,6 +72,19 @@ export class PetsController {
         avatar: file ? avatar : body.avatar,
       };
       return await this.petsService.update(pet.id, pet);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Delete()
+  async delete(id: number): Promise<Pet> {
+    try {
+      const pet = await this.petsService.findById(id);
+      if (pet.status === PetEnum.IN_POST || pet.status === PetEnum.DELETED) {
+        throw Error("Cannot delete this pet");
+      }
+      return this.petsService.update(id, { ...pet, status: PetEnum.DELETED });
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

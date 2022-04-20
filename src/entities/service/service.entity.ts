@@ -1,10 +1,16 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { IsBoolean, IsInt, IsString, Length } from "class-validator";
 import { HealthService } from "../health_service/health-service.entity";
 import { OrderDetail } from "../order_service/order-detail.entity";
 
 @Entity("service")
-export class Service {
+export class Service extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
   @Column({ type: "text", nullable: false })
@@ -30,4 +36,9 @@ export class Service {
 
   @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.service)
   orderDetails: OrderDetail[];
+
+  constructor(partial: Partial<Service>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

@@ -19,9 +19,9 @@ export class Promotion {
   name: string;
   @Column({ type: "integer", nullable: false })
   promo: number;
-  @Column({ type: "date", nullable: false })
+  @Column({ type: "timestamp without time zone", nullable: false })
   startTime: Date;
-  @Column({ type: "date", nullable: false })
+  @Column({ type: "timestamp without time zone", nullable: false })
   expireTime: Date;
   @Column({ type: "text", nullable: true })
   description: string;

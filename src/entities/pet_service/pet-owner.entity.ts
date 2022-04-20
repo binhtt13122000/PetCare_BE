@@ -16,7 +16,7 @@ export class PetOwner {
   @Column({ type: "bool", default: true })
   @IsBoolean()
   isCurrentOwner: boolean;
-  @Column({ type: "date", nullable: false })
+  @Column({ type: "timestamp without time zone", nullable: false })
   @IsDate()
   date: Date;
 

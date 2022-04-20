@@ -5,6 +5,8 @@ import {
   Put,
   HttpException,
   HttpStatus,
+  Delete,
+  Patch,
 } from "@nestjs/common";
 import { VaccineService } from "./vaccine.service";
 import { Vaccine } from "../../entities/pet_service/vaccine.entity";
@@ -30,6 +32,29 @@ export class VaccineController {
   async update(@Body() body: UpdateVaccineDTO): Promise<Vaccine> {
     try {
       return await this.vaccineService.update(body.id, body);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Patch("/change-status")
+  async changeStatus(id: number): Promise<Vaccine> {
+    try {
+      const vaccine: Vaccine = await this.vaccineService.findById(id);
+      return this.vaccineService.update(id, {
+        ...vaccine,
+        isActive: !vaccine.isActive,
+      });
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Delete()
+  async delete(id: number): Promise<Vaccine> {
+    try {
+      const vaccine: Vaccine = await this.vaccineService.findById(id);
+      return this.vaccineService.update(id, { ...vaccine, isActive: false });
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

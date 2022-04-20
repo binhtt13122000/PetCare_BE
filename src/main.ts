@@ -19,7 +19,7 @@ async function bootstrap(): Promise<void> {
     .setTitle("Pet App Capstone")
     .setDescription("API for Capstone")
     .setVersion("1.0")
-    .addBearerAuth()
+    .addCookieAuth()
     .build();
   const document = SwaggerModule.createDocument(app, openApiConfig);
   SwaggerModule.setup("api", app, document);

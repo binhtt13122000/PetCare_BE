@@ -15,7 +15,11 @@ export class ResponseDataInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const ctx = context.switchToHttp();
     const response = ctx.getResponse();
-    if (response.req.url !== "/payment") {
+    if (
+      response.req.url !== "/v1/api/payment" &&
+      response.req.url !==
+        "/v1/api/orders/payment/1?promotionId=1&locale=vi&paymentMethod=vnpay&total=135000&message=CC"
+    ) {
       return next.handle().pipe(
         map((data) => {
           if (data != 0 && !data) {

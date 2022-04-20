@@ -10,15 +10,16 @@ import { AuthService } from "./auth.service";
 import _ from "lodash";
 import { NotificationProducerService } from "../../shared/notification.producer/notification.producer.service";
 import { getFirestore } from "firebase-admin/firestore";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiCreatedResponse, ApiTags } from "@nestjs/swagger";
 import { LoginBodyDTO, LoginResponseDTO } from "./auth.dto";
 import { StaffService } from "../staff/staff.service";
 import { CustomerService } from "../customer/customer.service";
 import { Staff } from "src/entities/user_management_service/staff.entity";
 import { Customer } from "../../entities/user_management_service/customer.entity";
+import { LoginStatusEnum, RoleEnum } from "src/enum";
 
-@ApiTags("authenticate")
 @Controller("auth")
+@ApiTags("authenticate")
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
@@ -40,6 +41,7 @@ export class AuthController {
   }
 
   @Post("login")
+  @ApiCreatedResponse({ type: LoginResponseDTO })
   async login(
     @Body() data: LoginBodyDTO,
   ): Promise<LoginResponseDTO | UnauthorizedException> {
@@ -53,7 +55,7 @@ export class AuthController {
           if (account.isActive) {
             if (account.roleId !== data.loginType) {
               return {
-                status: "UNAUTHORIZED",
+                status: LoginStatusEnum.UNAUTHORIZED,
               };
             }
             // const payload = await this.authService.generateJwtToken(account);
@@ -61,27 +63,82 @@ export class AuthController {
               id: account.id,
               fcm: data.fcmToken,
             });
-            let information: Partial<Customer | Staff> = null;
-            if (data.role === "CUSTOMER") {
+            let information: Customer | Staff = null;
+            if (data.role === RoleEnum.CUSTOMER) {
               information = await this.customerService.findByAccountId(
                 account.id,
               );
-            } else if (data.role === "STAFF") {
+            } else if (data.role === RoleEnum.STAFF) {
               information = await this.staffService.findByAccountId(account.id);
             }
             return {
               user: account,
               information: information,
-              status: "SUCCESS",
+              status: LoginStatusEnum.SUCCESS,
             };
           } else {
             return {
-              status: "BANNED",
+              status: LoginStatusEnum.BANNED,
             };
           }
         } else {
           return {
-            status: "NEWER",
+            status: LoginStatusEnum.NEWER,
+          };
+        }
+      } catch (error) {
+        return new UnauthorizedException(error);
+      }
+    } else {
+      return new BadRequestException();
+    }
+  }
+
+  @Post("register")
+  async register(
+    @Body() data: LoginBodyDTO,
+  ): Promise<LoginResponseDTO | UnauthorizedException> {
+    let phoneNumber: string;
+    if (data !== null && !_.isEmpty(data)) {
+      try {
+        const auth = await firebase.auth().verifyIdToken(data.accessToken);
+        phoneNumber = auth.phone_number;
+        const account = await this.authService.validateUser(phoneNumber);
+        if (!_.isEmpty(account)) {
+          if (account.isActive) {
+            if (account.roleId !== data.loginType) {
+              return {
+                status: LoginStatusEnum.UNAUTHORIZED,
+              };
+            }
+            await getFirestore().collection("fcm").doc().set({
+              id: account.id,
+              fcm: data.fcmToken,
+            });
+            let information: Customer | Staff = null;
+            if (data.role === RoleEnum.CUSTOMER) {
+              information = await this.customerService.findByAccountId(
+                account.id,
+              );
+            } else if (data.role === RoleEnum.STAFF) {
+              information = await this.staffService.findByAccountId(account.id);
+            }
+            const payload = await this.authService.generateJwtToken(
+              account,
+              information,
+            );
+            return {
+              ...payload,
+              status: LoginStatusEnum.SUCCESS,
+            };
+          } else {
+            return {
+              status: LoginStatusEnum.BANNED,
+            };
+          }
+        } else {
+          return {
+            status: LoginStatusEnum.NEWER,
           };
         }
       } catch (error) {

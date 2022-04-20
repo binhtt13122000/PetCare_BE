@@ -1,35 +1,42 @@
-import { Account } from "src/entities/authenticate_service/account.entity";
-import { Media } from "src/entities/transaction_service/media.entity";
-import { Pet } from "src/entities/pet_service/pet.entity";
-import { SaleTransaction } from "src/entities/transaction_service/sale-transaction.entity";
-import { PostEnum, ServiceEnum } from "src/enum";
-import { BreedingTransaction } from "../../../entities/transaction_service/breeding-transaction.entity";
+import { ApiProperty } from "@nestjs/swagger";
+import { IsInt, IsDate, IsString } from "class-validator";
+import { PostEnum, ServiceEnum } from "../../../enum/index";
 
 export class CreatePostDTO {
-  title: string;
-  price: number;
-  deposit: number;
-  refund: number;
+  @ApiProperty()
+  @IsInt()
+  sellerReceive: number;
+  @ApiProperty()
+  @IsInt()
+  shopFee: number;
+  @ApiProperty()
+  @IsInt()
+  provisionalTotal: number;
+  @ApiProperty()
+  @IsDate()
   createTime: Date;
-  approveTime: Date;
-  effectiveTime: Date;
-  type: ServiceEnum;
-  description: string;
-  status: PostEnum;
+  @ApiProperty()
+  @IsDate()
   meetingTime: Date;
-  healthCheckTime: Date;
-  sellerContractImages: Media[];
-  reasonCancel: string;
-  evidences: Media[];
-  healthCheckMedias: Media[];
+  @ApiProperty({ enum: ServiceEnum })
+  type: ServiceEnum;
+  @ApiProperty()
+  @IsString()
+  description: string;
+  @ApiProperty({ enum: PostEnum })
+  status: PostEnum;
+  @ApiProperty()
+  @IsInt()
   petId: number;
-  pet: Pet;
+
+  @ApiProperty()
+  @IsInt()
   staffId: number;
-  staff: Account;
-  sellerId: number;
-  seller: Account;
 
-  breedingTransactions: BreedingTransaction[];
+  @ApiProperty()
+  @IsInt()
+  customerId: number;
 
-  saleTransactions: SaleTransaction[];
+  @ApiProperty({ type: "array", items: { type: "string", format: "binary" } })
+  files: Array<Express.Multer.File>;
 }

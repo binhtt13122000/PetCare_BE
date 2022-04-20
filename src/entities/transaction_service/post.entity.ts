@@ -111,8 +111,3 @@ export class Post extends BaseEntity {
     Object.assign(this, partial);
   }
 }
-
-// @OneToMany(() => Media, (media) => media.postSellerContractId, {
-//   cascade: true,
-// })
-// sellerContractImages: Media[];
