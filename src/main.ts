@@ -23,10 +23,10 @@ async function bootstrap(): Promise<void> {
     .build();
   const document = SwaggerModule.createDocument(app, openApiConfig);
   SwaggerModule.setup("api", app, document);
-  app.enableCors({
-    origin: [`${WEB_ADMIN_ROOT_URL}`],
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  });
+  // app.enableCors({
+  //   origin: [`${WEB_ADMIN_ROOT_URL}`],
+  //   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  // });
   if (!firebase.apps.length) {
     firebase.initializeApp({
       credential: firebase.credential.cert(
