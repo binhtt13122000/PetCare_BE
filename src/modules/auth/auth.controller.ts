@@ -40,9 +40,8 @@ export class AuthController {
     return "ok";
   }
 
-  @Post("login")
-  @ApiCreatedResponse({ type: LoginResponseDTO })
-  async login(
+  @Post("register")
+  async register(
     @Body() data: LoginBodyDTO,
   ): Promise<LoginResponseDTO | UnauthorizedException> {
     let phoneNumber: string;
@@ -94,8 +93,9 @@ export class AuthController {
     }
   }
 
-  @Post("register")
-  async register(
+  @Post("login")
+  @ApiCreatedResponse({ type: LoginResponseDTO })
+  async login(
     @Body() data: LoginBodyDTO,
   ): Promise<LoginResponseDTO | UnauthorizedException> {
     let phoneNumber: string;

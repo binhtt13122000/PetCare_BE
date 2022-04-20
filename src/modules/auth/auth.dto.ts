@@ -25,4 +25,6 @@ export class LoginResponseDTO {
   information?: Staff | Customer;
   @ApiProperty({ enum: LoginStatusEnum })
   status: LoginStatusEnum;
+  @ApiProperty()
+  token?: string;
 }
