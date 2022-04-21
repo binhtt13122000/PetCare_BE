@@ -71,6 +71,7 @@ export class Account extends BaseEntity {
 
   @Column({
     nullable: true,
+    type: "text",
   })
   currentHashedRefreshToken?: string;
 

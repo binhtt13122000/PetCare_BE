@@ -38,4 +38,9 @@ export class Staff extends BaseEntity {
     (breedingTransaction) => breedingTransaction.staff,
   )
   breedingTransactions: BreedingTransaction[];
+
+  constructor(partial: Partial<Staff>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

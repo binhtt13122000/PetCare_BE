@@ -10,7 +10,7 @@ import { Pet } from "./pet.entity";
 import { Species } from "./species.entity";
 import { IsBoolean, IsString, Length } from "class-validator";
 
-@Entity("Breed")
+@Entity("breed")
 export class Breed {
   @PrimaryGeneratedColumn("increment")
   id: number;

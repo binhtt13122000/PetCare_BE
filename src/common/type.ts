@@ -5,6 +5,11 @@ export class IdParams {
   id: number;
 }
 
+export class IdQuery {
+  @ApiProperty()
+  id: number;
+}
+
 export class PaymentQuery {
   @ApiProperty()
   @IsInt()

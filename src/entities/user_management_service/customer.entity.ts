@@ -94,4 +94,9 @@ export class Customer extends BaseEntity {
     (breedingTransaction) => breedingTransaction.ownerPetFemale,
   )
   ownerPetFemales: BreedingTransaction[];
+
+  constructor(partial: Partial<Customer>) {
+    super();
+    Object.assign(this, partial);
+  }
 }
