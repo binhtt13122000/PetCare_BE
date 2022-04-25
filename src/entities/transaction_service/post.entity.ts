@@ -83,7 +83,7 @@ export class Post extends BaseEntity {
   @JoinColumn({ name: "staffId", referencedColumnName: "id" })
   staff: Staff;
 
-  @Column({ name: "sellerId" })
+  @Column({ name: "customerId" })
   customerId: number;
   @ManyToOne(() => Customer, (customer) => customer.posts, {})
   @JoinColumn({ name: "customerId", referencedColumnName: "id" })
