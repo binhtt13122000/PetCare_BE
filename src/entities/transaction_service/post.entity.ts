@@ -20,6 +20,8 @@ import { Customer } from "../user_management_service/customer.entity";
 export class Post extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
+  @Column({ type: "text", nullable: false })
+  title: string;
   @Column({ type: "integer", nullable: false })
   @IsInt()
   sellerReceive: number;
@@ -67,8 +69,8 @@ export class Post extends BaseEntity {
   reasonCancel: string;
   @Column({ type: "text", nullable: true })
   reasonReject: string;
-  @Column({ type: "bool", nullable: false })
-  isVaccineInject: string;
+  @Column({ type: "bool", default: false })
+  isVaccineInject: boolean;
 
   //references
   @Column({ name: "petId" })

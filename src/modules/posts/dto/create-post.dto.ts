@@ -4,6 +4,9 @@ import { PostEnum, ServiceEnum } from "../../../enum/index";
 
 export class CreatePostDTO {
   @ApiProperty()
+  @IsString()
+  title: string;
+  @ApiProperty()
   @IsInt()
   sellerReceive: number;
   @ApiProperty()
@@ -28,10 +31,6 @@ export class CreatePostDTO {
   @ApiProperty()
   @IsInt()
   petId: number;
-
-  @ApiProperty()
-  @IsInt()
-  staffId: number;
 
   @ApiProperty()
   @IsInt()

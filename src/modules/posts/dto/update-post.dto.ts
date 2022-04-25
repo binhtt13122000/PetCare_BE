@@ -37,4 +37,7 @@ export class UpdatePostDTO extends CreatePostDTO {
 
   @ApiProperty()
   medias: Media[];
+
+  @ApiProperty()
+  isVaccineInject: boolean;
 }
