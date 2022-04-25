@@ -12,7 +12,7 @@ import { BaseEntity } from "typeorm";
 import { GenderEnum, PetEnum } from "../../enum/index";
 import { Breed } from "./breed.entity";
 import { VaccinePetRecord } from "./vaccine-pet-record.entity";
-import { IsDate, IsString, Length, IsInt, IsBoolean } from "class-validator";
+import { IsDate, IsString, Length, IsBoolean } from "class-validator";
 import { HealthRecord } from "../health_service/health-record.entity";
 import { Post } from "../transaction_service/post.entity";
 import { SaleTransaction } from "../transaction_service/sale-transaction.entity";
@@ -29,9 +29,6 @@ export class Pet extends BaseEntity {
   @Column({ type: "timestamp without time zone", nullable: false })
   @IsDate()
   dob: Date;
-  @Column({ type: "integer", nullable: true })
-  @IsInt()
-  ageRange: number;
   @Column({ type: "enum", enum: GenderEnum })
   gender: GenderEnum;
   @Column({ type: "text", nullable: true })

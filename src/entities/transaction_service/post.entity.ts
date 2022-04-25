@@ -67,6 +67,8 @@ export class Post extends BaseEntity {
   reasonCancel: string;
   @Column({ type: "text", nullable: true })
   reasonReject: string;
+  @Column({ type: "bool", nullable: false })
+  isVaccineInject: string;
 
   //references
   @Column({ name: "petId" })
