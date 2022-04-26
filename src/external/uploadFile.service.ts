@@ -60,6 +60,18 @@ export class UploadFileService {
     }
   }
 
+  async removeImages(paths: string[]): Promise<unknown> {
+    try {
+      return Promise.all([
+        paths?.map(async (path) => {
+          await this.removeImage(path);
+        }),
+      ]);
+    } catch (ex) {
+      throw Error("Cannot remove file");
+    }
+  }
+
   private getFileName(path: string): string {
     const subPath: string[] = path.split("?")[0].split("/");
     return subPath[subPath.length - 1];

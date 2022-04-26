@@ -17,6 +17,8 @@ import { RolesModule } from "./modules/roles/roles.module";
 import { PaymentModule } from "./modules/payment/payment.module";
 import { ServicesModule } from "./modules/services/services.module";
 import { OrdersModule } from "./modules/orders/orders.module";
+import { MediasModule } from "./modules/medias/medias.module";
+import { SaleTransactionsModule } from "./modules/sale-transactions/sale-transactions.module";
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { OrdersModule } from "./modules/orders/orders.module";
     PaymentModule,
     ServicesModule,
     OrdersModule,
+    MediasModule,
+    SaleTransactionsModule,
   ],
   controllers: [AppController],
   providers: [

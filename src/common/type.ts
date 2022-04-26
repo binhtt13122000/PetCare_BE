@@ -10,6 +10,11 @@ export class IdQuery {
   id: number;
 }
 
+export class IdsQuery {
+  @ApiProperty({ type: "number", isArray: true })
+  ids: number[];
+}
+
 export class PaymentQuery {
   @ApiProperty()
   @IsInt()

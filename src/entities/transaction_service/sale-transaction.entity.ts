@@ -11,9 +11,10 @@ import { Customer } from "../user_management_service/customer.entity";
 import { Pet } from "../pet_service/pet.entity";
 import { Post } from "./post.entity";
 import { Promotion } from "../service/promotion.entity";
+import { BaseEntity } from "typeorm";
 
 @Entity("sale_transaction")
-export class SaleTransaction {
+export class SaleTransaction extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
   @Column({
@@ -30,7 +31,7 @@ export class SaleTransaction {
   @IsDate()
   meetingTime: Date;
   @Column({ type: "text", nullable: false })
-  placeMeeting: Date;
+  placeMeeting: string;
   @Column({
     type: "timestamp without time zone",
     nullable: false,
@@ -103,4 +104,9 @@ export class SaleTransaction {
   @ManyToOne(() => Promotion, (promotion) => promotion.saleTransactions, {})
   @JoinColumn({ name: "promotionId", referencedColumnName: "id" })
   promotion: Promotion;
+
+  constructor(partial: Partial<SaleTransaction>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

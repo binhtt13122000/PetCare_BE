@@ -11,4 +11,10 @@ export class FileProducerService {
       url: url,
     });
   }
+
+  async deleteFiles(urls: string[]): Promise<void> {
+    await this.queue.add("delete-files-job", {
+      urls: urls,
+    });
+  }
 }

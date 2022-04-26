@@ -13,4 +13,14 @@ export class FileConsumer {
       console.log(ex);
     }
   }
+
+  @Process("delete-files-job")
+  async deleteFiles(job: Job<{ urls: string[] }>): Promise<void> {
+    try {
+      uploadService.removeImages(job.data.urls);
+    } catch (ex) {
+      // eslint-disable-next-line no-console
+      console.log(ex);
+    }
+  }
 }

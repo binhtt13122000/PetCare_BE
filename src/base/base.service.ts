@@ -32,4 +32,8 @@ export class BaseService<T extends BaseEntity, R extends Repository<T>>
   delete(id: EntityId): Promise<DeleteResult> {
     return this.repository.delete(id);
   }
+
+  deleteItems(ids: number[]): Promise<DeleteResult> {
+    return this.repository.delete(ids);
+  }
 }
