@@ -8,6 +8,6 @@ import { SaleTransactionsRepository } from "./sale-transaction.repository";
   imports: [TypeOrmModule.forFeature([SaleTransactionsRepository])],
   providers: [SaleTransactionsService],
   controllers: [SaleTransactionsController],
-  exports: [SaleTransactionsController],
+  exports: [SaleTransactionsService],
 })
 export class SaleTransactionsModule {}
