@@ -20,7 +20,7 @@ export class MediasController {
   ) {}
 
   @Delete()
-  async deleteMedias(@Query() query: IdsQuery): Promise<void> {
+  async deleteMedias(@Query() query: IdsQuery): Promise<string> {
     try {
       const medias = await this.mediasService.findByIds(
         query.ids as [EntityId],
@@ -29,9 +29,9 @@ export class MediasController {
       await this.fileProducerService.deleteFiles(
         medias.map((media) => media.url),
       );
+      return "Success";
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
-    return null;
   }
 }
