@@ -15,7 +15,6 @@ import {
 import * as firebase from "firebase-admin";
 import { AuthService } from "./auth.service";
 import _ from "lodash";
-import { NotificationProducerService } from "../../shared/notification.producer/notification.producer.service";
 import { getFirestore } from "firebase-admin/firestore";
 import {
   LoginBodyDTO,
@@ -26,7 +25,6 @@ import {
 import { StaffService } from "../staff/staff.service";
 import { CustomerService } from "../customer/customer.service";
 import { Staff } from "src/entities/user_management_service/staff.entity";
-import { Customer } from "../../entities/user_management_service/customer.entity";
 import { LoginStatusEnum, RoleEnum } from "src/enum";
 import {
   ApiOkResponse,
@@ -34,13 +32,15 @@ import {
   ApiTags,
   ApiConsumes,
 } from "@nestjs/swagger";
-import { IdParams } from "src/common/type";
+import { IdParams } from "src/common";
 import { Account } from "src/entities/authenticate_service/account.entity";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { uploadService } from "src/external/uploadFile.service";
 import { UserService } from "../users/user.service";
 import { HttpStatus, HttpException } from "@nestjs/common";
 import { Tokens } from "./types";
+import { Customer } from "src/entities/user_management_service/customer.entity";
+import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
 
 @Controller("auth")
 @ApiTags("authenticate")

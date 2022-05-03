@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Pet } from "./pet.entity";
-import { PaperEnum } from "../../enum/index";
 import { IsDate, IsString, Length } from "class-validator";
+import { PaperEnum } from "src/enum";
 
 @Entity("paper")
 export class Paper extends BaseEntity {

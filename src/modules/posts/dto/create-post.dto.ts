@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsInt, IsDate, IsString } from "class-validator";
-import { PostEnum, ServiceEnum } from "../../../enum/index";
+import { PostEnum, ServiceEnum } from "src/enum";
 
 export class CreatePostDTO {
   @ApiProperty()

@@ -62,6 +62,10 @@ class ConfigService {
   public getVnVersion(): string {
     return this.getValue("VNPAY_VERSION", true);
   }
+
+  public getPrefix(): string {
+    return this.getValue("API_PREFIX", true);
+  }
 }
 
 const configService = new ConfigService({
@@ -82,6 +86,7 @@ const configService = new ConfigService({
   "VNPAY_HASH_SECRET",
   "VNPAY_URL",
   "VNPAY_VERSION",
+  "API_PREFIX",
 ]);
 
 export { configService };

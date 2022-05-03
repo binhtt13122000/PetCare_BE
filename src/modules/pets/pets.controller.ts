@@ -13,11 +13,11 @@ import { PetsService } from "./pets.service";
 import { CreatePetDTO } from "./dto/create-pet.dto";
 import { Pet } from "src/entities/pet_service/pet.entity";
 import { uploadService } from "src/external/uploadFile.service";
-import { PetOwner } from "../../entities/pet_service/pet-owner.entity";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { UpdatePetDTO } from "./dto/update-pet.dto";
 import { PetEnum } from "src/enum";
+import { PetOwner } from "src/entities/pet_service/pet-owner.entity";
 
 @Controller("pets")
 @ApiTags("pets")

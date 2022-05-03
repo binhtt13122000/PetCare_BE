@@ -1,10 +1,8 @@
 import { Process, Processor } from "@nestjs/bull";
 import { Job } from "bull";
-import {
-  Message,
-  sendNotificationService,
-} from "src/external/sendNotification.service";
+import { sendNotificationService } from "src/external/sendNotification.service";
 import { getFirestore } from "firebase-admin/firestore";
+import { Message } from "src/common";
 
 @Processor("notification-queue")
 export class NotificationConsumer {

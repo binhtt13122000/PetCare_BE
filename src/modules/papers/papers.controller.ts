@@ -14,12 +14,12 @@ import { uploadService } from "src/external/uploadFile.service";
 import { PapersService } from "./papers.service";
 import { CreatePaperDTO } from "./dto/create-paper.dto";
 import { Paper } from "src/entities/pet_service/paper.entity";
-import { FileProducerService } from "../../shared/file/file.producer.service";
 import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { UpdatePaperDTO } from "./dto/update-paper.dto";
 import { DeleteResult } from "typeorm";
 import { PetsService } from "../pets/pets.service";
-import { PetEnum } from "../../enum/index";
+import { FileProducerService } from "src/shared/file/file.producer.service";
+import { PetEnum } from "src/enum";
 
 @ApiTags("paper")
 @Controller("papers")

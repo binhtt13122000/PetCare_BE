@@ -44,9 +44,9 @@ export class VnPayService {
       vnp_Params["vnp_OrderType"] = orderType;
     }
 
-    vnp_Params = sortObject(vnp_Params);
+    vnp_Params = this.sortObject(vnp_Params);
 
-    const signed = getSign(secretKey, vnp_Params);
+    const signed = this.getSign(secretKey, vnp_Params);
     vnp_Params["vnp_SecureHash"] = signed;
     vnpUrl += "?" + qs.stringify(vnp_Params, { encode: false });
     return vnpUrl;
@@ -61,9 +61,9 @@ export class VnPayService {
     const secureHash = vnp_Params["vnp_SecureHash"];
     delete vnp_Params["vnp_SecureHash"];
     delete vnp_Params["vnp_SecureHashType"];
-    vnp_Params = sortObject(vnp_Params);
+    vnp_Params = this.sortObject(vnp_Params);
     const secretKey = configService.getVnPayHashSecret();
-    const signed = getSign(secretKey, vnp_Params);
+    const signed = this.getSign(secretKey, vnp_Params);
 
     if (secureHash === signed) {
       callbackSuccess();
@@ -71,32 +71,32 @@ export class VnPayService {
       callBackFail();
     }
   }
-}
 
-function getSign(secretKey: string, vnp_Params: qs.ParsedQs): string {
-  const signData = qs.stringify(vnp_Params, { encode: false });
-  const hmac = crypto.createHmac("sha512", secretKey);
-  const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
-  return signed;
-}
+  private getSign(secretKey: string, vnp_Params: qs.ParsedQs): string {
+    const signData = qs.stringify(vnp_Params, { encode: false });
+    const hmac = crypto.createHmac("sha512", secretKey);
+    const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
+    return signed;
+  }
 
-function sortObject(obj: qs.ParsedQs): qs.ParsedQs {
-  const sorted = {};
-  const str = [];
-  let key: string;
-  for (key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      str.push(encodeURIComponent(key));
+  private sortObject(obj: qs.ParsedQs): qs.ParsedQs {
+    const sorted = {};
+    const str = [];
+    let key: string;
+    for (key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        str.push(encodeURIComponent(key));
+      }
     }
+    str.sort();
+    for (let i = 0; i < str.length; i++) {
+      sorted[str[i]] = encodeURIComponent(obj[str[i]] as string).replace(
+        /%20/g,
+        "+",
+      );
+    }
+    return sorted;
   }
-  str.sort();
-  for (let i = 0; i < str.length; i++) {
-    sorted[str[i]] = encodeURIComponent(obj[str[i]] as string).replace(
-      /%20/g,
-      "+",
-    );
-  }
-  return sorted;
 }
 
 const vnpayService = new VnPayService();

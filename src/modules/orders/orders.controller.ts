@@ -19,7 +19,7 @@ import { UpdateOrderDTO } from "./dto/update-order.dto";
 import { configService } from "src/config/config.service";
 import { vnpayService } from "src/external/vnpay.service";
 import { Request, Response } from "express";
-import { IdParams, PaymentQuery } from "src/common/type";
+import { IdParams, PaymentQuery } from "src/common";
 
 @ApiTags("orders")
 @Controller("orders")

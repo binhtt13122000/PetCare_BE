@@ -6,7 +6,7 @@ import {
   HttpStatus,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
-import { IdsQuery } from "src/common/type";
+import { IdsQuery } from "src/common";
 import { FileProducerService } from "src/shared/file/file.producer.service";
 import { MediasService } from "./medias.service";
 import { EntityId } from "typeorm/repository/EntityId";

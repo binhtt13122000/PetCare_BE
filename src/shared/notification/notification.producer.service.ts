@@ -1,7 +1,7 @@
 import { InjectQueue } from "@nestjs/bull";
 import { Injectable } from "@nestjs/common";
 import { Queue } from "bull";
-import { Message } from "src/external/sendNotification.service";
+import { Message } from "src/common";
 
 @Injectable()
 export class NotificationProducerService {

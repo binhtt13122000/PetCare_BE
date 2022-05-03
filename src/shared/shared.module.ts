@@ -2,8 +2,8 @@ import { BullModule } from "@nestjs/bull";
 import { Module } from "@nestjs/common";
 import { configService } from "src/config/config.service";
 import { FileProducerService } from "./file/file.producer.service";
-import { NotificationProducerService } from "./notification.producer/notification.producer.service";
-import { NotificationConsumer } from "./notification.producer/notification.consumer";
+import { NotificationProducerService } from "./notification/notification.producer.service";
+import { NotificationConsumer } from "./notification/notification.consumer";
 import { FileConsumer } from "./file/file.consumer";
 
 @Module({

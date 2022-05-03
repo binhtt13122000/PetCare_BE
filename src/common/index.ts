@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsInt } from "class-validator";
+
 export class IdParams {
   @ApiProperty()
   id: number;
@@ -27,4 +28,11 @@ export class PaymentQuery {
   locale?: "vn" | "en";
   @ApiProperty({ enum: ["vnpay", "momo"] })
   paymentMethod?: "vnpay" | "momo";
+}
+
+export interface Message {
+  title: string;
+  body: string;
+  requireInteraction?: boolean;
+  link?: string;
 }

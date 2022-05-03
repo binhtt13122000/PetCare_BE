@@ -15,7 +15,7 @@ import { ShopService } from "./services.service";
 import { CreateServiceDTO } from "./dto/create-service.dto";
 import { Service } from "src/entities/service/service.entity";
 import { UpdateServiceDTO } from "./dto/update-service.dto";
-import { IdParams } from "src/common/type";
+import { IdParams } from "src/common";
 
 @Controller("services")
 @ApiTags("services")

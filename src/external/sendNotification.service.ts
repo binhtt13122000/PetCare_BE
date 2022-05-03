@@ -1,11 +1,6 @@
+import { Logger } from "@nestjs/common";
 import { BatchResponse, getMessaging } from "firebase-admin/messaging";
-
-export interface Message {
-  title: string;
-  body: string;
-  requireInteraction?: boolean;
-  link?: string;
-}
+import { Message } from "src/common";
 export class SendNotificationService {
   async sendNotification(
     fcmTokens: string[],
@@ -38,8 +33,7 @@ export class SendNotificationService {
       });
       return res;
     } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error("sendFCMMessage error", e);
+      Logger.log(`sendFCMMessage error: ${e}`);
     }
   }
 }

@@ -9,7 +9,6 @@ import {
 import { Paper } from "./paper.entity";
 import { PetOwner } from "./pet-owner.entity";
 import { BaseEntity } from "typeorm";
-import { GenderEnum, PetEnum } from "../../enum/index";
 import { Breed } from "./breed.entity";
 import { VaccinePetRecord } from "./vaccine-pet-record.entity";
 import { IsDate, IsString, Length, IsBoolean } from "class-validator";
@@ -17,6 +16,7 @@ import { HealthRecord } from "../health_service/health-record.entity";
 import { Post } from "../transaction_service/post.entity";
 import { SaleTransaction } from "../transaction_service/sale-transaction.entity";
 import { BreedingTransaction } from "../transaction_service/breeding-transaction.entity";
+import { GenderEnum, PetEnum } from "src/enum";
 
 @Entity("pet")
 export class Pet extends BaseEntity {

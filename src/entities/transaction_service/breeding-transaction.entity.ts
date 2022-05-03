@@ -5,13 +5,13 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import { BreedingTransactionEnum } from "../../enum/index";
 import { IsDate, IsInt, Min, Max, IsString } from "class-validator";
 import { Customer } from "../user_management_service/customer.entity";
 import { Pet } from "../pet_service/pet.entity";
 import { Post } from "./post.entity";
 import { Staff } from "../user_management_service/staff.entity";
 import { Promotion } from "../service/promotion.entity";
+import { BreedingTransactionEnum } from "src/enum";
 
 @Entity("breeding_transaction")
 export class BreedingTransaction {

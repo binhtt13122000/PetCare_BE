@@ -1,7 +1,7 @@
 import { OmitType, ApiProperty } from "@nestjs/swagger";
 import { CreateOrderDTO } from "./create-order.dto";
-import { Order } from "../../../entities/order_service/order.entity";
 import { Service } from "src/entities/service/service.entity";
+import { Order } from "src/entities/order_service/order.entity";
 export class UpdateOrderDTO extends OmitType(CreateOrderDTO, [
   "orderDetails",
 ] as const) {

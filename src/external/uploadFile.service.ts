@@ -6,9 +6,8 @@ export class UploadFileService {
   async uploadFile(
     file: Express.Multer.File,
   ): Promise<{ url: string | null; type: string }> {
-    const contentType = file.mimetype.startsWith("image")
-      ? "image/jpeg"
-      : "video/mp4";
+    let contentType = file.mimetype.startsWith("image") && "image/jpeg";
+    contentType = file.mimetype.startsWith("video") && "video/mp4";
     return new Promise<{ url: string | null; type: string }>(
       (resolve, reject) => {
         const BUCKET = configService.getBucket();
@@ -56,7 +55,7 @@ export class UploadFileService {
         return response;
       }
     } catch (ex) {
-      throw Error("Cannot remove file");
+      throw Error(`Cannot remove file, ${ex}`);
     }
   }
 
@@ -68,7 +67,7 @@ export class UploadFileService {
         }),
       ]);
     } catch (ex) {
-      throw Error("Cannot remove file");
+      throw Error(`Cannot remove files, ${ex}`);
     }
   }
 

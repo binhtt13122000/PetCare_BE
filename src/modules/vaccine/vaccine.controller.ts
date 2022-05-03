@@ -9,10 +9,10 @@ import {
   Patch,
 } from "@nestjs/common";
 import { VaccineService } from "./vaccine.service";
-import { Vaccine } from "../../entities/pet_service/vaccine.entity";
 import { ApiTags } from "@nestjs/swagger";
 import { CreateVaccineDTO } from "./dto/create-vaccine.dto";
 import { UpdateVaccineDTO } from "./dto/update-vaccine.dto";
+import { Vaccine } from "src/entities/pet_service/vaccine.entity";
 
 @ApiTags("vaccine")
 @Controller("vaccine")

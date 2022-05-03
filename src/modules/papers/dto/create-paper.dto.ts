@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { PaperEnum } from "../../../enum/index";
+import { PaperEnum } from "src/enum";
 export class CreatePaperDTO {
   @ApiProperty()
   name: string;

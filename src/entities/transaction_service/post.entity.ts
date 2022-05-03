@@ -9,12 +9,12 @@ import {
 } from "typeorm";
 import { Media } from "./media.entity";
 import { Pet } from "../pet_service/pet.entity";
-import { PostEnum, ServiceEnum } from "../../enum/index";
 import { BreedingTransaction } from "./breeding-transaction.entity";
 import { SaleTransaction } from "./sale-transaction.entity";
 import { IsDate, IsInt } from "class-validator";
 import { Staff } from "../user_management_service/staff.entity";
 import { Customer } from "../user_management_service/customer.entity";
+import { PostEnum, ServiceEnum } from "src/enum";
 
 @Entity("post")
 export class Post extends BaseEntity {

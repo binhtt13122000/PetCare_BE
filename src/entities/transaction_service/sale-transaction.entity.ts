@@ -1,4 +1,3 @@
-import { SaleTransactionEnum } from "../../enum/index";
 import {
   Column,
   Entity,
@@ -12,6 +11,7 @@ import { Pet } from "../pet_service/pet.entity";
 import { Post } from "./post.entity";
 import { Promotion } from "../service/promotion.entity";
 import { BaseEntity } from "typeorm";
+import { SaleTransactionEnum } from "src/enum";
 
 @Entity("sale_transaction")
 export class SaleTransaction extends BaseEntity {
