@@ -19,10 +19,13 @@ import { ServicesModule } from "./modules/services/services.module";
 import { OrdersModule } from "./modules/orders/orders.module";
 import { MediasModule } from "./modules/medias/medias.module";
 import { SaleTransactionsModule } from "./modules/sale-transactions/sale-transactions.module";
+import { MongooseModule } from "@nestjs/mongoose";
+import { RoomsModule } from "./modules/rooms/rooms.module";
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(ormconfig),
+    MongooseModule.forRoot("mongodb://root:example@localhost:27017"),
     AuthModule,
     UserModule,
     VaccineModule,
@@ -36,6 +39,7 @@ import { SaleTransactionsModule } from "./modules/sale-transactions/sale-transac
     OrdersModule,
     MediasModule,
     SaleTransactionsModule,
+    RoomsModule,
   ],
   controllers: [AppController],
   providers: [
