@@ -1,4 +1,9 @@
-import { Logger, ValidationPipe } from "@nestjs/common";
+import {
+  BadRequestException,
+  Logger,
+  ValidationError,
+  ValidationPipe,
+} from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { configService } from "./config/config.service";
@@ -17,8 +22,28 @@ async function bootstrap(): Promise<void> {
   const API_PREFIX = configService.getPrefix();
 
   const app = await NestFactory.create(AppModule);
+  app.enableCors({
+    origin: [`${WEB_ADMIN_ROOT_URL}`],
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  });
   app.setGlobalPrefix(API_PREFIX);
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      exceptionFactory: (
+        validationErrors: ValidationError[] = [],
+      ): BadRequestException => {
+        return new BadRequestException(
+          validationErrors.map((validationError: ValidationError) => {
+            return {
+              property: validationError.property,
+              constraints: validationError.constraints,
+              value: validationError.value,
+            };
+          }),
+        );
+      },
+    }),
+  );
 
   //implement Swagger
   const openApiConfig = new DocumentBuilder()
@@ -50,8 +75,3 @@ async function bootstrap(): Promise<void> {
   await app.listen(API_PORT);
 }
 bootstrap();
-
-// app.enableCors({
-//   origin: [`${WEB_ADMIN_ROOT_URL}`],
-//   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-// });
