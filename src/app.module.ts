@@ -25,7 +25,7 @@ import { RoomsModule } from "./modules/rooms/rooms.module";
 @Module({
   imports: [
     TypeOrmModule.forRoot(ormconfig),
-    MongooseModule.forRoot("mongodb://root:example@localhost:27017"),
+    MongooseModule.forRoot("mongodb://root:example@host.docker.internal:27017"),
     AuthModule,
     UserModule,
     VaccineModule,
