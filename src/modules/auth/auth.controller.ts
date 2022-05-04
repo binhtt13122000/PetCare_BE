@@ -14,7 +14,6 @@ import {
 } from "@nestjs/common";
 import * as firebase from "firebase-admin";
 import { AuthService } from "./auth.service";
-import _ from "lodash";
 import { getFirestore } from "firebase-admin/firestore";
 import {
   LoginBodyDTO,
@@ -104,13 +103,12 @@ export class AuthController {
   async login(
     @Body() data: LoginBodyDTO,
   ): Promise<LoginResponseDTO | UnauthorizedException> {
-    let phoneNumber: string;
-    if (data !== null && !_.isEmpty(data)) {
+    if (data !== null) {
       try {
         const auth = await firebase.auth().verifyIdToken(data.accessToken);
-        phoneNumber = auth.phone_number;
+        const phoneNumber = auth.phone_number;
         const account = await this.authService.validateUser(phoneNumber);
-        if (!_.isEmpty(account)) {
+        if (account) {
           if (account.isActive) {
             if (account.roleId !== data.loginType) {
               return {
