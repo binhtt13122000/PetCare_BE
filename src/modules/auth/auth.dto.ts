@@ -12,7 +12,7 @@ import { Staff } from "src/entities/user_management_service/staff.entity";
 import { GenderEnum, LoginStatusEnum, RoleEnum } from "src/enum";
 
 export class LoginBodyDTO {
-  @ApiProperty()
+  @ApiProperty({})
   accessToken: string;
   @ApiProperty()
   loginType: number;
