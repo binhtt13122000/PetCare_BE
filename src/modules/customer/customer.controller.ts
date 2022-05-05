@@ -5,7 +5,6 @@ import {
   HttpException,
   HttpStatus,
   Param,
-  Post,
   Put,
   UploadedFile,
   UseInterceptors,
@@ -18,7 +17,6 @@ import { IdParams } from "src/common";
 import { Customer } from "src/entities/user_management_service/customer.entity";
 import { uploadService } from "src/external/uploadFile.service";
 import { CustomerService } from "./customer.service";
-import { CreateCustomerDTO } from "./dto/create-customer.dto";
 import { UpdateCustomerDTO } from "./dto/update-customer.dto";
 
 @Controller("customer")
@@ -63,27 +61,6 @@ export class CustomerController {
       };
 
       return await this.customerService.update(customer.id, customer);
-    } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  @ApiConsumes("multipart/form-data")
-  @Post()
-  @UseInterceptors(FileInterceptor("file"))
-  async create(
-    @UploadedFile() file: Express.Multer.File,
-    @Body() body: CreateCustomerDTO,
-  ): Promise<Customer> {
-    try {
-      const { url: avatar } = await uploadService.uploadFile(file);
-
-      const customerProfile: Partial<Customer> = {
-        ...body,
-        avatar,
-      };
-
-      return await this.customerService.store(new Customer(customerProfile));
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
