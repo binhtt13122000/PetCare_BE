@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsInt, IsString, Length } from "class-validator";
-import { CreateCustomerProfileDTO } from "./create-customer-profile.dto";
+import { CreateCustomerProfileDTO } from "./create-customer.dto";
 
 export class UpdateCustomerProfileDTO extends CreateCustomerProfileDTO {
   @ApiProperty()

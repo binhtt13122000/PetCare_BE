@@ -21,7 +21,6 @@ import { MediasModule } from "./modules/medias/medias.module";
 import { SaleTransactionsModule } from "./modules/sale-transactions/sale-transactions.module";
 import { MongooseModule } from "@nestjs/mongoose";
 import { RoomsModule } from "./modules/rooms/rooms.module";
-import { CustomerProfileModule } from "./modules/customer-profile/customer-profile.module";
 
 @Module({
   imports: [
@@ -29,7 +28,6 @@ import { CustomerProfileModule } from "./modules/customer-profile/customer-profi
     MongooseModule.forRoot("mongodb://root:example@localhost:27017"),
     AuthModule,
     UserModule,
-    CustomerProfileModule,
     VaccineModule,
     PapersModule,
     PetsModule,

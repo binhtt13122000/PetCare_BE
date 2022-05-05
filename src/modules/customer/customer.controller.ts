@@ -16,20 +16,19 @@ import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { IdParams } from "src/common";
 import { Customer } from "src/entities/user_management_service/customer.entity";
 import { uploadService } from "src/external/uploadFile.service";
-import { CustomerProfileService } from "./customer-profile.service";
-import { UpdateCustomerProfileDTO } from "./dto/update-customer-profile.dto";
+import { CustomerService } from "./customer.service";
+
+import { UpdateCustomerProfileDTO } from "./dto/update-customer.dto";
 
 @Controller("customer-profile")
 @ApiTags("customer")
-export class CustomerProfileController {
-  constructor(
-    private readonly customerProfileService: CustomerProfileService,
-  ) {}
+export class CustomerController {
+  constructor(private readonly customerService: CustomerService) {}
 
   @Get(":id")
   async getOne(@Param() params: IdParams): Promise<Customer> {
     try {
-      return await this.customerProfileService.findById(params.id);
+      return await this.customerService.findById(params.id);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -38,7 +37,7 @@ export class CustomerProfileController {
   @Get()
   async getAll(): Promise<Customer[]> {
     try {
-      return await this.customerProfileService.index();
+      return await this.customerService.index();
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -62,7 +61,7 @@ export class CustomerProfileController {
         avatar: file ? avatar : body.avatar,
       };
 
-      return await this.customerProfileService.update(
+      return await this.customerService.update(
         customerProfile.id,
         customerProfile,
       );
