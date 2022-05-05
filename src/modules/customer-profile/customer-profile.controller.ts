@@ -17,7 +17,6 @@ import { IdParams } from "src/common";
 import { Customer } from "src/entities/user_management_service/customer.entity";
 import { uploadService } from "src/external/uploadFile.service";
 import { CustomerProfileService } from "./customer-profile.service";
-import { CreateCustomerProfileDTO } from "./dto/create-customer-profile.dto";
 import { UpdateCustomerProfileDTO } from "./dto/update-customer-profile.dto";
 
 @Controller("customer-profile")
