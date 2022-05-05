@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsInt, IsString, Length } from "class-validator";
-import { CreateCustomerProfileDTO } from "./create-customer.dto";
+import { CreateCustomerDTO } from "./create-customer.dto";
 
-export class UpdateCustomerProfileDTO extends CreateCustomerProfileDTO {
+export class UpdateCustomerDTO extends CreateCustomerDTO {
   @ApiProperty()
   @IsInt()
   id: number;

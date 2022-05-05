@@ -5,6 +5,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  Post,
   Put,
   UploadedFile,
   UseInterceptors,
@@ -13,11 +14,12 @@ import { FileInterceptor } from "@nestjs/platform-express";
 
 import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { IdParams } from "src/common";
+
 import { Customer } from "src/entities/user_management_service/customer.entity";
 import { uploadService } from "src/external/uploadFile.service";
 import { CustomerService } from "./customer.service";
-
-import { UpdateCustomerProfileDTO } from "./dto/update-customer.dto";
+import { CreateCustomerDTO } from "./dto/create-customer.dto";
+import { UpdateCustomerDTO } from "./dto/update-customer.dto";
 
 @Controller("customer")
 @ApiTags("customer")
@@ -47,7 +49,7 @@ export class CustomerController {
   @UseInterceptors(FileInterceptor("file"))
   async update(
     @UploadedFile() file: Express.Multer.File,
-    @Body() body: UpdateCustomerProfileDTO,
+    @Body() body: UpdateCustomerDTO,
   ): Promise<Customer> {
     try {
       let avatar = null;
@@ -55,15 +57,33 @@ export class CustomerController {
         avatar = await uploadService.uploadFile(file);
         await uploadService.removeImage(body.avatar);
       }
-      const customerProfile: Partial<Customer> = {
+      const customer: Partial<Customer> = {
         ...body,
         avatar: file ? avatar : body.avatar,
       };
 
-      return await this.customerService.update(
-        customerProfile.id,
-        customerProfile,
-      );
+      return await this.customerService.update(customer.id, customer);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @ApiConsumes("multipart/form-data")
+  @Post()
+  @UseInterceptors(FileInterceptor("file"))
+  async create(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: CreateCustomerDTO,
+  ): Promise<Customer> {
+    try {
+      const { url: avatar } = await uploadService.uploadFile(file);
+
+      const customerProfile: Partial<Customer> = {
+        ...body,
+        avatar,
+      };
+
+      return await this.customerService.store(new Customer(customerProfile));
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

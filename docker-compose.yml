@@ -38,12 +38,9 @@ services:
       - HASURA_GRAPHQL_ENABLED_LOG_TYPES
       - HASURA_GRAPHQL_JWT_SECRET
   petapp-backend:
-    build:
-      context: ./
-      # dockerfile: .
-    image: petcare-be
-    container_name: petcare-be
+    image: binhtt13122000/petcare-be:latest
     restart: always
+    container_name: petcare-be
     depends_on:
       - "postgres-db"
     ports:
@@ -74,6 +71,7 @@ services:
       - VNPAY_HASH_SECRET
       - VNPAY_URL
       - VNPAY_VERSION
+      - MONGO_CONNECTION_STRING
   redis-server:
     image: redis
     command: redis-server --appendonly yes
