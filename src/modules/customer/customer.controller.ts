@@ -19,7 +19,7 @@ import { CustomerService } from "./customer.service";
 
 import { UpdateCustomerProfileDTO } from "./dto/update-customer.dto";
 
-@Controller("customer-profile")
+@Controller("customer")
 @ApiTags("customer")
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
