@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { BaseService } from "src/base/base.service";
-import { Account } from "src/entities/authenticate_service/account.entity";
 import { Customer } from "src/entities/user_management_service/customer.entity";
 import { CustomerRepository } from "./customer.repository";
 
