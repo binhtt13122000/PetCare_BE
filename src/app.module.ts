@@ -21,11 +21,13 @@ import { MediasModule } from "./modules/medias/medias.module";
 import { SaleTransactionsModule } from "./modules/sale-transactions/sale-transactions.module";
 import { MongooseModule } from "@nestjs/mongoose";
 import { RoomsModule } from "./modules/rooms/rooms.module";
+import { configService } from "src/config/config.service";
 
+const mongoConnectionString = configService.getMongoConnectionString();
 @Module({
   imports: [
     TypeOrmModule.forRoot(ormconfig),
-    MongooseModule.forRoot("mongodb://root:example@host.docker.internal:27017"),
+    MongooseModule.forRoot(mongoConnectionString),
     AuthModule,
     UserModule,
     VaccineModule,

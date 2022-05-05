@@ -12,6 +12,7 @@ export class UserService extends BaseService<Account, UserRepository> {
   findByPhoneNumber(phoneNumber: string): Promise<Account | null> {
     return this.userRepository.findOne({
       where: { phoneNumber: phoneNumber },
+      relations: ["role"],
     });
   }
 }
