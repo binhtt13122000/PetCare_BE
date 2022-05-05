@@ -8,6 +8,9 @@ export class UpdateCustomerProfileDTO extends CreateCustomerProfileDTO {
   id: number;
 
   @ApiProperty()
+  avatar: string;
+
+  @ApiProperty()
   @IsInt()
   star: number;
 
@@ -25,12 +28,12 @@ export class UpdateCustomerProfileDTO extends CreateCustomerProfileDTO {
 
   @ApiProperty()
   @IsString()
-  @Length(0, 32)
+  @Length(0, 8)
   bankName: string;
 
   @ApiProperty()
   @IsString()
-  @Length(12, 19)
+  @Length(0, 32)
   bankCode: string;
 
   @ApiProperty()

@@ -38,6 +38,9 @@ export class CreateCustomerProfileDTO {
   @IsInt()
   accountId: number;
 
-  @ApiProperty()
-  avatar: string;
+  // @ApiProperty()
+  // avatar: string;
+
+  @ApiProperty({ type: "string", format: "binary" })
+  file: Express.Multer.File;
 }
