@@ -85,7 +85,6 @@ export class AuthController {
       const createdAccount: Account = await this.userService.store(
         new Account({
           password: data.password,
-          email: data.email,
           currentHashedRefreshToken: null,
           phoneNumber: data.phoneNumber,
           isActive: true,
@@ -93,7 +92,7 @@ export class AuthController {
         }),
       );
       await this.customerService.store(
-        new Customer({ accountId: createdAccount.id, ...data, avatar }),
+        new Customer({ ...data, avatar, isActive: true }),
       );
       createdAccount.password = null;
       return createdAccount;
@@ -124,8 +123,8 @@ export class AuthController {
               id: account.id,
               fcm: data.fcmToken,
             });
-            const information = await this.customerService.findByAccountId(
-              account.id,
+            const information = await this.customerService.findByPhoneNumber(
+              account.phoneNumber,
             );
             const payload = await this.authService.generateJwtToken(
               account.phoneNumber,
@@ -180,11 +179,13 @@ export class AuthController {
             });
             let information: Customer | Staff = null;
             if (data.role === RoleEnum.CUSTOMER) {
-              information = await this.customerService.findByAccountId(
-                account.id,
+              information = await this.customerService.findByPhoneNumber(
+                account.phoneNumber,
               );
             } else if (data.role === RoleEnum.STAFF) {
-              information = await this.staffService.findByAccountId(account.id);
+              information = await this.staffService.findByPhoneNumber(
+                account.phoneNumber,
+              );
             }
             const payload = await this.authService.generateJwtToken(
               account.phoneNumber,

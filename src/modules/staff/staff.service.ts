@@ -9,9 +9,9 @@ export class StaffService extends BaseService<Staff, StaffRepository> {
     super(staffRepository);
   }
 
-  findByAccountId(accountId: number): Promise<Staff | null> {
+  findByPhoneNumber(phoneNumber: string): Promise<Staff | null> {
     return this.staffRepository.findOne({
-      where: { accountId },
+      where: { phoneNumber },
     });
   }
 }

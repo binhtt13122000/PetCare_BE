@@ -1,4 +1,4 @@
-import { IsEmail, IsPhoneNumber, IsString, IsBoolean } from "class-validator";
+import { IsPhoneNumber, IsString, IsBoolean } from "class-validator";
 import {
   BaseEntity,
   Column,
@@ -13,9 +13,6 @@ import { Role } from "./role.entity";
 export class Account extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
-  @Column({ type: "text", nullable: true })
-  @IsEmail()
-  email: string;
   @Column({ type: "text", nullable: true })
   @IsString()
   password: string;
