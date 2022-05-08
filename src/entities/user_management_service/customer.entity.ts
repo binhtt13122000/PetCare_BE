@@ -7,6 +7,7 @@ import {
   Length,
   IsEmail,
   IsPhoneNumber,
+  IsBoolean,
 } from "class-validator";
 import {
   Column,
@@ -80,9 +81,9 @@ export class Customer extends BaseEntity {
   @IsString()
   @Length(0, 64)
   bankBranch: string;
-
-  @Column({ type: "int", nullable: false })
-  accountId: number;
+  @Column({ type: "bool", default: true })
+  @IsBoolean()
+  isActive: boolean;
 
   // Reference
   @OneToMany(() => Follow, (follow) => follow.follower)

@@ -30,6 +30,8 @@ export class Service extends BaseEntity {
   isHealthCheck: boolean;
   @Column({ type: "text", nullable: false })
   unit: string;
+  @Column({ type: "text", nullable: true })
+  healthCheckTemplate: string;
 
   @OneToMany(() => HealthService, (healthService) => healthService.service)
   healthServices: HealthService[];

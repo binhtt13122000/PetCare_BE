@@ -7,6 +7,7 @@ import {
   IsPhoneNumber,
   IsString,
   IsEmail,
+  IsBoolean,
 } from "class-validator";
 import {
   Column,
@@ -55,9 +56,9 @@ export class Staff extends BaseEntity {
   @Min(0)
   @IsInt()
   numberReviewers: number;
-
-  @Column({ type: "int", nullable: false })
-  accountId: number;
+  @Column({ type: "bool", default: true })
+  @IsBoolean()
+  isActive: boolean;
 
   @OneToMany(() => Order, (order) => order.staff)
   orders: Order[];

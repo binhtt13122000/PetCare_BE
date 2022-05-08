@@ -10,14 +10,12 @@ import {
   Post,
   Res,
   Response,
-  UnauthorizedException,
 } from "@nestjs/common";
 import * as firebase from "firebase-admin";
 import { AuthService } from "./auth.service";
-import _ from "lodash";
 import { getFirestore } from "firebase-admin/firestore";
 import {
-  LoginBodyDTO,
+  LoginBodyWithPasswordDTO,
   LoginResponseDTO,
   RefreshTokenBodyDTO,
   UserRegisterDTO,
@@ -25,7 +23,7 @@ import {
 import { StaffService } from "../staff/staff.service";
 import { CustomerService } from "../customer/customer.service";
 import { Staff } from "src/entities/user_management_service/staff.entity";
-import { LoginStatusEnum, RoleEnum } from "src/enum";
+import { LoginStatusEnum, RoleEnum, RoleIndexEnum } from "src/enum";
 import {
   ApiOkResponse,
   ApiOperation,
@@ -41,6 +39,8 @@ import { HttpStatus, HttpException } from "@nestjs/common";
 import { Tokens } from "./types";
 import { Customer } from "src/entities/user_management_service/customer.entity";
 import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
+import { LoginBodyWithPhoneNumberDTO } from "./auth.dto";
+import * as bcrypt from "bcrypt";
 
 @Controller("auth")
 @ApiTags("authenticate")
@@ -74,45 +74,47 @@ export class AuthController {
   ): Promise<Account> {
     try {
       const { url: avatar } = await uploadService.uploadFile(file);
-      const account: Partial<Account> = {
-        ...data,
-        avatar,
-      };
+      if (data.password !== data.conFirmPassword) {
+        throw new HttpException(
+          "Password and confirm password are not equal",
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      data.password = await bcrypt.hash(data.password, 12);
 
       const createdAccount: Account = await this.userService.store(
-        new Account(account),
+        new Account({
+          password: data.password,
+          currentHashedRefreshToken: null,
+          phoneNumber: data.phoneNumber,
+          isActive: true,
+          roleId: RoleIndexEnum.CUSTOMER,
+        }),
       );
-      if (data.roleEnum === RoleEnum.CUSTOMER) {
-        await this.customerService.store(
-          new Customer({ accountId: createdAccount.id }),
-        );
-      }
-      if (data.roleEnum === RoleEnum.STAFF) {
-        await this.staffService.store(
-          new Customer({ accountId: createdAccount.id }),
-        );
-      }
+      await this.customerService.store(
+        new Customer({ ...data, avatar, isActive: true }),
+      );
+      createdAccount.password = null;
       return createdAccount;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
 
-  @Post("login")
+  @Post("login/phone-number")
   @ApiOkResponse({ type: LoginResponseDTO })
   @HttpCode(200)
-  async login(
-    @Body() data: LoginBodyDTO,
-  ): Promise<LoginResponseDTO | UnauthorizedException> {
-    let phoneNumber: string;
-    if (data !== null && !_.isEmpty(data)) {
+  async loginWithPhoneNumber(
+    @Body() data: LoginBodyWithPhoneNumberDTO,
+  ): Promise<LoginResponseDTO> {
+    if (data !== null) {
       try {
         const auth = await firebase.auth().verifyIdToken(data.accessToken);
-        phoneNumber = auth.phone_number;
+        const phoneNumber = auth.phone_number;
         const account = await this.authService.validateUser(phoneNumber);
-        if (!_.isEmpty(account)) {
+        if (account) {
           if (account.isActive) {
-            if (account.roleId !== data.loginType) {
+            if (account.role.name !== RoleEnum.CUSTOMER) {
               return {
                 status: LoginStatusEnum.UNAUTHORIZED,
               };
@@ -121,14 +123,9 @@ export class AuthController {
               id: account.id,
               fcm: data.fcmToken,
             });
-            let information: Customer | Staff = null;
-            if (data.role === RoleEnum.CUSTOMER) {
-              information = await this.customerService.findByAccountId(
-                account.id,
-              );
-            } else if (data.role === RoleEnum.STAFF) {
-              information = await this.staffService.findByAccountId(account.id);
-            }
+            const information = await this.customerService.findByPhoneNumber(
+              account.phoneNumber,
+            );
             const payload = await this.authService.generateJwtToken(
               account.phoneNumber,
               account.id,
@@ -150,10 +147,71 @@ export class AuthController {
           };
         }
       } catch (error) {
-        return new UnauthorizedException(error);
+        throw new BadRequestException(error);
       }
     } else {
-      return new BadRequestException();
+      throw new BadRequestException();
+    }
+  }
+
+  @Post("login")
+  @ApiOkResponse({ type: LoginResponseDTO })
+  @HttpCode(200)
+  async login(
+    @Body() data: LoginBodyWithPasswordDTO,
+  ): Promise<LoginResponseDTO> {
+    if (data !== null) {
+      try {
+        const account = await this.authService.validateUserByPassword(
+          data.phoneNumber,
+          data.password,
+        );
+        if (account) {
+          if (account.isActive) {
+            if (account.role.name !== data.role) {
+              return {
+                status: LoginStatusEnum.UNAUTHORIZED,
+              };
+            }
+            await getFirestore().collection("fcm").doc().set({
+              id: account.id,
+              fcm: data.fcmToken,
+            });
+            let information: Customer | Staff = null;
+            if (data.role === RoleEnum.CUSTOMER) {
+              information = await this.customerService.findByPhoneNumber(
+                account.phoneNumber,
+              );
+            } else if (data.role === RoleEnum.STAFF) {
+              information = await this.staffService.findByPhoneNumber(
+                account.phoneNumber,
+              );
+            }
+            const payload = await this.authService.generateJwtToken(
+              account.phoneNumber,
+              account.id,
+            );
+            return {
+              ...payload,
+              information: information,
+              user: account,
+              status: LoginStatusEnum.SUCCESS,
+            };
+          } else {
+            return {
+              status: LoginStatusEnum.BANNED,
+            };
+          }
+        } else {
+          return {
+            status: LoginStatusEnum.UNAUTHENTICATED,
+          };
+        }
+      } catch (error) {
+        throw new BadRequestException(error);
+      }
+    } else {
+      throw new BadRequestException();
     }
   }
 

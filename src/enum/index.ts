@@ -61,6 +61,13 @@ export enum ReportEnum {
 export enum RoleEnum {
   STAFF = "STAFF",
   CUSTOMER = "CUSTOMER",
+  ADMIN = "ADMIN",
+}
+
+export enum RoleIndexEnum {
+  STAFF = 2,
+  CUSTOMER = 3,
+  ADMIN = 1,
 }
 
 export enum LoginStatusEnum {
@@ -68,4 +75,5 @@ export enum LoginStatusEnum {
   BANNED = "BANNED",
   NEWER = "NEWER",
   UNAUTHORIZED = "UNAUTHORIZED",
+  UNAUTHENTICATED = "UNAUTHENTICATED",
 }

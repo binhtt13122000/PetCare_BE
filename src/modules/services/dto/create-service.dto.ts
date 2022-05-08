@@ -19,4 +19,6 @@ export class CreateServiceDTO {
   isHealthCheck: boolean;
   @ApiProperty()
   unit: string;
+  @ApiProperty()
+  healthCheckTemplate: string;
 }

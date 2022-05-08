@@ -66,6 +66,10 @@ class ConfigService {
   public getPrefix(): string {
     return this.getValue("API_PREFIX", true);
   }
+
+  public getMongoConnectionString(): string {
+    return this.getValue("MONGO_CONNECTION_STRING");
+  }
 }
 
 const configService = new ConfigService({
@@ -87,6 +91,7 @@ const configService = new ConfigService({
   "VNPAY_URL",
   "VNPAY_VERSION",
   "API_PREFIX",
+  "MONGO_CONNECTION_STRING",
 ]);
 
 export { configService };

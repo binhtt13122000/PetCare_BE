@@ -1,22 +1,23 @@
 import { ApiProperty } from "@nestjs/swagger";
-import {
-  IsEmail,
-  IsPhoneNumber,
-  IsString,
-  Length,
-  IsDate,
-} from "class-validator";
+import { IsEmail, IsPhoneNumber, IsString, Length } from "class-validator";
 import { Account } from "src/entities/authenticate_service/account.entity";
 import { Customer } from "src/entities/user_management_service/customer.entity";
 import { Staff } from "src/entities/user_management_service/staff.entity";
 import { GenderEnum, LoginStatusEnum, RoleEnum } from "src/enum";
 
-export class LoginBodyDTO {
-  @ApiProperty()
+export class LoginBodyWithPhoneNumberDTO {
+  @ApiProperty({ required: true, description: "Access token from Firebase" })
   accessToken: string;
-  @ApiProperty()
-  loginType: number;
-  @ApiProperty()
+  @ApiProperty({ required: true, description: "device's FCM token" })
+  fcmToken: string;
+}
+
+export class LoginBodyWithPasswordDTO {
+  @ApiProperty({ required: true, description: "Phone Number" })
+  phoneNumber: string;
+  @ApiProperty({ required: true, description: "Password" })
+  password: string;
+  @ApiProperty({ required: true, description: "device's FCM token" })
   fcmToken: string;
   @ApiProperty({ enum: RoleEnum })
   role: RoleEnum;
@@ -69,17 +70,21 @@ export class UserRegisterDTO {
   file: Express.Multer.File;
 
   @ApiProperty()
-  @IsDate()
   dateOfBirth: Date;
 
   @ApiProperty()
-  roleId: number;
+  password: string;
 
-  @ApiProperty({ enum: RoleEnum })
-  roleEnum: RoleEnum;
+  @ApiProperty()
+  conFirmPassword: string;
 }
 
 export class RefreshTokenBodyDTO {
   @ApiProperty()
   refreshToken: string;
+}
+
+export class AuthPayloadDTO {
+  sub: number;
+  phoneNumber: string;
 }

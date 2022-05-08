@@ -9,9 +9,9 @@ export class CustomerService extends BaseService<Customer, CustomerRepository> {
     super(customerRepository);
   }
 
-  findByAccountId(accountId: number): Promise<Customer | null> {
+  findByPhoneNumber(phoneNumber: string): Promise<Customer | null> {
     return this.customerRepository.findOne({
-      where: { accountId },
+      where: { phoneNumber },
     });
   }
 }

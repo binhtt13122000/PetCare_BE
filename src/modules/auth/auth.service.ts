@@ -11,6 +11,7 @@ import { Account } from "src/entities/authenticate_service/account.entity";
 import { UserService } from "../users/user.service";
 import * as bcrypt from "bcrypt";
 import { Tokens } from "./types";
+import { AuthPayloadDTO } from "./auth.dto";
 @Injectable()
 export class AuthService {
   constructor(
@@ -25,8 +26,19 @@ export class AuthService {
     return user;
   }
 
+  async validateUserByPassword(
+    phoneNumber: string,
+    password: string,
+  ): Promise<Account | null> {
+    const user = await this.userService.findByPhoneNumber(phoneNumber);
+    if (user && bcrypt.compareSync(password, user.password)) {
+      return user;
+    }
+    return null;
+  }
+
   async generateJwtToken(phoneNumber: string, userId: number): Promise<Tokens> {
-    const payload = {
+    const payload: AuthPayloadDTO = {
       sub: userId,
       phoneNumber,
     };
@@ -65,7 +77,7 @@ export class AuthService {
     refreshToken: string,
     userId: number,
   ): Promise<Account> {
-    const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+    const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 12);
     const user = await this.userService.findById(userId);
 
     if (!user) {
