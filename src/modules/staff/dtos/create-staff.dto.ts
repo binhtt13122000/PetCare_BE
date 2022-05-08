@@ -14,8 +14,4 @@ export class CreateStaffDTO {
   address: string;
   @ApiProperty({ enum: GenderEnum })
   gender: GenderEnum;
-  @ApiProperty()
-  accountId: number;
-  @ApiProperty({ type: "string", format: "binary" })
-  files: Express.Multer.File;
 }

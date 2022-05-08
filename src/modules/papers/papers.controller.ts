@@ -8,6 +8,7 @@ import {
   HttpException,
   HttpStatus,
   Delete,
+  Param,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { uploadService } from "src/external/uploadFile.service";
@@ -20,6 +21,7 @@ import { DeleteResult } from "typeorm";
 import { PetsService } from "../pets/pets.service";
 import { FileProducerService } from "src/shared/file/file.producer.service";
 import { PetEnum } from "src/enum";
+import { IdParams } from "src/common";
 
 @ApiTags("paper")
 @Controller("papers")
@@ -62,25 +64,36 @@ export class PapersController {
         evidence = await uploadService.uploadFile(file);
         await this.fileProducerService.deleteFile(body.evidence);
       }
-      const vaccine = {
+      const paper = {
         ...body,
         evidence: file ? evidence.url : body.evidence,
       };
-      return await this.papersService.update(vaccine.id, vaccine);
+      return await this.papersService.update(paper.id, paper);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
 
-  @Delete()
-  async delete(id: number): Promise<DeleteResult> {
+  @Delete(":id")
+  async delete(@Param() params: IdParams): Promise<DeleteResult> {
     try {
-      const paper = await this.papersService.findById(id);
+      const paper = await this.papersService.findById(params.id);
+      if (!paper) {
+        throw new HttpException(
+          "Paper is not available",
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       const pet = await this.petsService.findById(paper.petId);
       if (pet.status === PetEnum.IN_POST) {
-        throw Error("Cannot delete this paper");
+        throw new HttpException(
+          "Cannot delete this paper",
+          HttpStatus.BAD_REQUEST,
+        );
       }
-      return this.papersService.delete(id);
+
+      await this.fileProducerService.deleteFile(paper.evidence);
+      return this.papersService.delete(params.id);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

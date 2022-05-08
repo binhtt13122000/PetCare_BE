@@ -76,12 +76,32 @@ export class UserRegisterDTO {
   password: string;
 
   @ApiProperty()
-  conFirmPassword: string;
+  confirmPassword: string;
 }
 
 export class RefreshTokenBodyDTO {
   @ApiProperty()
   refreshToken: string;
+}
+
+export class ChangePasswordDTO {
+  @ApiProperty()
+  phoneNumber: string;
+  @ApiProperty()
+  oldPassWord: string;
+  @ApiProperty()
+  newPassword: string;
+  @ApiProperty()
+  confirmPassword: string;
+}
+
+export class ChangePasswordWithNotLoginDTO {
+  @ApiProperty()
+  accessToken: string;
+  @ApiProperty()
+  newPassword: string;
+  @ApiProperty()
+  confirmPassword: string;
 }
 
 export class AuthPayloadDTO {

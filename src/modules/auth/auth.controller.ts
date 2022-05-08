@@ -10,11 +10,14 @@ import {
   Post,
   Res,
   Response,
+  Put,
 } from "@nestjs/common";
 import * as firebase from "firebase-admin";
 import { AuthService } from "./auth.service";
 import { getFirestore } from "firebase-admin/firestore";
 import {
+  ChangePasswordDTO,
+  ChangePasswordWithNotLoginDTO,
   LoginBodyWithPasswordDTO,
   LoginResponseDTO,
   RefreshTokenBodyDTO,
@@ -73,8 +76,7 @@ export class AuthController {
     @Body() data: UserRegisterDTO,
   ): Promise<Account> {
     try {
-      const { url: avatar } = await uploadService.uploadFile(file);
-      if (data.password !== data.conFirmPassword) {
+      if (data.password !== data.confirmPassword) {
         throw new HttpException(
           "Password and confirm password are not equal",
           HttpStatus.BAD_REQUEST,
@@ -91,11 +93,67 @@ export class AuthController {
           roleId: RoleIndexEnum.CUSTOMER,
         }),
       );
+      let avatar = null;
+      if (file) {
+        const { url } = await uploadService.uploadFile(file);
+        avatar = url;
+      }
       await this.customerService.store(
         new Customer({ ...data, avatar, isActive: true }),
       );
       createdAccount.password = null;
       return createdAccount;
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Put("change-password")
+  async changePassword(@Body() body: ChangePasswordDTO): Promise<Account> {
+    try {
+      if (body.newPassword !== body.confirmPassword) {
+        throw new HttpException(
+          "Password and confirm password are not equal",
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      const user = await this.authService.validateUserByPassword(
+        body.phoneNumber,
+        body.oldPassWord,
+      );
+      if (!user) {
+        throw new HttpException("Password is wrong!", HttpStatus.BAD_REQUEST);
+      }
+      user.password = await bcrypt.hash(body.newPassword, 12);
+      const updatedUser = await this.userService.update(user.id, user);
+      updatedUser.password = null;
+      return updatedUser;
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Put("change-password-not-login")
+  async changePasswordWithNotLogin(
+    @Body() body: ChangePasswordWithNotLoginDTO,
+  ): Promise<Account> {
+    try {
+      if (body.newPassword !== body.confirmPassword) {
+        throw new HttpException(
+          "Password and confirm password are not equal",
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      const auth = await firebase.auth().verifyIdToken(body.accessToken);
+      const phoneNumber = auth.phone_number;
+      const user = await this.authService.validateUser(phoneNumber);
+      if (!user) {
+        throw new HttpException("Authentication fail!", HttpStatus.BAD_REQUEST);
+      }
+      user.password = await bcrypt.hash(body.newPassword, 12);
+      const updatedUser = await this.userService.update(user.id, user);
+      updatedUser.password = null;
+      return updatedUser;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
