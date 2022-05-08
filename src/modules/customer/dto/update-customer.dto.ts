@@ -1,11 +1,35 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsInt, IsString, Length } from "class-validator";
-import { CreateCustomerDTO } from "./create-customer.dto";
+import { IsInt, IsString, Length, IsEmail } from "class-validator";
+import { GenderEnum } from "src/enum";
 
-export class UpdateCustomerDTO extends CreateCustomerDTO {
+export class UpdateCustomerDTO {
   @ApiProperty()
   @IsInt()
   id: number;
+
+  @ApiProperty()
+  @IsString()
+  @Length(0, 16)
+  firstName: string;
+
+  @ApiProperty()
+  @IsString()
+  @Length(0, 16)
+  lastName: string;
+
+  @ApiProperty()
+  @IsEmail()
+  email: string;
+
+  @ApiProperty()
+  @Length(0, 64)
+  address: string;
+
+  @ApiProperty({ enum: GenderEnum })
+  gender: GenderEnum;
+
+  @ApiProperty({ type: "string", format: "binary" })
+  file: Express.Multer.File;
 
   @ApiProperty()
   avatar: string;
