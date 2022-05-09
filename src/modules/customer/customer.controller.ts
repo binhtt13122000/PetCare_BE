@@ -53,8 +53,8 @@ export class CustomerController {
     }
   }
 
-  @ApiConsumes("multipart/form-data")
   @Put()
+  @ApiConsumes("multipart/form-data")
   @UseInterceptors(FileInterceptor("file"))
   async update(
     @UploadedFile() file: Express.Multer.File,
