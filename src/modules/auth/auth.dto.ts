@@ -56,7 +56,7 @@ export class UserRegisterDTO {
 
   @ApiProperty()
   @IsPhoneNumber()
-  phoneNumber: string;
+  accessToken: string;
 
   @ApiProperty()
   @IsString()
@@ -76,7 +76,7 @@ export class UserRegisterDTO {
   password: string;
 
   @ApiProperty()
-  conFirmPassword: string;
+  confirmPassword: string;
 }
 
 export class RefreshTokenBodyDTO {
@@ -84,7 +84,37 @@ export class RefreshTokenBodyDTO {
   refreshToken: string;
 }
 
+export class ChangePasswordDTO {
+  @ApiProperty()
+  phoneNumber: string;
+  @ApiProperty()
+  oldPassWord: string;
+  @ApiProperty()
+  newPassword: string;
+  @ApiProperty()
+  confirmPassword: string;
+}
+
+export class ChangePasswordWithNotLoginDTO {
+  @ApiProperty()
+  accessToken: string;
+  @ApiProperty()
+  newPassword: string;
+  @ApiProperty()
+  confirmPassword: string;
+}
+
+export class CheckPhoneNumberExistDTO {
+  @ApiProperty()
+  phoneNumber: string;
+}
+
 export class AuthPayloadDTO {
   sub: number;
   phoneNumber: string;
 }
+
+export type Tokens = {
+  accessToken: string;
+  refreshToken: string;
+};
