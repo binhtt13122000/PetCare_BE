@@ -106,16 +106,28 @@ export class CustomerController {
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(FileInterceptor("file"))
   @Post()
-  async create(@Body() body: CreateCustomerDTO): Promise<Customer> {
+  async create(
+    @Body() body: CreateCustomerDTO,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<Customer> {
     try {
+      let avatar = null;
+      if (file) {
+        avatar = await uploadService.uploadFile(file);
+      }
+      const customer: Partial<Customer> = {
+        ...body,
+        avatar: avatar,
+      };
       const account: Partial<Account> = {
         password: body.password,
         phoneNumber: body.phoneNumber,
         isActive: true,
         roleId: 3,
       };
-      const user = await this.userService.store(new Account(account));
-      return this.customerService.store(body);
+
+      await this.userService.store(new Account(account));
+      return this.customerService.store(customer);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
