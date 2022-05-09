@@ -38,7 +38,9 @@ services:
       - HASURA_GRAPHQL_ENABLED_LOG_TYPES
       - HASURA_GRAPHQL_JWT_SECRET
   petapp-backend:
-    image: binhtt13122000/petcare-be:latest
+    build:
+      context: ./
+      # dockerfile: .
     restart: always
     container_name: petcare-be
     depends_on:
