@@ -18,6 +18,7 @@ import { getFirestore } from "firebase-admin/firestore";
 import {
   ChangePasswordDTO,
   ChangePasswordWithNotLoginDTO,
+  CheckPhoneNumberExistDTO,
   LoginBodyWithPasswordDTO,
   LoginResponseDTO,
   RefreshTokenBodyDTO,
@@ -39,10 +40,9 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { uploadService } from "src/external/uploadFile.service";
 import { UserService } from "../users/user.service";
 import { HttpStatus, HttpException } from "@nestjs/common";
-import { Tokens } from "./types";
 import { Customer } from "src/entities/user_management_service/customer.entity";
 import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
-import { LoginBodyWithPhoneNumberDTO } from "./auth.dto";
+import { LoginBodyWithPhoneNumberDTO, Tokens } from "./auth.dto";
 import * as bcrypt from "bcrypt";
 
 @Controller("auth")
@@ -68,13 +68,25 @@ export class AuthController {
     return "ok";
   }
 
+  @Get("phone-number/:phoneNumber")
+  async isExistPhoneNumber(
+    @Param() param: CheckPhoneNumberExistDTO,
+  ): Promise<boolean> {
+    try {
+      const user = await this.authService.validateUser(param.phoneNumber);
+      return !!user;
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   @Post("register")
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(FileInterceptor("file"))
   async register(
     @UploadedFile() file: Express.Multer.File,
     @Body() data: UserRegisterDTO,
-  ): Promise<Account> {
+  ): Promise<LoginResponseDTO> {
     try {
       if (data.password !== data.confirmPassword) {
         throw new HttpException(
@@ -82,13 +94,19 @@ export class AuthController {
           HttpStatus.BAD_REQUEST,
         );
       }
+      const auth = await firebase.auth().verifyIdToken(data.accessToken);
+      const phoneNumber = auth.phone_number;
+      const user = await this.authService.validateUser(phoneNumber);
+      if (user) {
+        throw new HttpException("Existed!", HttpStatus.BAD_REQUEST);
+      }
       data.password = await bcrypt.hash(data.password, 12);
 
       const createdAccount: Account = await this.userService.store(
         new Account({
           password: data.password,
           currentHashedRefreshToken: null,
-          phoneNumber: data.phoneNumber,
+          phoneNumber: phoneNumber,
           isActive: true,
           roleId: RoleIndexEnum.CUSTOMER,
         }),
@@ -98,11 +116,25 @@ export class AuthController {
         const { url } = await uploadService.uploadFile(file);
         avatar = url;
       }
-      await this.customerService.store(
-        new Customer({ ...data, avatar, isActive: true }),
+      const createdCustomer = await this.customerService.store(
+        new Customer({
+          ...data,
+          avatar,
+          isActive: true,
+          phoneNumber: phoneNumber,
+        }),
       );
       createdAccount.password = null;
-      return createdAccount;
+      const payload = await this.authService.generateJwtToken(
+        phoneNumber,
+        createdAccount.id,
+      );
+      return {
+        ...payload,
+        status: LoginStatusEnum.SUCCESS,
+        information: createdCustomer,
+        user: createdAccount,
+      };
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
