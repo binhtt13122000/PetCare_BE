@@ -41,7 +41,6 @@ export class LoginResponseDTO {
 
 export class UserRegisterDTO {
   @ApiProperty()
-  @IsEmail()
   email: string;
 
   @ApiProperty()
@@ -55,7 +54,6 @@ export class UserRegisterDTO {
   lastName: string;
 
   @ApiProperty()
-  @IsPhoneNumber()
   accessToken: string;
 
   @ApiProperty()
