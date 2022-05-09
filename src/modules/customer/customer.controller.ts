@@ -15,7 +15,7 @@ import {
 import { FileInterceptor } from "@nestjs/platform-express";
 
 import { ApiConsumes, ApiTags } from "@nestjs/swagger";
-import { IdParams } from "src/common";
+import { DEFAULT_PASSWORD, IdParams } from "src/common";
 import { Account } from "src/entities/authenticate_service/account.entity";
 
 import { Customer } from "src/entities/user_management_service/customer.entity";
@@ -120,7 +120,7 @@ export class CustomerController {
         avatar: avatar,
       };
       const account: Partial<Account> = {
-        password: body.password,
+        password: DEFAULT_PASSWORD,
         phoneNumber: body.phoneNumber,
         isActive: true,
         roleId: 3,
