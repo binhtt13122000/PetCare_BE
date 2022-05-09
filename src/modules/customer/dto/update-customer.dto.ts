@@ -1,20 +1,31 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Type } from "class-transformer";
+
+import { IsString, Length, IsEmail, IsNumber } from "class-validator";
 import { GenderEnum } from "src/enum";
 
 export class UpdateCustomerDTO {
   @ApiProperty()
+  @IsNumber()
+  @Type(() => Number)
   id: number;
 
   @ApiProperty()
+  @IsString()
+  @Length(0, 16)
   firstName: string;
 
   @ApiProperty()
+  @IsString()
+  @Length(0, 16)
   lastName: string;
 
   @ApiProperty()
+  @IsEmail()
   email: string;
 
   @ApiProperty()
+  @Length(0, 64)
   address: string;
 
   @ApiProperty({ enum: GenderEnum })
@@ -27,23 +38,17 @@ export class UpdateCustomerDTO {
   avatar: string;
 
   @ApiProperty()
-  star: number;
-
-  @ApiProperty()
-  point: number;
-
-  @ApiProperty()
-  numberFollowers: number;
-
-  @ApiProperty()
-  numberReviewers: number;
-
-  @ApiProperty()
+  @IsString()
+  @Length(0, 8)
   bankName: string;
 
   @ApiProperty()
+  @IsString()
+  @Length(0, 32)
   bankCode: string;
 
   @ApiProperty()
+  @IsString()
+  @Length(0, 32)
   bankBranch: string;
 }
