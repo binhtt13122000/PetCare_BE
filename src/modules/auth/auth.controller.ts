@@ -88,23 +88,16 @@ export class AuthController {
     @Body() data: UserRegisterDTO,
   ): Promise<LoginResponseDTO> {
     try {
-      if (data.password !== data.confirmPassword) {
-        throw new HttpException(
-          "Password and confirm password are not equal",
-          HttpStatus.BAD_REQUEST,
-        );
-      }
       const auth = await firebase.auth().verifyIdToken(data.accessToken);
       const phoneNumber = auth.phone_number;
       const user = await this.authService.validateUser(phoneNumber);
       if (user) {
         throw new HttpException("Existed!", HttpStatus.BAD_REQUEST);
       }
-      data.password = await bcrypt.hash(data.password, 12);
 
       const createdAccount: Account = await this.userService.store(
         new Account({
-          password: data.password,
+          password: null,
           currentHashedRefreshToken: null,
           phoneNumber: phoneNumber,
           isActive: true,
@@ -129,6 +122,10 @@ export class AuthController {
         phoneNumber,
         createdAccount.id,
       );
+      await getFirestore().collection("fcm").doc().set({
+        id: createdAccount.id,
+        fcm: data.fcmToken,
+      });
       return {
         ...payload,
         status: LoginStatusEnum.SUCCESS,
