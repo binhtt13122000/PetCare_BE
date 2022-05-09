@@ -13,11 +13,9 @@ import {
   UseInterceptors,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
-
 import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { DEFAULT_PASSWORD, IdParams } from "src/common";
 import { Account } from "src/entities/authenticate_service/account.entity";
-
 import { Customer } from "src/entities/user_management_service/customer.entity";
 import { RoleIndexEnum } from "src/enum";
 import { uploadService } from "src/external/uploadFile.service";
@@ -25,6 +23,7 @@ import { UserService } from "../users/user.service";
 import { CustomerService } from "./customer.service";
 import { CreateCustomerDTO } from "./dto/create-customer.dto";
 import { UpdateCustomerDTO } from "./dto/update-customer.dto";
+import * as bcrypt from "bcrypt";
 
 @Controller("customer")
 @ApiTags("customer")
@@ -120,8 +119,11 @@ export class CustomerController {
         ...body,
         avatar: avatar,
       };
+
+      body.password = await bcrypt.hash(DEFAULT_PASSWORD, 12);
+
       const account: Partial<Account> = {
-        password: DEFAULT_PASSWORD,
+        password: body.password,
         phoneNumber: body.phoneNumber,
         isActive: true,
         roleId: RoleIndexEnum.CUSTOMER,
