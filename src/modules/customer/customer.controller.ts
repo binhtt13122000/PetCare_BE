@@ -19,6 +19,7 @@ import { DEFAULT_PASSWORD, IdParams } from "src/common";
 import { Account } from "src/entities/authenticate_service/account.entity";
 
 import { Customer } from "src/entities/user_management_service/customer.entity";
+import { RoleIndexEnum } from "src/enum";
 import { uploadService } from "src/external/uploadFile.service";
 import { UserService } from "../users/user.service";
 import { CustomerService } from "./customer.service";
@@ -75,7 +76,7 @@ export class CustomerController {
     }
   }
 
-  @Patch(":id")
+  @Patch("change-status/:id")
   async changeStatus(@Param("id") id: string): Promise<Customer> {
     try {
       const customer = await this.customerService.findById(id);
@@ -123,7 +124,7 @@ export class CustomerController {
         password: DEFAULT_PASSWORD,
         phoneNumber: body.phoneNumber,
         isActive: true,
-        roleId: 3,
+        roleId: RoleIndexEnum.CUSTOMER,
       };
 
       await this.userService.store(new Account(account));
