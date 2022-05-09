@@ -24,6 +24,7 @@ import { CustomerService } from "./customer.service";
 import { CreateCustomerDTO } from "./dto/create-customer.dto";
 import { UpdateCustomerDTO } from "./dto/update-customer.dto";
 import * as bcrypt from "bcrypt";
+import { FileProducerService } from "src/shared/file/file.producer.service";
 
 @Controller("customer")
 @ApiTags("customer")
@@ -31,6 +32,7 @@ export class CustomerController {
   constructor(
     private readonly customerService: CustomerService,
     private userService: UserService,
+    private fileProducerService: FileProducerService,
   ) {}
 
   @Get(":id")
@@ -62,7 +64,7 @@ export class CustomerController {
       let avatar = null;
       if (file) {
         avatar = await uploadService.uploadFile(file);
-        await uploadService.removeImage(body.avatar);
+        await this.fileProducerService.deleteFile(body.avatar);
       }
       const customer: Partial<Customer> = {
         ...body,
