@@ -1,14 +1,16 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Type } from "class-transformer";
-
-import { IsString, Length, IsEmail, IsNumber } from "class-validator";
+import { IsString, Length, IsEmail, IsPhoneNumber } from "class-validator";
 import { GenderEnum } from "src/enum";
 
-export class UpdateCustomerDTO {
+export class CreateCustomerDTO {
   @ApiProperty()
-  @IsNumber()
-  @Type(() => Number)
-  id: number;
+  @IsPhoneNumber()
+  phoneNumber: string;
+
+  @ApiProperty()
+  @IsString()
+  @Length(6, 15)
+  password: string;
 
   @ApiProperty()
   @IsString()
@@ -33,22 +35,4 @@ export class UpdateCustomerDTO {
 
   @ApiProperty({ type: "string", format: "binary" })
   file: Express.Multer.File;
-
-  @ApiProperty()
-  avatar: string;
-
-  @ApiProperty()
-  @IsString()
-  @Length(0, 8)
-  bankName: string;
-
-  @ApiProperty()
-  @IsString()
-  @Length(0, 32)
-  bankCode: string;
-
-  @ApiProperty()
-  @IsString()
-  @Length(0, 32)
-  bankBranch: string;
 }
