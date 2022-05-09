@@ -132,7 +132,7 @@ export class CustomerController {
       };
 
       await this.userService.store(new Account(account));
-      return this.customerService.store(customer);
+      return await this.customerService.store(new Customer(customer));
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

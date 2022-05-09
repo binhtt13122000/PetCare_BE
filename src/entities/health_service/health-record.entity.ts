@@ -40,8 +40,8 @@ export class HealthRecord extends BaseEntity {
   @OneToMany(() => HealthService, (healthService) => healthService.healthRecord)
   healthServices: HealthService[];
 
-  // constructor(partial: Partial<HealthRecord>) {
-  //   super();
-  //   Object.assign(this, partial);
-  // }
+  constructor(partial: Partial<HealthRecord>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

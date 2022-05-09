@@ -8,6 +8,7 @@ import {
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { HealthRecord } from "src/entities/health_service/health-record.entity";
+import { HealthService } from "src/entities/health_service/health-service.entity";
 import { HealthRecordDTO } from "./dto/create-health-record.dto";
 import { HealthRecordService } from "./health-record.service";
 
@@ -26,9 +27,22 @@ export class HealthRecordController {
   }
 
   @Post()
-  async create(@Body() body: HealthRecordDTO): Promise<HealthRecord> {
+  async create(@Body() body: HealthRecordDTO): Promise<HealthService> {
     try {
-      return this.healthRecordService.store(body);
+      const healthRecord: Partial<HealthRecord> = {
+        petId: body.petId,
+        isPeriodical: body.isPeriodical,
+        weight: body.weight,
+        content: body.content,
+        petStatus: body.petStatus,
+        dateOfExam: body.dateOfExam,
+        nextHealthCheck: body.nextHealthCheck,
+      };
+      const createHealthRecord = await this.healthRecordService.store(
+        healthRecord,
+      );
+
+      return;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
