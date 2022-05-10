@@ -4,12 +4,14 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  Param,
   Post,
   UploadedFile,
   UseInterceptors,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiConsumes, ApiTags } from "@nestjs/swagger";
+import { IdParams } from "src/common";
 import { HealthRecord } from "src/entities/health_service/health-record.entity";
 import { HealthService } from "src/entities/health_service/health-service.entity";
 import { uploadService } from "src/external/uploadFile.service";
@@ -31,6 +33,15 @@ export class HealthServiceController {
   async getAll(): Promise<HealthService[]> {
     try {
       return await this.healthServices.index();
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Get(":id")
+  async getOne(@Param() params: IdParams): Promise<HealthService> {
+    try {
+      return await this.healthServices.findById(params.id);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
