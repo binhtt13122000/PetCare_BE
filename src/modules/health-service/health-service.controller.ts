@@ -15,7 +15,8 @@ import { HealthService } from "src/entities/health_service/health-service.entity
 import { uploadService } from "src/external/uploadFile.service";
 import { HealthRecordService } from "../health-record/health-record.service";
 import { HealthRecordDTO } from "./dto/create-health-record.dto";
-import { CreateHealthServiceToHeathRecordDto } from "./dto/create-health-service-to-health-record";
+import { HealthServiceDTO } from "./dto/create-health-service.dto";
+
 import { HealthServices } from "./health-service.service";
 
 @Controller("health-service")
@@ -75,11 +76,11 @@ export class HealthServiceController {
     }
   }
 
-  @Post("add-service")
+  @Post()
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(FileInterceptor("file"))
   async addServiceToHealthRecord(
-    @Body() body: CreateHealthServiceToHeathRecordDto,
+    @Body() body: HealthServiceDTO,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<HealthService> {
     try {

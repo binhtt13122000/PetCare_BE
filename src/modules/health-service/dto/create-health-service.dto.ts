@@ -23,4 +23,9 @@ export class HealthServiceDTO {
   @ApiProperty()
   @IsString()
   petStatus: string;
+
+  @ApiProperty()
+  @Type(() => Number)
+  @IsNumber()
+  healthRecordId: number;
 }
