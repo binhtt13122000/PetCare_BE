@@ -33,6 +33,6 @@ export class CreateCustomerDTO {
   @ApiProperty({ enum: GenderEnum })
   gender: GenderEnum;
 
-  @ApiProperty({ type: "string", format: "binary" })
+  @ApiProperty({ type: "string", format: "binary", required: false })
   file: Express.Multer.File;
 }

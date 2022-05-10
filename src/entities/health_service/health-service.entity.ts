@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -9,7 +10,7 @@ import { HealthRecord } from "./health-record.entity";
 import { Service } from "../service/service.entity";
 
 @Entity("health_service")
-export class HealthService {
+export class HealthService extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
   @Column({ type: "integer", nullable: false })
@@ -37,4 +38,9 @@ export class HealthService {
   @ManyToOne(() => Service, (service) => service.healthServices, {})
   @JoinColumn({ name: "serviceId", referencedColumnName: "id" })
   service: Service;
+
+  constructor(partial: Partial<HealthService>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

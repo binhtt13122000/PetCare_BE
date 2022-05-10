@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -11,7 +12,7 @@ import { Pet } from "../pet_service/pet.entity";
 import { IsDate, IsInt } from "class-validator";
 
 @Entity("health_record")
-export class HealthRecord {
+export class HealthRecord extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
   @Column({ type: "timestamp without time zone", nullable: false })
@@ -38,4 +39,9 @@ export class HealthRecord {
 
   @OneToMany(() => HealthService, (healthService) => healthService.healthRecord)
   healthServices: HealthService[];
+
+  constructor(partial: Partial<HealthRecord>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

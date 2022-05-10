@@ -78,11 +78,11 @@ export class CustomerController {
   }
 
   @Patch("change-status/:id")
-  async changeStatus(@Param("id") id: string): Promise<Customer> {
+  async changeStatus(@Param() params: IdParams): Promise<Customer> {
     try {
-      const customer = await this.customerService.findById(id);
+      const customer = await this.customerService.findById(params.id);
 
-      return this.customerService.update(id, {
+      return this.customerService.update(params.id, {
         ...customer,
         isActive: !customer.isActive,
       });
@@ -92,11 +92,11 @@ export class CustomerController {
   }
 
   @Delete(":id")
-  async delete(@Param("id") id: string): Promise<Customer> {
+  async delete(@Param() params: IdParams): Promise<Customer> {
     try {
-      const customer = await this.customerService.findById(id);
+      const customer = await this.customerService.findById(params.id);
 
-      return this.customerService.update(id, {
+      return this.customerService.update(params.id, {
         ...customer,
         isActive: false,
       });
@@ -115,8 +115,9 @@ export class CustomerController {
     try {
       let avatar = null;
       if (file) {
-        avatar = await uploadService.uploadFile(file);
+        avatar = await (await uploadService.uploadFile(file)).url;
       }
+
       const customer: Partial<Customer> = {
         ...body,
         avatar: avatar,
@@ -132,7 +133,7 @@ export class CustomerController {
       };
 
       await this.userService.store(new Account(account));
-      return this.customerService.store(customer);
+      return await this.customerService.store(new Customer(customer));
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
