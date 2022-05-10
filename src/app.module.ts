@@ -23,6 +23,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { RoomsModule } from "./modules/rooms/rooms.module";
 import { configService } from "src/config/config.service";
 import { StaffModule } from "./modules/staff/staff.module";
+import { TransactionFeesModule } from "./modules/transaction-fees/transaction-fees.module";
 import { ChatGateway } from "./modules/chat/chat.gateway";
 
 const mongoConnectionString = configService.getMongoConnectionString();
@@ -45,6 +46,7 @@ const mongoConnectionString = configService.getMongoConnectionString();
     SaleTransactionsModule,
     RoomsModule,
     StaffModule,
+    TransactionFeesModule,
   ],
   controllers: [AppController],
   providers: [
