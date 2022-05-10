@@ -25,6 +25,8 @@ import { configService } from "src/config/config.service";
 import { StaffModule } from "./modules/staff/staff.module";
 import { HealthRecordModule } from "./modules/health-record/health-record.module";
 import { HealthServiceModule } from "./modules/health-service/health-service.module";
+import { TransactionFeesModule } from "./modules/transaction-fees/transaction-fees.module";
+import { ChatGateway } from "./modules/chat/chat.gateway";
 
 const mongoConnectionString = configService.getMongoConnectionString();
 @Module({
@@ -48,9 +50,11 @@ const mongoConnectionString = configService.getMongoConnectionString();
     StaffModule,
     HealthRecordModule,
     HealthServiceModule,
+    TransactionFeesModule,
   ],
   controllers: [AppController],
   providers: [
+    ChatGateway,
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,

@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsEmail, IsPhoneNumber, IsString, Length } from "class-validator";
+import { IsString, Length } from "class-validator";
 import { Account } from "src/entities/authenticate_service/account.entity";
 import { Customer } from "src/entities/user_management_service/customer.entity";
 import { Staff } from "src/entities/user_management_service/staff.entity";
@@ -41,7 +41,6 @@ export class LoginResponseDTO {
 
 export class UserRegisterDTO {
   @ApiProperty()
-  @IsEmail()
   email: string;
 
   @ApiProperty()
@@ -55,8 +54,10 @@ export class UserRegisterDTO {
   lastName: string;
 
   @ApiProperty()
-  @IsPhoneNumber()
   accessToken: string;
+
+  @ApiProperty()
+  fcmToken: string;
 
   @ApiProperty()
   @IsString()
@@ -71,12 +72,6 @@ export class UserRegisterDTO {
 
   @ApiProperty()
   dateOfBirth: Date;
-
-  @ApiProperty()
-  password: string;
-
-  @ApiProperty()
-  confirmPassword: string;
 }
 
 export class RefreshTokenBodyDTO {
