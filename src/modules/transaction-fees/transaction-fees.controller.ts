@@ -60,7 +60,7 @@ export class TransactionFeesController {
     }
   }
 
-  @Delete("id")
+  @Delete(":id")
   async delete(@Param() params: IdParams): Promise<DeleteResult> {
     try {
       return await this.transactionFeesServices.delete(params.id);
