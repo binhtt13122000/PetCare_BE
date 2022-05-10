@@ -23,6 +23,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { RoomsModule } from "./modules/rooms/rooms.module";
 import { configService } from "src/config/config.service";
 import { StaffModule } from "./modules/staff/staff.module";
+import { ChatGateway } from "./modules/chat/chat.gateway";
 
 const mongoConnectionString = configService.getMongoConnectionString();
 @Module({
@@ -47,6 +48,7 @@ const mongoConnectionString = configService.getMongoConnectionString();
   ],
   controllers: [AppController],
   providers: [
+    ChatGateway,
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,

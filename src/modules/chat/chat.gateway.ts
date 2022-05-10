@@ -5,7 +5,7 @@ import {
   WebSocketServer,
   MessageBody,
 } from "@nestjs/websockets";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { Logger } from "@nestjs/common";
 
 @WebSocketGateway({
@@ -28,6 +28,24 @@ export class ChatGateway implements OnGatewayInit {
   handleMessage(
     @MessageBody() message: { sender: string; room: string; message: string },
   ): void {
+    // eslint-disable-next-line no-console
+    console.log("chat");
     this.wss.to(message.room).emit("chatToClient", message);
+  }
+
+  @SubscribeMessage("joinRoom")
+  handleRoomJoin(client: Socket, room: string): void {
+    // eslint-disable-next-line no-console
+    console.log("A NEW CLIENT JUST JOINED", room);
+    client.join(room);
+    client.emit("joinedRoom", room);
+  }
+
+  @SubscribeMessage("leaveRoom")
+  handleRoomLeave(client: Socket, room: string): void {
+    // eslint-disable-next-line no-console
+    console.log("A NEW CLIENT JUST LEAVE", room);
+    client.leave(room);
+    client.emit("leftRoom", room);
   }
 }
