@@ -113,7 +113,10 @@ export class CustomerController {
     @UploadedFile() file: Express.Multer.File,
   ): Promise<Customer> {
     try {
-      const { url: avatar } = await uploadService.uploadFile(file);
+      let avatar = null;
+      if (file) {
+        avatar = await (await uploadService.uploadFile(file)).url;
+      }
 
       const customer: Partial<Customer> = {
         ...body,

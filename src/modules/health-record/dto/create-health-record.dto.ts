@@ -1,11 +1,8 @@
-import { ApiProperty, OmitType } from "@nestjs/swagger";
+import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsDate, IsNumber, IsString } from "class-validator";
-import { HealthServiceDTO } from "./create-health-service.dto";
 
-export class HealthRecordDTO extends OmitType(HealthServiceDTO, [
-  "healthRecordId",
-]) {
+export class HealthRecordDTO {
   @ApiProperty()
   @IsNumber()
   @Type(() => Number)
@@ -32,7 +29,7 @@ export class HealthRecordDTO extends OmitType(HealthServiceDTO, [
   @IsDate()
   dateOfExam: Date;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @Type(() => Date)
   @IsDate()
   nextHealthCheck: Date;
