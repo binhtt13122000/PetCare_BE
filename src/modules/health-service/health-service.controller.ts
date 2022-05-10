@@ -5,20 +5,17 @@ import {
   HttpException,
   HttpStatus,
   Post,
-  UploadedFiles,
+  UploadedFile,
   UseInterceptors,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { HealthRecord } from "src/entities/health_service/health-record.entity";
 import { HealthService } from "src/entities/health_service/health-service.entity";
-
 import { uploadService } from "src/external/uploadFile.service";
 import { HealthRecordService } from "../health-record/health-record.service";
 import { HealthRecordDTO } from "./dto/create-health-record.dto";
-
-import { HealthServiceDto } from "./dto/health-service.dto";
-
+import { CreateHealthServiceToHeathRecordDto } from "./dto/create-health-service-to-health-record";
 import { HealthServices } from "./health-service.service";
 
 @Controller("health-service")
@@ -38,70 +35,67 @@ export class HealthServiceController {
     }
   }
 
-  // @ApiBody({
-  //   schema: {
-  //     type: "object",
-  //     properties: {
-  //       content: { type: "string" },
-  //       petStatus: { type: "string" },
-  //       serviceId: { type: "integer" },
-  //       price: { type: "integer" },
-  //       file: {
-  //         type: "string",
-  //         format: "binary",
-  //       },
-  //     },
-  //   },
-  // })
-
-  @Post("/health-record")
+  @Post("health-record")
   @ApiConsumes("multipart/form-data")
-  @UseInterceptors(FileInterceptor("files"))
+  @UseInterceptors(FileInterceptor("file"))
   async create(
     @Body() body: HealthRecordDTO,
-    @Body()
-    arrayHealthService: HealthServiceDto[],
-    @UploadedFiles() files: Array<Express.Multer.File>,
-  ): Promise<HealthService[]> {
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<HealthService> {
     try {
-      const listHealthService: Pick<
-        HealthService,
-        "content" | "evidence" | "healthRecordId" | "petStatus" | "price"
-      >[] = [];
-
-      const healthRecord: Partial<HealthRecordDTO> = {
+      const healthRecord: Partial<HealthRecord> = {
         petId: body.petId,
         isPeriodical: body.isPeriodical,
         weight: body.weight,
-        content: body.content,
-        petStatus: body.petStatus,
+        content: body.contentOfHealthRecord,
+        petStatus: body.petStatusOfHealthRecord,
         dateOfExam: body.dateOfExam,
         nextHealthCheck: body.nextHealthCheck,
       };
-      const fileEvidence: { url: string; type: string }[] = [];
-
-      files?.map(async (value) => {
-        const file = await uploadService.uploadFile(value);
-        fileEvidence.push(file);
-      });
 
       const createHealthRecord = await this.healthRecordService.store(
         new HealthRecord(healthRecord),
       );
 
-      // if (arrayHealthService) {
-      //   arrayHealthService.map((item, index) => {
-      //     listHealthService.push(...listHealthService, {
-      //       healthRecordId: createHealthRecord.id,
-      //       content: item.content,
-      //       petStatus: item.petStatus,
-      //       price: item.price,
-      //       evidence: fileEvidence[index].url,
-      //     });
-      //   });
-      // }
+      const { url: evidence } = await uploadService.uploadFile(file);
 
-      return await this.healthServices.saveArray(listHealthService);
+      const createHealthService: Partial<HealthService> = {
+        healthRecordId: createHealthRecord.id,
+        evidence: evidence,
+        serviceId: body.serviceId,
+        price: body.price,
+        content: body.content,
+        petStatus: body.petStatus,
+      };
+      return await this.healthServices.store(
+        new HealthService(createHealthService),
+      );
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Post("add-service")
+  @ApiConsumes("multipart/form-data")
+  @UseInterceptors(FileInterceptor("file"))
+  async addServiceToHealthRecord(
+    @Body() body: CreateHealthServiceToHeathRecordDto,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<HealthService> {
+    try {
+      const { url: evidence } = await uploadService.uploadFile(file);
+
+      const createHealthService: Partial<HealthService> = {
+        evidence: evidence,
+        serviceId: body.serviceId,
+        price: body.price,
+        content: body.content,
+        petStatus: body.petStatus,
+        healthRecordId: body.healthRecordId,
+      };
+      return await this.healthServices.store(
+        new HealthService(createHealthService),
+      );
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

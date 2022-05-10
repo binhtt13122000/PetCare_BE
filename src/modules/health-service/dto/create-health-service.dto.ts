@@ -1,13 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsNumber } from "class-validator";
+import { IsNumber, IsString } from "class-validator";
 
 export class HealthServiceDTO {
-  // @ApiProperty({ type: "string", format: "binary" })
-  // file: Express.Multer.File;
-
-  @ApiProperty({ type: "array", items: { type: "string", format: "binary" } })
-  files: Array<Express.Multer.File>;
+  @ApiProperty({ type: "string", format: "binary" })
+  file: Express.Multer.File;
 
   @ApiProperty()
   @IsNumber()
@@ -20,8 +17,10 @@ export class HealthServiceDTO {
   price: number;
 
   @ApiProperty()
-  contentOfHealthService: string;
+  @IsString()
+  content: string;
 
   @ApiProperty()
-  petStatusOfHealthService: string;
+  @IsString()
+  petStatus: string;
 }

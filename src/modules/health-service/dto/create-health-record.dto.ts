@@ -1,11 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsDate, IsNumber, IsString } from "class-validator";
+import { HealthServiceDTO } from "./create-health-service.dto";
 
-export class HealthRecordDTO {
-  @ApiProperty({ type: "array", items: { type: "string", format: "binary" } })
-  files: Array<Express.Multer.File>;
-
+export class HealthRecordDTO extends HealthServiceDTO {
   @ApiProperty()
   @IsNumber()
   @Type(() => Number)
@@ -21,11 +19,11 @@ export class HealthRecordDTO {
 
   @ApiProperty()
   @IsString()
-  content: string;
+  contentOfHealthRecord: string;
 
   @ApiProperty()
   @IsString()
-  petStatus: string;
+  petStatusOfHealthRecord: string;
 
   @ApiProperty()
   @Type(() => Date)
