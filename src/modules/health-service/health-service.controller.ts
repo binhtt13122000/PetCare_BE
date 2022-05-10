@@ -5,18 +5,19 @@ import {
   HttpException,
   HttpStatus,
   Post,
-  UploadedFile,
+  UploadedFiles,
   UseInterceptors,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { HealthRecord } from "src/entities/health_service/health-record.entity";
 import { HealthService } from "src/entities/health_service/health-service.entity";
-import { uploadService } from "src/external/uploadFile.service";
-import { FileProducerService } from "src/shared/file/file.producer.service";
-import { HealthRecordService } from "../health-record/health-record.service";
 
-import { HealthServiceDTO } from "./dto/create-health-service.dto";
+import { uploadService } from "src/external/uploadFile.service";
+import { HealthRecordService } from "../health-record/health-record.service";
+import { HealthRecordDTO } from "./dto/create-health-record.dto";
+
+import { HealthServiceDto } from "./dto/health-service.dto";
 
 import { HealthServices } from "./health-service.service";
 
@@ -26,7 +27,6 @@ export class HealthServiceController {
   constructor(
     private readonly healthServices: HealthServices,
     private healthRecordService: HealthRecordService,
-    private fileProducerService: FileProducerService,
   ) {}
 
   @Get()
@@ -38,34 +38,70 @@ export class HealthServiceController {
     }
   }
 
-  @Post()
-  async create(@Body() body: HealthServiceDTO): Promise<HealthService> {
+  // @ApiBody({
+  //   schema: {
+  //     type: "object",
+  //     properties: {
+  //       content: { type: "string" },
+  //       petStatus: { type: "string" },
+  //       serviceId: { type: "integer" },
+  //       price: { type: "integer" },
+  //       file: {
+  //         type: "string",
+  //         format: "binary",
+  //       },
+  //     },
+  //   },
+  // })
+
+  @Post("/health-record")
+  @ApiConsumes("multipart/form-data")
+  @UseInterceptors(FileInterceptor("files"))
+  async create(
+    @Body() body: HealthRecordDTO,
+    @Body()
+    arrayHealthService: HealthServiceDto[],
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ): Promise<HealthService[]> {
     try {
-      const healthRecord: Partial<HealthRecord> = {
+      const listHealthService: Pick<
+        HealthService,
+        "content" | "evidence" | "healthRecordId" | "petStatus" | "price"
+      >[] = [];
+
+      const healthRecord: Partial<HealthRecordDTO> = {
         petId: body.petId,
         isPeriodical: body.isPeriodical,
         weight: body.weight,
-        content: body.contentOfHealthRecord,
-        petStatus: body.petStatusOfHealthRecord,
+        content: body.content,
+        petStatus: body.petStatus,
         dateOfExam: body.dateOfExam,
         nextHealthCheck: body.nextHealthCheck,
       };
+      const fileEvidence: { url: string; type: string }[] = [];
+
+      files?.map(async (value) => {
+        const file = await uploadService.uploadFile(value);
+        fileEvidence.push(file);
+      });
 
       const createHealthRecord = await this.healthRecordService.store(
         new HealthRecord(healthRecord),
       );
 
-      const createHealthService: Partial<HealthService> = {
-        evidence: body.evidence,
-        serviceId: body.serviceId,
-        price: body.price,
-        content: body.contentOfHealthService,
-        petStatus: body.petStatusOfHealthService,
-        healthRecordId: createHealthRecord.id,
-      };
-      return await this.healthServices.store(
-        new HealthService(createHealthService),
-      );
+      // if (arrayHealthService) {
+      //   arrayHealthService.map((item, index) => {
+      //     listHealthService.push(...listHealthService, {
+      //       healthRecordId: createHealthRecord.id,
+      //       content: item.content,
+      //       petStatus: item.petStatus,
+      //       price: item.price,
+      //       evidence: fileEvidence[index].url,
+      //     });
+      //   });
+      // }
+
+      return await this.healthServices.saveArray(listHealthService);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

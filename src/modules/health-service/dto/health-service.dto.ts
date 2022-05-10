@@ -2,13 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsNumber } from "class-validator";
 
-export class HealthServiceDTO {
-  // @ApiProperty({ type: "string", format: "binary" })
-  // file: Express.Multer.File;
-
-  @ApiProperty({ type: "array", items: { type: "string", format: "binary" } })
-  files: Array<Express.Multer.File>;
-
+export class HealthServiceDto {
   @ApiProperty()
   @IsNumber()
   @Type(() => Number)
@@ -20,8 +14,15 @@ export class HealthServiceDTO {
   price: number;
 
   @ApiProperty()
-  contentOfHealthService: string;
+  content: string;
 
   @ApiProperty()
-  petStatusOfHealthService: string;
+  petStatus: string;
+}
+
+export class IArrayHeathService {
+  @ApiProperty({ type: [HealthServiceDto] })
+  @Type(() => HealthServiceDto)
+  // @ValidateNested({ each: true })
+  items: HealthServiceDto[];
 }

@@ -1,15 +1,13 @@
 import {
-  Body,
   Controller,
   Get,
   HttpException,
   HttpStatus,
-  Post,
+  Param,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { IdParams } from "src/common";
 import { HealthRecord } from "src/entities/health_service/health-record.entity";
-import { HealthService } from "src/entities/health_service/health-service.entity";
-import { HealthRecordDTO } from "./dto/create-health-record.dto";
 import { HealthRecordService } from "./health-record.service";
 
 @Controller("health-record")
@@ -26,23 +24,10 @@ export class HealthRecordController {
     }
   }
 
-  @Post()
-  async create(@Body() body: HealthRecordDTO): Promise<HealthService> {
+  @Get(":id")
+  async getOne(@Param() params: IdParams): Promise<HealthRecord> {
     try {
-      const healthRecord: Partial<HealthRecord> = {
-        petId: body.petId,
-        isPeriodical: body.isPeriodical,
-        weight: body.weight,
-        content: body.content,
-        petStatus: body.petStatus,
-        dateOfExam: body.dateOfExam,
-        nextHealthCheck: body.nextHealthCheck,
-      };
-      const createHealthRecord = await this.healthRecordService.store(
-        healthRecord,
-      );
-
-      return;
+      return await this.healthRecordService.findById(params.id);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
