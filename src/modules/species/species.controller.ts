@@ -87,4 +87,32 @@ export class SpeciesController {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
+
+  @Patch("change-status-breeding/:id")
+  async changeStatusBreeding(@Param("id") id: string): Promise<Species> {
+    try {
+      const species = await this.speciesService.findById(id);
+
+      return this.speciesService.update(id, {
+        ...species,
+        isBreeding: !species.isBreeding,
+      });
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Patch("change-status-inject/:id")
+  async changeStatusInject(@Param("id") id: string): Promise<Species> {
+    try {
+      const species = await this.speciesService.findById(id);
+
+      return this.speciesService.update(id, {
+        ...species,
+        isInject: !species.isInject,
+      });
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
 }
