@@ -8,7 +8,6 @@ export class CreatePetDTO {
   name: string;
 
   @ApiProperty()
-  @IsDate()
   dob: Date;
 
   @ApiProperty()

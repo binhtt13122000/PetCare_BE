@@ -6,12 +6,10 @@ export class UpdateSaleTransactionDTO {
   @ApiProperty()
   id: number;
   @ApiProperty()
-  @IsDate()
   meetingTime: Date;
   @ApiProperty()
   placeMeeting: string;
   @ApiProperty()
-  @IsDate()
   transactionTime: Date;
   @ApiProperty()
   @IsInt()

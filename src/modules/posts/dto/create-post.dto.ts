@@ -16,10 +16,8 @@ export class CreatePostDTO {
   @IsInt()
   provisionalTotal: number;
   @ApiProperty()
-  @IsDate()
   createTime: Date;
   @ApiProperty()
-  @IsDate()
   meetingTime: Date;
   @ApiProperty({ enum: ServiceEnum })
   type: ServiceEnum;
