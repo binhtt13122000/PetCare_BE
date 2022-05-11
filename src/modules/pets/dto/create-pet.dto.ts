@@ -1,6 +1,6 @@
 import { GenderEnum, PetEnum } from "src/enum";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, Length, IsDate, IsInt, IsBoolean } from "class-validator";
+import { IsString, Length, IsInt, IsBoolean } from "class-validator";
 export class CreatePetDTO {
   @ApiProperty()
   @IsString()
@@ -8,7 +8,6 @@ export class CreatePetDTO {
   name: string;
 
   @ApiProperty()
-  @IsDate()
   dob: Date;
 
   @ApiProperty()
