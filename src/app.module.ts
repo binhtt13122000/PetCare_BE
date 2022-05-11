@@ -28,6 +28,7 @@ import { BreedsModule } from "./modules/breeds/breeds.module";
 import { SpeciesModule } from "./modules/species/species.module";
 import { TransactionFeesModule } from "./modules/transaction-fees/transaction-fees.module";
 import { VaccinePetRecordsModule } from "./modules/vaccine-pet-records/vaccine-pet-records.module";
+import { ServiceFeesModule } from "./modules/service-fees/service-fees.module";
 
 const mongoConnectionString = configService.getMongoConnectionString();
 @Module({
@@ -53,6 +54,7 @@ const mongoConnectionString = configService.getMongoConnectionString();
     TransactionFeesModule,
     SpeciesModule,
     BreedsModule,
+    ServiceFeesModule,
   ],
   controllers: [AppController],
   providers: [
