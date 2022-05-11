@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -11,7 +12,7 @@ import { Species } from "./species.entity";
 import { IsBoolean, IsString, Length } from "class-validator";
 
 @Entity("breed")
-export class Breed {
+export class Breed extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
   @Column({ type: "text", nullable: false })
@@ -35,4 +36,9 @@ export class Breed {
 
   @OneToMany(() => Pet, (pet) => pet.breed)
   pets: Pet[];
+
+  constructor(partial: Partial<Breed>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

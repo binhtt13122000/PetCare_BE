@@ -25,6 +25,8 @@ import { configService } from "src/config/config.service";
 import { StaffModule } from "./modules/staff/staff.module";
 import { TransactionFeesModule } from "./modules/transaction-fees/transaction-fees.module";
 import { ChatGateway } from "./modules/chat/chat.gateway";
+import { BreedsModule } from "./modules/breeds/breeds.module";
+import { SpeciesModule } from "./modules/species/species.module";
 
 const mongoConnectionString = configService.getMongoConnectionString();
 @Module({
@@ -47,6 +49,8 @@ const mongoConnectionString = configService.getMongoConnectionString();
     RoomsModule,
     StaffModule,
     TransactionFeesModule,
+    SpeciesModule,
+    BreedsModule,
   ],
   controllers: [AppController],
   providers: [
