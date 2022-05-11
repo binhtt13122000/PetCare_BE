@@ -27,7 +27,7 @@ import { TransactionFeesModule } from "./modules/transaction-fees/transaction-fe
 import { ChatGateway } from "./modules/chat/chat.gateway";
 import { BreedsModule } from "./modules/breeds/breeds.module";
 import { SpeciesModule } from "./modules/species/species.module";
-import { ServiceFeesModule } from "./service-fees/service-fees.module";
+import { ServiceFeesModule } from "./modules/service-fees/service-fees.module";
 import { ServiceFeeService } from "./service-fee/service-fee.service";
 
 const mongoConnectionString = configService.getMongoConnectionString();
