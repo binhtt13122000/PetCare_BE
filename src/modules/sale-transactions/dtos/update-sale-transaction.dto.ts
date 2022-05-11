@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsInt, Min, IsString, Max } from "class-validator";
+import { IsInt, Min, IsString, Max } from "class-validator";
 import { SaleTransactionEnum } from "src/enum";
 
 export class UpdateSaleTransactionDTO {
