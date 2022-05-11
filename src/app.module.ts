@@ -27,6 +27,7 @@ import { TransactionFeesModule } from "./modules/transaction-fees/transaction-fe
 import { ChatGateway } from "./modules/chat/chat.gateway";
 import { BreedsModule } from "./modules/breeds/breeds.module";
 import { SpeciesModule } from "./modules/species/species.module";
+import { PromotionsModule } from "./modules/promotions/promotions.module";
 
 const mongoConnectionString = configService.getMongoConnectionString();
 @Module({
@@ -51,6 +52,7 @@ const mongoConnectionString = configService.getMongoConnectionString();
     TransactionFeesModule,
     SpeciesModule,
     BreedsModule,
+    PromotionsModule,
   ],
   controllers: [AppController],
   providers: [
