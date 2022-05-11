@@ -13,7 +13,6 @@ import {
 import { ApiTags } from "@nestjs/swagger";
 import { IdParams } from "src/common";
 import { Breed } from "src/entities/pet_service/breed.entity";
-import { DeleteResult } from "typeorm";
 import { BreedsService } from "./breeds.service";
 import { CreateBreedsDTO } from "./dto/create-breeds.dto";
 import { UpdateBreedsDTO } from "./dto/update-breeds.dto";

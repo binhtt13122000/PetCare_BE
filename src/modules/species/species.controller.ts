@@ -13,7 +13,6 @@ import {
 import { ApiTags } from "@nestjs/swagger";
 import { IdParams } from "src/common";
 import { Species } from "src/entities/pet_service/species.entity";
-import { DeleteResult } from "typeorm";
 import { CreateSpeciesDTO } from "./dto/create-species.dto";
 import { UpdateSpecies } from "./dto/update-species.dto";
 import { SpeciesService } from "./species.service";
