@@ -3,12 +3,12 @@ import { Type } from "class-transformer";
 import { IsNumber } from "class-validator";
 
 export class CreateServiceFeeDTO {
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsNumber()
   @Type(() => Number)
   min: number;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @Type(() => Number)
   @IsNumber()
   max: number;
