@@ -27,6 +27,8 @@ import { TransactionFeesModule } from "./modules/transaction-fees/transaction-fe
 import { ChatGateway } from "./modules/chat/chat.gateway";
 import { BreedsModule } from "./modules/breeds/breeds.module";
 import { SpeciesModule } from "./modules/species/species.module";
+import { ServiceFeesModule } from "./service-fees/service-fees.module";
+import { ServiceFeeService } from "./service-fee/service-fee.service";
 
 const mongoConnectionString = configService.getMongoConnectionString();
 @Module({
@@ -51,6 +53,7 @@ const mongoConnectionString = configService.getMongoConnectionString();
     TransactionFeesModule,
     SpeciesModule,
     BreedsModule,
+    ServiceFeesModule,
   ],
   controllers: [AppController],
   providers: [
@@ -64,6 +67,7 @@ const mongoConnectionString = configService.getMongoConnectionString();
       useClass: ResponseDataInterceptor,
     },
     AppService,
+    ServiceFeeService,
   ],
 })
 export class AppModule {}
