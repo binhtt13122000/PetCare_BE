@@ -95,7 +95,19 @@ export class CustomerController {
   async delete(@Param("id") id: string): Promise<Customer> {
     try {
       const customer = await this.customerService.findById(id);
-
+      if (!customer) {
+        throw new HttpException("Not found!", HttpStatus.NOT_FOUND);
+      }
+      const user = await this.userService.findByPhoneNumber(
+        customer.phoneNumber,
+      );
+      if (!user) {
+        throw new HttpException("Not found!", HttpStatus.NOT_FOUND);
+      }
+      await this.userService.update(id, {
+        ...user,
+        isActive: false,
+      });
       return this.customerService.update(id, {
         ...customer,
         isActive: false,
