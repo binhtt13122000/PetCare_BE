@@ -1,17 +1,15 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsInt, Min, IsString, Max } from "class-validator";
+import { IsInt, Min, IsString, Max } from "class-validator";
 import { SaleTransactionEnum } from "src/enum";
 
 export class UpdateSaleTransactionDTO {
   @ApiProperty()
   id: number;
   @ApiProperty()
-  @IsDate()
   meetingTime: Date;
   @ApiProperty()
   placeMeeting: string;
   @ApiProperty()
-  @IsDate()
   transactionTime: Date;
   @ApiProperty()
   @IsInt()
