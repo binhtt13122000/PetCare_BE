@@ -12,8 +12,6 @@ import { Service } from "../service/service.entity";
 export class HealthService {
   @PrimaryGeneratedColumn("increment")
   id: number;
-  @Column({ type: "integer", nullable: false })
-  price: number;
   @Column({ type: "text", nullable: true })
   evidence: string;
   @Column({ type: "text", nullable: false })
