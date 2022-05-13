@@ -23,10 +23,11 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { RoomsModule } from "./modules/rooms/rooms.module";
 import { configService } from "src/config/config.service";
 import { StaffModule } from "./modules/staff/staff.module";
-import { TransactionFeesModule } from "./modules/transaction-fees/transaction-fees.module";
 import { ChatGateway } from "./modules/chat/chat.gateway";
 import { BreedsModule } from "./modules/breeds/breeds.module";
 import { SpeciesModule } from "./modules/species/species.module";
+import { TransactionFeesModule } from "./modules/transaction-fees/transaction-fees.module";
+import { VaccinePetRecordsModule } from "./modules/vaccine-pet-records/vaccine-pet-records.module";
 import { PromotionsModule } from "./modules/promotions/promotions.module";
 import { ServiceFeesModule } from "./modules/service-fees/service-fees.module";
 
@@ -38,6 +39,7 @@ const mongoConnectionString = configService.getMongoConnectionString();
     AuthModule,
     UserModule,
     VaccineModule,
+    VaccinePetRecordsModule,
     PapersModule,
     PetsModule,
     SharedModule,
