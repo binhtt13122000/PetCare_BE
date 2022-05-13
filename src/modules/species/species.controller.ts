@@ -14,7 +14,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { IdParams } from "src/common";
 import { Species } from "src/entities/pet_service/species.entity";
 import { CreateSpeciesDTO } from "./dto/create-species.dto";
-import { UpdateSpecies } from "./dto/update-species.dto";
+import { UpdateSpeciesDTO } from "./dto/update-species.dto";
 import { SpeciesService } from "./species.service";
 
 @Controller("species")
@@ -50,7 +50,7 @@ export class SpeciesController {
   }
 
   @Put()
-  async update(@Body() body: UpdateSpecies): Promise<Species> {
+  async update(@Body() body: UpdateSpeciesDTO): Promise<Species> {
     try {
       return await this.speciesService.update(body.id, body);
     } catch (error) {

@@ -264,12 +264,8 @@ export class AuthController {
               id: account.id,
               fcm: data.fcmToken,
             });
-            let information: Customer | Staff = null;
-            if (data.role === RoleEnum.CUSTOMER) {
-              information = await this.customerService.findByPhoneNumber(
-                account.phoneNumber,
-              );
-            } else if (data.role === RoleEnum.STAFF) {
+            let information: Staff = null;
+            if (data.role === RoleEnum.STAFF) {
               information = await this.staffService.findByPhoneNumber(
                 account.phoneNumber,
               );

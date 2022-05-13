@@ -1,9 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsNumber } from "class-validator";
-import { CreateSpeciesDTO } from "./create-species.dto";
+import { CreatePromotionDTO } from "./create-promotion.dto";
 
-export class UpdateSpeciesDTO extends CreateSpeciesDTO {
+export class UpdatePromotionDTO extends CreatePromotionDTO {
   @ApiProperty()
   @IsNumber()
   @Type(() => Number)
