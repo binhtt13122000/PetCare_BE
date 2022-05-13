@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -12,7 +13,7 @@ import { SaleTransaction } from "../transaction_service/sale-transaction.entity"
 import { BreedingTransaction } from "../transaction_service/breeding-transaction.entity";
 
 @Entity("promotion")
-export class Promotion {
+export class Promotion extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
   @Column({ type: "text", nullable: false })
@@ -33,7 +34,7 @@ export class Promotion {
   maxMoneyPromo: number;
 
   @Column({ name: "customerId", nullable: true })
-  accountId: number;
+  customerId: number;
   @ManyToOne(() => Customer, (customer) => customer.promotions, {})
   @JoinColumn({ name: "customerId", referencedColumnName: "id" })
   customer: Customer;
@@ -52,4 +53,9 @@ export class Promotion {
     (breedingTransaction) => breedingTransaction.promotion,
   )
   breedingTransactions: BreedingTransaction[];
+
+  constructor(partial: Partial<Promotion>) {
+    super();
+    Object.assign(this, partial);
+  }
 }
