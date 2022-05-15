@@ -3,12 +3,14 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   HttpException,
   HttpStatus,
   Param,
   Patch,
   Post,
   Put,
+  Query,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { ShopService } from "./services.service";
@@ -16,6 +18,8 @@ import { CreateServiceDTO } from "./dto/create-service.dto";
 import { Service } from "src/entities/service/service.entity";
 import { UpdateServiceDTO } from "./dto/update-service.dto";
 import { IdParams } from "src/common";
+import { PageDto } from "./dto/page.dto";
+import { PageOptionsDto } from "./dto/page-options.dto";
 
 @Controller("services")
 @ApiTags("services")
@@ -26,6 +30,19 @@ export class ServicesController {
   async getOne(@Param() params: IdParams): Promise<Service> {
     try {
       return await this.shopService.findById(params.id);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  async getAllService(
+    @Query()
+    pageOptionsDto: PageOptionsDto,
+  ): Promise<PageDto<Service>> {
+    try {
+      return await this.shopService.getUsers(pageOptionsDto);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

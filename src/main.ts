@@ -29,6 +29,7 @@ async function bootstrap(): Promise<void> {
   app.setGlobalPrefix(API_PREFIX);
   app.useGlobalPipes(
     new ValidationPipe({
+      transform: true,
       exceptionFactory: (
         validationErrors: ValidationError[] = [],
       ): BadRequestException => {

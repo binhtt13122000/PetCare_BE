@@ -77,3 +77,13 @@ export enum LoginStatusEnum {
   UNAUTHORIZED = "UNAUTHORIZED",
   UNAUTHENTICATED = "UNAUTHENTICATED",
 }
+
+export enum OrderType {
+  DESC = "DESC",
+  ASC = "ASC",
+}
+
+export enum ServiceOrderName {
+  ID = "id",
+  NAME = "name",
+}
