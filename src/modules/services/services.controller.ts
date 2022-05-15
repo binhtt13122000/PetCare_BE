@@ -36,19 +36,6 @@ export class ServicesController {
     }
   }
 
-  // @Get()
-  // @HttpCode(HttpStatus.OK)
-  // async getAllService(
-  //   @Query()
-  //   pageOptionsDto: ServiceOptionDto,
-  // ): Promise<PageDto<Service>> {
-  //   try {
-  //     return await this.shopService.getServices(pageOptionsDto);
-  //   } catch (error) {
-  //     throw new HttpException(error, HttpStatus.BAD_REQUEST);
-  //   }
-  // }
-
   @Get()
   @HttpCode(HttpStatus.OK)
   async getAllServices(
@@ -56,10 +43,18 @@ export class ServicesController {
     pageOptionsDto: ServiceOptionDto,
   ): Promise<PageDto<Service>> {
     try {
-      return await this.shopService.getAllEntities(
+      if (
+        pageOptionsDto.name ||
+        pageOptionsDto.priceTo ||
+        pageOptionsDto.priceFrom ||
+        pageOptionsDto.description
+      ) {
+        return await this.shopService.getServices(pageOptionsDto);
+      }
+      return await this.shopService.getAll(
         pageOptionsDto,
         "service",
-        pageOptionsDto.serviceOrderName,
+        pageOptionsDto.orderName,
         ["name", "description"],
       );
     } catch (error) {

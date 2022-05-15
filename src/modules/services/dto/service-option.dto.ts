@@ -8,16 +8,13 @@ export class ServiceOptionDto extends PageOptionsDto {
   @ApiPropertyOptional({ enum: ServiceOrderName, default: ServiceOrderName.ID })
   @IsEnum(ServiceOrderName)
   @IsOptional()
-  serviceOrderName?: ServiceOrderName = ServiceOrderName.ID;
+  orderName?: ServiceOrderName = ServiceOrderName.ID;
 
   @ApiProperty({ required: false })
-  readonly name?: string;
+  name?: string;
 
   @ApiProperty({ required: false })
-  readonly description?: string;
-
-  @ApiProperty({ required: false })
-  readonly unit?: string;
+  description?: string;
 
   @ApiPropertyOptional({
     minimum: 0,
@@ -28,7 +25,7 @@ export class ServiceOptionDto extends PageOptionsDto {
   @Min(0)
   @Max(9999999)
   @IsOptional()
-  readonly priceTo?: number = 1;
+  priceFrom?: number = 1;
 
   @ApiPropertyOptional({
     minimum: 1,
@@ -36,10 +33,10 @@ export class ServiceOptionDto extends PageOptionsDto {
     default: 100000,
   })
   @Type(() => Number)
-  @Min(0)
+  @Min(5)
   @Max(10000000)
   @IsOptional()
-  readonly priceFrom?: number = 100000;
+  priceTo?: number = 100000;
 
   @ApiProperty({ required: false })
   isHealthCheck?: boolean;

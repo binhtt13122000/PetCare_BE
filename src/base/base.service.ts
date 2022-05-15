@@ -41,7 +41,7 @@ export class BaseService<T extends BaseEntity, R extends Repository<T>>
     return this.repository.delete(ids);
   }
 
-  async getAllEntities(
+  async getAll(
     pageOptionsDto: PageOptionsDto,
     entity: string,
     orderName: string,
@@ -55,21 +55,16 @@ export class BaseService<T extends BaseEntity, R extends Repository<T>>
           name: "%" + pageOptionsDto.filtering + "%",
         });
       });
-
-      const { entities } = await queryBuilder.getRawAndEntities();
-      const itemCount = await queryBuilder.getCount();
-      const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
-      return new PageDto(entities, pageMetaDto);
     } else {
       queryBuilder
         .orderBy(entity + "." + orderName, pageOptionsDto.orderType)
         .skip(pageOptionsDto.skip)
         .take(pageOptionsDto.limit);
-
-      const { entities } = await queryBuilder.getRawAndEntities();
-      const itemCount = await queryBuilder.getCount();
-      const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
-      return new PageDto(entities, pageMetaDto);
     }
+
+    const { entities } = await queryBuilder.getRawAndEntities();
+    const itemCount = await queryBuilder.getCount();
+    const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
+    return new PageDto(entities, pageMetaDto);
   }
 }

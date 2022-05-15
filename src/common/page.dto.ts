@@ -5,13 +5,13 @@ import { PageMetaDto } from "./page-meta.dto";
 export class PageDto<T> {
   @IsArray()
   @ApiProperty({ isArray: true })
-  readonly data: T[];
+  readonly content: T[];
 
   @ApiProperty({ type: () => PageMetaDto })
   readonly meta: PageMetaDto;
 
-  constructor(data: T[], meta: PageMetaDto) {
-    this.data = data;
+  constructor(content: T[], meta: PageMetaDto) {
+    this.content = content;
     this.meta = meta;
   }
 }

@@ -16,21 +16,21 @@ export class PageOptionsDto {
   @Type(() => Number)
   @Min(1)
   @IsOptional()
-  page?: number = 1;
+  readonly page?: number = 1;
 
   @ApiPropertyOptional({
     minimum: 1,
-    maximum: 50,
+    maximum: 100,
     default: 10,
   })
   @Type(() => Number)
   @Min(1)
-  @Max(50)
+  @Max(100)
   @IsOptional()
   readonly limit?: number = 10;
 
   @ApiProperty({ required: false })
-  readonly filtering?: string;
+  filtering?: string;
 
   get skip(): number {
     return (this.page - 1) * this.limit;
