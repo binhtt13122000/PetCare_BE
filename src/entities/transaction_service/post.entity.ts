@@ -12,7 +12,7 @@ import { Pet } from "../pet_service/pet.entity";
 import { BreedingTransaction } from "./breeding-transaction.entity";
 import { SaleTransaction } from "./sale-transaction.entity";
 import { IsDate, IsInt } from "class-validator";
-import { Staff } from "../user_management_service/staff.entity";
+import { Branch } from "../user_management_service/branch.entity";
 import { Customer } from "../user_management_service/customer.entity";
 import { PostEnum, ServiceEnum } from "src/enum";
 
@@ -79,11 +79,11 @@ export class Post extends BaseEntity {
   @JoinColumn({ name: "petId", referencedColumnName: "id" })
   pet: Pet;
 
-  @Column({ name: "staffId", nullable: true })
-  staffId: number;
-  @ManyToOne(() => Staff, (staff) => staff.posts, {})
-  @JoinColumn({ name: "staffId", referencedColumnName: "id" })
-  staff: Staff;
+  @Column({ name: "branchId", nullable: true })
+  branchId: number;
+  @ManyToOne(() => Branch, (branch) => branch.posts, {})
+  @JoinColumn({ name: "branchId", referencedColumnName: "id" })
+  branch: Branch;
 
   @Column({ name: "customerId" })
   customerId: number;

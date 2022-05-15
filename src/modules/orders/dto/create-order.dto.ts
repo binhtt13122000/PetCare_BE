@@ -13,7 +13,7 @@ export class CreateOrderDTO {
   @ApiProperty()
   orderDetails: CreateOrderDetailDTO[];
   @ApiProperty()
-  staffId: number;
+  branchId: number;
   @ApiProperty()
   customerId: number;
 }

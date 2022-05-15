@@ -5,7 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { IsString, Length, IsBoolean } from "class-validator";
+import { IsString, IsBoolean } from "class-validator";
 import { Breed } from "./breed.entity";
 
 @Entity("species")
@@ -14,11 +14,9 @@ export class Species extends BaseEntity {
   id: number;
   @Column({ type: "text", nullable: false })
   @IsString()
-  @Length(8, 32)
   name: string;
   @Column({ type: "text", nullable: true })
   @IsString()
-  @Length(8, 256)
   description: string;
   @Column({ type: "bool" })
   @IsBoolean()

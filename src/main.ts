@@ -54,7 +54,12 @@ async function bootstrap(): Promise<void> {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, openApiConfig);
-  SwaggerModule.setup("api", app, document);
+  SwaggerModule.setup("api", app, document, {
+    swaggerOptions: {
+      tagsSorter: "alpha",
+      operationsSorter: "method",
+    },
+  });
 
   //implement firebase
   if (!firebase.apps.length) {

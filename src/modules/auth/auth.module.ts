@@ -9,7 +9,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { PassportModule } from "@nestjs/passport";
 import { MulterModule } from "@nestjs/platform-express";
 import { SharedModule } from "src/shared/shared.module";
-import { StaffModule } from "../staff/staff.module";
+import { BrachModule } from "../branchs/branch.module";
 import { CustomerModule } from "../customer/customer.module";
 
 @Module({
@@ -28,7 +28,7 @@ import { CustomerModule } from "../customer/customer.module";
     UserModule,
     ConfigModule,
     SharedModule,
-    StaffModule,
+    BrachModule,
     CustomerModule,
   ],
   controllers: [AuthController],

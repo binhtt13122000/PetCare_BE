@@ -9,6 +9,7 @@ import {
 import { HealthService } from "./health-service.entity";
 import { Pet } from "../pet_service/pet.entity";
 import { IsDate, IsInt } from "class-validator";
+import { Branch } from "../user_management_service/branch.entity";
 
 @Entity("health_record")
 export class HealthRecord {
@@ -35,6 +36,12 @@ export class HealthRecord {
   @ManyToOne(() => Pet, (pet) => pet.healthRecords, {})
   @JoinColumn({ name: "petId", referencedColumnName: "id" })
   pet: Pet;
+
+  @Column({ name: "branchId" })
+  branchId: number;
+  @ManyToOne(() => Branch, (branch) => branch.healthRecords, {})
+  @JoinColumn({ name: "branchId", referencedColumnName: "id" })
+  branch: Branch;
 
   @OneToMany(() => HealthService, (healthService) => healthService.healthRecord)
   healthServices: HealthService[];

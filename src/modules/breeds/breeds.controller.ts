@@ -52,7 +52,33 @@ export class BreedsController {
   @Put()
   async update(@Body() body: UpdateBreedsDTO): Promise<Breed> {
     try {
-      return await this.breedsService.update(body.id, body);
+      const breed = await this.breedsService.findById(body.id);
+      if (!breed) {
+        throw new HttpException("The breed is not found", HttpStatus.NOT_FOUND);
+      }
+      return await this.breedsService.update(
+        body.id,
+        new Breed({
+          ...breed,
+          ...body,
+        }),
+      );
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Patch("change-status/:id")
+  async changeStatus(@Param() params: IdParams): Promise<Breed> {
+    try {
+      const breed = await this.breedsService.findById(params.id);
+      if (!breed) {
+        throw new HttpException("The breed is not found", HttpStatus.NOT_FOUND);
+      }
+      return this.breedsService.update(params.id, {
+        ...breed,
+        isActive: !breed.isActive,
+      });
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -62,26 +88,18 @@ export class BreedsController {
   async delete(@Param() params: IdParams): Promise<Breed> {
     try {
       const breed = await this.breedsService.findById(params.id);
+      if (!breed) {
+        throw new HttpException("The breed is not found", HttpStatus.NOT_FOUND);
+      }
       if (!breed.isActive) {
-        throw Error("Cannot delete this breed");
+        throw new HttpException(
+          "The breed is inactive",
+          HttpStatus.BAD_REQUEST,
+        );
       }
       return this.breedsService.update(params.id, {
         ...breed,
         isActive: false,
-      });
-    } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  @Patch("change-status/:id")
-  async changeStatus(@Param("id") id: string): Promise<Breed> {
-    try {
-      const breed = await this.breedsService.findById(id);
-
-      return this.breedsService.update(id, {
-        ...breed,
-        isActive: !breed.isActive,
       });
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);

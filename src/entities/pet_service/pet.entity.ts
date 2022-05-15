@@ -11,7 +11,7 @@ import { PetOwner } from "./pet-owner.entity";
 import { BaseEntity } from "typeorm";
 import { Breed } from "./breed.entity";
 import { VaccinePetRecord } from "./vaccine-pet-record.entity";
-import { IsDate, IsString, Length, IsBoolean } from "class-validator";
+import { IsDate, IsString, IsBoolean } from "class-validator";
 import { HealthRecord } from "../health_service/health-record.entity";
 import { Post } from "../transaction_service/post.entity";
 import { SaleTransaction } from "../transaction_service/sale-transaction.entity";
@@ -24,7 +24,6 @@ export class Pet extends BaseEntity {
   id: number;
   @Column({ type: "text", nullable: false })
   @IsString()
-  @Length(0, 32)
   name: string;
   @Column({ type: "timestamp without time zone", nullable: false })
   @IsDate()

@@ -9,7 +9,6 @@ import { Server, Socket } from "socket.io";
 import { Logger } from "@nestjs/common";
 
 @WebSocketGateway({
-  namespace: "/chat",
   cors: {
     origin: "*",
   },
