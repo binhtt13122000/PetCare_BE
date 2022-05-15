@@ -50,16 +50,3 @@ export class Account extends BaseEntity {
     Object.assign(this, partial);
   }
 }
-
-// @OneToMany(() => Post, (post) => post.seller)
-// posts: Post[];
-
-// @OneToMany(() => Post, (post) => post.staff)
-// staffPosts: Post[];
-// @OneToMany(() => SaleTransaction, (saleTransaction) => saleTransaction.id)
-// saleTransactions: SaleTransaction[];
-// @OneToMany(
-//   () => BreedingTransaction,
-//   (breedingTransaction) => breedingTransaction.id,
-// )
-// breedingTransactions: BreedingTransaction[];

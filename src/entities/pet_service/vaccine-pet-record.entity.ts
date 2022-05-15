@@ -1,4 +1,4 @@
-import { Length, IsString, IsDate } from "class-validator";
+import { IsString, IsDate } from "class-validator";
 import {
   BaseEntity,
   Column,
@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import { Vaccine } from "./vaccine.entity";
 import { Pet } from "./pet.entity";
+import { Branch } from "../user_management_service/branch.entity";
 
 @Entity("vaccine_pet_record")
 export class VaccinePetRecord extends BaseEntity {
@@ -18,7 +19,6 @@ export class VaccinePetRecord extends BaseEntity {
   @IsDate()
   dateOfInjection: Date;
   @Column({ type: "text", nullable: true })
-  @Length(8, 1024)
   @IsString()
   description: string;
   @Column({ type: "text", nullable: false })
@@ -39,6 +39,12 @@ export class VaccinePetRecord extends BaseEntity {
   @ManyToOne(() => Pet, (pet) => pet.vaccinePetRecords, {})
   @JoinColumn({ name: "petId", referencedColumnName: "id" })
   pet: Pet;
+
+  @Column({ name: "branchId" })
+  branchId: number;
+  @ManyToOne(() => Branch, (branch) => branch.vaccinePetRecords, {})
+  @JoinColumn({ name: "branchId", referencedColumnName: "id" })
+  branch: Branch;
 
   constructor(partial: Partial<VaccinePetRecord>) {
     super();

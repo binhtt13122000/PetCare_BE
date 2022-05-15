@@ -1,4 +1,4 @@
-import { IsString, Length } from "class-validator";
+import { IsString } from "class-validator";
 import {
   Column,
   Entity,
@@ -14,7 +14,6 @@ export class Role extends BaseEntity {
   id: number;
   @Column({ type: "text", nullable: false })
   @IsString()
-  @Length(0, 8)
   name: string;
   @OneToMany(() => Account, (account) => account.role)
   accounts: Account[];

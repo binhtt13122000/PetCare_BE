@@ -9,7 +9,7 @@ import { IsDate, IsInt, Min, Max, IsString } from "class-validator";
 import { Customer } from "../user_management_service/customer.entity";
 import { Pet } from "../pet_service/pet.entity";
 import { Post } from "./post.entity";
-import { Staff } from "../user_management_service/staff.entity";
+import { Branch } from "../user_management_service/branch.entity";
 import { Promotion } from "../service/promotion.entity";
 import { BreedingTransactionEnum } from "src/enum";
 
@@ -119,11 +119,11 @@ export class BreedingTransaction {
   @JoinColumn({ name: "postId", referencedColumnName: "id" })
   post: Post;
 
-  @Column({ name: "staffId" })
-  staffId: number;
-  @ManyToOne(() => Staff, (staff) => staff.breedingTransactions, {})
-  @JoinColumn({ name: "staffId", referencedColumnName: "id" })
-  staff: Staff;
+  @Column({ name: "branchId" })
+  branchId: number;
+  @ManyToOne(() => Branch, (branch) => branch.breedingTransactions, {})
+  @JoinColumn({ name: "branchId", referencedColumnName: "id" })
+  branch: Branch;
 
   @Column({ name: "promotionId", nullable: true })
   promotionId: number;

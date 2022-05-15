@@ -1,4 +1,4 @@
-import { Length, IsDate } from "class-validator";
+import { IsDate } from "class-validator";
 import { ReportEnum } from "src/enum";
 import {
   Column,
@@ -15,7 +15,6 @@ export class Report {
   id: number;
 
   @Column({ type: "text", nullable: false })
-  @Length(8, 256)
   description: string;
 
   @Column({ type: "text", nullable: true })

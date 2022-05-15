@@ -1,10 +1,9 @@
 import { GenderEnum, PetEnum } from "src/enum";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, Length, IsInt, IsBoolean } from "class-validator";
+import { IsString, IsInt, IsBoolean } from "class-validator";
 export class CreatePetDTO {
   @ApiProperty()
   @IsString()
-  @Length(0, 32)
   name: string;
 
   @ApiProperty()

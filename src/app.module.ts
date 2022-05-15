@@ -22,7 +22,7 @@ import { SaleTransactionsModule } from "./modules/sale-transactions/sale-transac
 import { MongooseModule } from "@nestjs/mongoose";
 import { RoomsModule } from "./modules/rooms/rooms.module";
 import { configService } from "src/config/config.service";
-import { StaffModule } from "./modules/staff/staff.module";
+import { BrachModule } from "./modules/branchs/branch.module";
 import { ChatGateway } from "./modules/chat/chat.gateway";
 import { BreedsModule } from "./modules/breeds/breeds.module";
 import { SpeciesModule } from "./modules/species/species.module";
@@ -51,7 +51,7 @@ const mongoConnectionString = configService.getMongoConnectionString();
     MediasModule,
     SaleTransactionsModule,
     RoomsModule,
-    StaffModule,
+    BrachModule,
     TransactionFeesModule,
     SpeciesModule,
     BreedsModule,

@@ -15,8 +15,7 @@ export enum OrderEnum {
 
 export enum PetEnum {
   DELETED = "DELETED",
-  NOT_VERIFIED = "NOT_VERIFIED",
-  VERIFIED = "VERIFIED",
+  NORMAL = "NORMAL",
   IN_POST = "IN_POST",
 }
 
@@ -59,13 +58,13 @@ export enum ReportEnum {
 }
 
 export enum RoleEnum {
-  STAFF = "STAFF",
+  BRANCH_MANAGER = "BRANCH_MANAGER",
   CUSTOMER = "CUSTOMER",
   ADMIN = "ADMIN",
 }
 
 export enum RoleIndexEnum {
-  STAFF = 2,
+  BRANCH_MANAGER = 2,
   CUSTOMER = 3,
   ADMIN = 1,
 }
@@ -76,4 +75,17 @@ export enum LoginStatusEnum {
   NEWER = "NEWER",
   UNAUTHORIZED = "UNAUTHORIZED",
   UNAUTHENTICATED = "UNAUTHENTICATED",
+}
+
+export enum PaymentOrderMethodEnum {
+  CASH = "CASH",
+  VNPAY = "VNPAY",
+}
+
+export enum TicketStatusEnum {
+  CREATED = "CREATED",
+  CONFIRMED = "CONFIRMED",
+  CANCELED = "CANCELED",
+  SUCCESS = "SUCCESS",
+  EXPIRED = "EXPIRED",
 }

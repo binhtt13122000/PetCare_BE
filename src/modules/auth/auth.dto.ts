@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, Length } from "class-validator";
+import { IsString } from "class-validator";
 import { Account } from "src/entities/authenticate_service/account.entity";
 import { Customer } from "src/entities/user_management_service/customer.entity";
-import { Staff } from "src/entities/user_management_service/staff.entity";
+import { Branch } from "src/entities/user_management_service/branch.entity";
 import { GenderEnum, LoginStatusEnum, RoleEnum } from "src/enum";
 
 export class LoginBodyWithPhoneNumberDTO {
@@ -26,11 +26,8 @@ export class LoginBodyWithPasswordDTO {
 export class LoginResponseDTO {
   @ApiProperty()
   user?: Partial<Account>;
-  // @ApiProperty({
-  //   oneOf: [{ $ref: getSchemaPath(Staff) }, { $ref: getSchemaPath(Customer) }],
-  // })
   @ApiProperty()
-  information?: Staff | Customer;
+  information?: Branch | Customer;
   @ApiProperty({ enum: LoginStatusEnum })
   status: LoginStatusEnum;
   @ApiProperty()
@@ -45,12 +42,10 @@ export class UserRegisterDTO {
 
   @ApiProperty()
   @IsString()
-  @Length(0, 16)
   firstName: string;
 
   @ApiProperty()
   @IsString()
-  @Length(0, 16)
   lastName: string;
 
   @ApiProperty()
@@ -61,7 +56,6 @@ export class UserRegisterDTO {
 
   @ApiProperty()
   @IsString()
-  @Length(0, 64)
   address: string;
 
   @ApiProperty()

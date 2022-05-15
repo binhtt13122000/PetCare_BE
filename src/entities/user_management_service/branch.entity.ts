@@ -3,7 +3,6 @@ import {
   Max,
   Min,
   IsInt,
-  Length,
   IsPhoneNumber,
   IsString,
   IsEmail,
@@ -19,10 +18,12 @@ import {
 import { Order } from "../order_service/order.entity";
 import { Post } from "../transaction_service/post.entity";
 import { BreedingTransaction } from "../transaction_service/breeding-transaction.entity";
-import { GenderEnum } from "src/enum";
+import { HealthRecord } from "../health_service/health-record.entity";
+import { VaccinePetRecord } from "src/entities/pet_service/vaccine-pet-record.entity";
+import { Ticket } from "../service/ticket.entity";
 
-@Entity("staff")
-export class Staff extends BaseEntity {
+@Entity("branch")
+export class Branch extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
   @Column({ type: "text", nullable: true })
@@ -30,23 +31,21 @@ export class Staff extends BaseEntity {
   email: string;
   @Column({ type: "text", nullable: false })
   @IsString()
-  @Length(0, 16)
-  firstName: string;
-  @Column({ type: "text", nullable: false })
-  @IsString()
-  @Length(0, 16)
-  lastName: string;
+  representativeName: string;
   @Column({ type: "text", nullable: false, unique: true })
   @IsPhoneNumber()
   phoneNumber: string;
   @Column({ type: "text", nullable: true })
   @IsString()
-  @Length(0, 64)
   address: string;
-  @Column({ type: "enum", enum: GenderEnum, default: GenderEnum.MALE })
-  gender: GenderEnum;
+  @Column({ type: "float", nullable: true })
+  lat: number;
+  @Column({ type: "float", nullable: true })
+  lng: number;
   @Column({ type: "text", nullable: true })
-  avatar: string;
+  image: string;
+  @Column({ type: "text", nullable: true })
+  description: string;
   @Column({ type: "float", nullable: false, default: 0 })
   @Min(0)
   @Max(5)
@@ -60,19 +59,31 @@ export class Staff extends BaseEntity {
   @IsBoolean()
   isActive: boolean;
 
-  @OneToMany(() => Order, (order) => order.staff)
+  @OneToMany(() => Order, (order) => order.branch)
   orders: Order[];
 
-  @OneToMany(() => Post, (post) => post.staff)
+  @OneToMany(() => Post, (post) => post.branch)
   posts: Post[];
+
+  @OneToMany(() => HealthRecord, (healthRecord) => healthRecord.branch)
+  healthRecords: HealthRecord[];
+
+  @OneToMany(() => Ticket, (ticket) => ticket.branch)
+  tickets: Ticket[];
+
+  @OneToMany(
+    () => VaccinePetRecord,
+    (vaccinePetRecord) => vaccinePetRecord.branch,
+  )
+  vaccinePetRecords: VaccinePetRecord[];
 
   @OneToMany(
     () => BreedingTransaction,
-    (breedingTransaction) => breedingTransaction.staff,
+    (breedingTransaction) => breedingTransaction.branch,
   )
   breedingTransactions: BreedingTransaction[];
 
-  constructor(partial: Partial<Staff>) {
+  constructor(partial: Partial<Branch>) {
     super();
     Object.assign(this, partial);
   }

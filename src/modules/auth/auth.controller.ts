@@ -24,9 +24,9 @@ import {
   RefreshTokenBodyDTO,
   UserRegisterDTO,
 } from "./auth.dto";
-import { StaffService } from "../staff/staff.service";
+import { BranchService } from "../branchs/branch.service";
 import { CustomerService } from "../customer/customer.service";
-import { Staff } from "src/entities/user_management_service/staff.entity";
+import { Branch } from "src/entities/user_management_service/branch.entity";
 import { LoginStatusEnum, RoleEnum, RoleIndexEnum } from "src/enum";
 import {
   ApiOkResponse,
@@ -51,7 +51,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private notificationProducerService: NotificationProducerService,
-    private staffService: StaffService,
+    private branchService: BranchService,
     private customerService: CustomerService,
     private userService: UserService,
   ) {}
@@ -264,9 +264,9 @@ export class AuthController {
               id: account.id,
               fcm: data.fcmToken,
             });
-            let information: Staff = null;
-            if (data.role === RoleEnum.STAFF) {
-              information = await this.staffService.findByPhoneNumber(
+            let information: Branch = null;
+            if (data.role === RoleEnum.BRANCH_MANAGER) {
+              information = await this.branchService.findByPhoneNumber(
                 account.phoneNumber,
               );
             }

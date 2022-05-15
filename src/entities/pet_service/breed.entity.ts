@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 import { Pet } from "./pet.entity";
 import { Species } from "./species.entity";
-import { IsBoolean, IsString, Length } from "class-validator";
+import { IsBoolean, IsString } from "class-validator";
 
 @Entity("breed")
 export class Breed extends BaseEntity {
@@ -17,11 +17,9 @@ export class Breed extends BaseEntity {
   id: number;
   @Column({ type: "text", nullable: false })
   @IsString()
-  @Length(8, 32)
   name: string;
   @Column({ type: "text", nullable: true })
   @IsString()
-  @Length(8, 256)
   description: string;
   @Column({ type: "bool" })
   @IsBoolean()

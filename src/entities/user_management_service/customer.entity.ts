@@ -4,7 +4,6 @@ import {
   Min,
   IsInt,
   IsString,
-  Length,
   IsEmail,
   IsPhoneNumber,
   IsBoolean,
@@ -25,6 +24,7 @@ import { Post } from "../transaction_service/post.entity";
 import { SaleTransaction } from "../transaction_service/sale-transaction.entity";
 import { BreedingTransaction } from "../transaction_service/breeding-transaction.entity";
 import { GenderEnum } from "src/enum";
+import { Ticket } from "../service/ticket.entity";
 
 @Entity("customer")
 export class Customer extends BaseEntity {
@@ -35,18 +35,15 @@ export class Customer extends BaseEntity {
   email: string;
   @Column({ type: "text", nullable: false })
   @IsString()
-  @Length(0, 16)
   firstName: string;
   @Column({ type: "text", nullable: false })
   @IsString()
-  @Length(0, 16)
   lastName: string;
   @Column({ type: "text", nullable: false, unique: true })
   @IsPhoneNumber()
   phoneNumber: string;
   @Column({ type: "text", nullable: true })
   @IsString()
-  @Length(0, 64)
   address: string;
   @Column({ type: "enum", enum: GenderEnum, default: GenderEnum.MALE })
   gender: GenderEnum;
@@ -71,15 +68,12 @@ export class Customer extends BaseEntity {
   numberReviewers: number;
   @Column({ type: "text", nullable: true })
   @IsString()
-  @Length(0, 8)
   bankName: string;
   @Column({ type: "text", nullable: true })
   @IsString()
-  @Length(0, 32)
   bankCode: string;
   @Column({ type: "text", nullable: true })
   @IsString()
-  @Length(0, 64)
   bankBranch: string;
   @Column({ type: "bool", default: true })
   @IsBoolean()
@@ -109,6 +103,9 @@ export class Customer extends BaseEntity {
 
   @OneToMany(() => Post, (post) => post.customer)
   posts: Post[];
+
+  @OneToMany(() => Ticket, (ticket) => ticket.customer)
+  tickets: Ticket[];
 
   @OneToMany(() => SaleTransaction, (saleTransaction) => saleTransaction.buyer)
   buyerSaleTransactions: SaleTransaction[];

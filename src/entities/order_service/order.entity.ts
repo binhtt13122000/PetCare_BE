@@ -1,4 +1,4 @@
-import { OrderEnum } from "src/enum";
+import { OrderEnum, PaymentOrderMethodEnum } from "src/enum";
 import {
   Column,
   Entity,
@@ -10,7 +10,7 @@ import {
 import { OrderDetail } from "./order-detail.entity";
 import { Promotion } from "../service/promotion.entity";
 import { Customer } from "../user_management_service/customer.entity";
-import { Staff } from "../user_management_service/staff.entity";
+import { Branch } from "../user_management_service/branch.entity";
 import { BaseEntity } from "typeorm";
 
 @Entity("order")
@@ -19,12 +19,16 @@ export class Order extends BaseEntity {
   id: number;
   @Column({ type: "timestamp without time zone", nullable: true })
   paymentTime: Date;
-  @Column({ type: "text", nullable: true })
+  @Column({ type: "enum", enum: PaymentOrderMethodEnum, nullable: true })
   paymentMethod: string;
   @Column({ type: "integer", nullable: false })
   provisionalTotal: number;
   @Column({ type: "integer", nullable: false })
   orderTotal: number;
+  @Column({ type: "integer", nullable: true })
+  point: number;
+  @Column({ type: "integer", nullable: true })
+  payment: number;
   @Column({ type: "enum", enum: OrderEnum })
   status: OrderEnum;
   @Column({ type: "text", nullable: true })
@@ -33,11 +37,11 @@ export class Order extends BaseEntity {
   @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.order)
   orderDetails: OrderDetail[];
 
-  @Column({ name: "staffId" })
-  staffId: number;
-  @ManyToOne(() => Staff, (staff) => staff.orders, {})
-  @JoinColumn({ name: "staffId", referencedColumnName: "id" })
-  staff: Staff;
+  @Column({ name: "branchId" })
+  branchId: number;
+  @ManyToOne(() => Branch, (branch) => branch.orders, {})
+  @JoinColumn({ name: "branchId", referencedColumnName: "id" })
+  branch: Branch;
 
   @Column({ name: "promotionId", nullable: true })
   promotionId: number;

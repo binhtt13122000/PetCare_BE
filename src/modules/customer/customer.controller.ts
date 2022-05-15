@@ -81,7 +81,19 @@ export class CustomerController {
   async changeStatus(@Param("id") id: string): Promise<Customer> {
     try {
       const customer = await this.customerService.findById(id);
-
+      if (!customer) {
+        throw new HttpException("Not found!", HttpStatus.NOT_FOUND);
+      }
+      const user = await this.userService.findByPhoneNumber(
+        customer.phoneNumber,
+      );
+      if (!user) {
+        throw new HttpException("Not found!", HttpStatus.NOT_FOUND);
+      }
+      await this.userService.update(id, {
+        ...user,
+        isActive: !user.isActive,
+      });
       return this.customerService.update(id, {
         ...customer,
         isActive: !customer.isActive,
@@ -98,11 +110,17 @@ export class CustomerController {
       if (!customer) {
         throw new HttpException("Not found!", HttpStatus.NOT_FOUND);
       }
+      if (!customer.isActive) {
+        throw new HttpException("Inactive!", HttpStatus.BAD_REQUEST);
+      }
       const user = await this.userService.findByPhoneNumber(
         customer.phoneNumber,
       );
       if (!user) {
         throw new HttpException("Not found!", HttpStatus.NOT_FOUND);
+      }
+      if (!user.isActive) {
+        throw new HttpException("Inactive!", HttpStatus.BAD_REQUEST);
       }
       await this.userService.update(id, {
         ...user,

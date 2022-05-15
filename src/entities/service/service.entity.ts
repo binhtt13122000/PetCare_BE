@@ -5,7 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { IsBoolean, IsInt, IsString, Length } from "class-validator";
+import { IsBoolean, IsInt, IsString } from "class-validator";
 import { HealthService } from "../health_service/health-service.entity";
 import { OrderDetail } from "../order_service/order-detail.entity";
 import { ServiceFee } from "./service-fee.entity";
@@ -16,7 +16,6 @@ export class Service extends BaseEntity {
   id: number;
   @Column({ type: "text", nullable: false })
   @IsString()
-  @Length(0, 32)
   name: string;
   @Column({ type: "integer", nullable: true })
   @IsInt()

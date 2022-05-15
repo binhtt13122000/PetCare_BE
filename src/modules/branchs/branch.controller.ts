@@ -11,33 +11,33 @@ import {
   Param,
 } from "@nestjs/common";
 import { ApiConsumes, ApiTags } from "@nestjs/swagger";
-import { Staff } from "src/entities/user_management_service/staff.entity";
-import { CreateStaffDTO } from "./dtos/create-staff.dto";
-import { StaffService } from "./staff.service";
+import { Branch } from "src/entities/user_management_service/branch.entity";
+import { CreateBranchDTO } from "./dtos/create-branch.dto";
+import { BranchService } from "./branch.service";
 import { UserService } from "../users/user.service";
 import { Account } from "src/entities/authenticate_service/account.entity";
 import { DEFAULT_PASSWORD } from "../../common/index";
 import { RoleIndexEnum } from "src/enum";
 import * as bcrypt from "bcrypt";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { UpdateStaffDTO } from "./dtos/update-staff.dto";
+import { UpdateBranchDTO } from "./dtos/update-branch.dto";
 import { uploadService } from "src/external/uploadFile.service";
 import { FileProducerService } from "src/shared/file/file.producer.service";
 import { IdParams } from "src/common";
 
-@ApiTags("staffs")
-@Controller("staffs")
-export class StaffsController {
+@ApiTags("branch")
+@Controller("branch")
+export class BranchController {
   constructor(
-    private readonly staffService: StaffService,
+    private readonly branchService: BranchService,
     private readonly userService: UserService,
     private readonly fileProducerService: FileProducerService,
   ) {}
 
   @Post()
-  async createStaff(
-    @Body() body: CreateStaffDTO,
-  ): Promise<{ staff: Staff; account: Account }> {
+  async createBranch(
+    @Body() body: CreateBranchDTO,
+  ): Promise<{ branch: Branch; account: Account }> {
     try {
       const password = await bcrypt.hash(DEFAULT_PASSWORD, 12);
       const createdAccount = await this.userService.store(
@@ -47,15 +47,15 @@ export class StaffsController {
           password: password,
           registerTime: new Date(),
           currentHashedRefreshToken: null,
-          roleId: RoleIndexEnum.STAFF,
+          roleId: RoleIndexEnum.BRANCH_MANAGER,
         }),
       );
-      const createdStaff = await this.staffService.store(
-        new Staff({ ...body, isActive: true, avatar: null }),
+      const createdBranch = await this.branchService.store(
+        new Branch({ ...body, isActive: true, image: null }),
       );
       return {
         account: createdAccount,
-        staff: createdStaff,
+        branch: createdBranch,
       };
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
@@ -65,41 +65,56 @@ export class StaffsController {
   @ApiConsumes("multipart/form-data")
   @Put()
   @UseInterceptors(FileInterceptor("file"))
-  async updateStaff(
+  async updateBranch(
     @UploadedFile() file: Express.Multer.File,
 
-    @Body() body: UpdateStaffDTO,
-  ): Promise<Staff> {
+    @Body() body: UpdateBranchDTO,
+  ): Promise<Branch> {
     try {
-      let avatar = null;
-      if (file) {
-        avatar = await uploadService.uploadFile(file);
-        await this.fileProducerService.deleteFile(body.avatar);
+      const currentBranch = await this.branchService.findById(body.id);
+      if (!currentBranch) {
+        throw new HttpException("NOT FOUND", HttpStatus.NOT_FOUND);
       }
-      const staff = {
+      let image = null;
+      if (file) {
+        image = await uploadService.uploadFile(file);
+        if (body.image) {
+          await this.fileProducerService.deleteFile(body.image);
+        }
+      }
+      const branch = {
         ...body,
-        evidence: file ? avatar.url : body.avatar,
+        image: file ? image : body.image,
       };
-      return await this.staffService.update(staff.id, staff);
+      return await this.branchService.update(branch.id, {
+        ...currentBranch,
+        ...branch,
+      });
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
 
   @Delete(":id")
-  async deleteStaff(@Param() param: IdParams): Promise<Staff> {
+  async deleteBranch(@Param() param: IdParams): Promise<Branch> {
     try {
-      const staff = await this.staffService.findById(param.id);
-      if (!staff) {
+      const branch = await this.branchService.findById(param.id);
+      if (!branch) {
         throw new HttpException("Nothing", HttpStatus.NOT_FOUND);
       }
-      const user = await this.userService.findByPhoneNumber(staff.phoneNumber);
+      if (!branch.isActive) {
+        throw new HttpException("Inactive", HttpStatus.BAD_REQUEST);
+      }
+      const user = await this.userService.findByPhoneNumber(branch.phoneNumber);
       if (!user) {
         throw new HttpException("Nothing", HttpStatus.NOT_FOUND);
       }
+      if (!user.isActive) {
+        throw new HttpException("Inactive", HttpStatus.BAD_REQUEST);
+      }
       await this.userService.update(user.id, { ...user, isActive: false });
-      return await this.staffService.update(staff.id, {
-        ...staff,
+      return await this.branchService.update(branch.id, {
+        ...branch,
         isActive: false,
       });
     } catch (error) {
