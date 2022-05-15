@@ -1,3 +1,7 @@
+import { filter } from "rxjs";
+import { PageMetaDto } from "src/common/page-meta.dto";
+import { PageOptionsDto } from "src/common/page-options.dto";
+import { PageDto } from "src/common/page.dto";
 import { BaseEntity, DeepPartial, DeleteResult, Repository } from "typeorm";
 import { QueryDeepPartialEntity } from "typeorm/query-builder/QueryPartialEntity";
 import { EntityId } from "typeorm/repository/EntityId";
@@ -35,5 +39,37 @@ export class BaseService<T extends BaseEntity, R extends Repository<T>>
 
   deleteItems(ids: number[]): Promise<DeleteResult> {
     return this.repository.delete(ids);
+  }
+
+  async getAllEntities(
+    pageOptionsDto: PageOptionsDto,
+    entity: string,
+    orderName: string,
+    filtering: string[],
+  ): Promise<PageDto<T>> {
+    const queryBuilder = await this.repository.createQueryBuilder(entity);
+
+    if (Array.isArray(filtering)) {
+      filtering.map((filter) => {
+        queryBuilder.andWhere(entity + "." + filter + " ilike :name", {
+          name: "%" + pageOptionsDto.filtering + "%",
+        });
+      });
+
+      const { entities } = await queryBuilder.getRawAndEntities();
+      const itemCount = await queryBuilder.getCount();
+      const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
+      return new PageDto(entities, pageMetaDto);
+    } else {
+      queryBuilder
+        .orderBy(entity + "." + orderName, pageOptionsDto.orderType)
+        .skip(pageOptionsDto.skip)
+        .take(pageOptionsDto.limit);
+
+      const { entities } = await queryBuilder.getRawAndEntities();
+      const itemCount = await queryBuilder.getCount();
+      const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
+      return new PageDto(entities, pageMetaDto);
+    }
   }
 }

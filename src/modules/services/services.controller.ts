@@ -18,8 +18,9 @@ import { CreateServiceDTO } from "./dto/create-service.dto";
 import { Service } from "src/entities/service/service.entity";
 import { UpdateServiceDTO } from "./dto/update-service.dto";
 import { IdParams } from "src/common";
-import { PageDto } from "./dto/page.dto";
-import { PageOptionsDto } from "./dto/page-options.dto";
+
+import { ServiceOptionDto } from "./dto/service-option.dto";
+import { PageDto } from "src/common/page.dto";
 
 @Controller("services")
 @ApiTags("services")
@@ -35,14 +36,32 @@ export class ServicesController {
     }
   }
 
+  // @Get()
+  // @HttpCode(HttpStatus.OK)
+  // async getAllService(
+  //   @Query()
+  //   pageOptionsDto: ServiceOptionDto,
+  // ): Promise<PageDto<Service>> {
+  //   try {
+  //     return await this.shopService.getServices(pageOptionsDto);
+  //   } catch (error) {
+  //     throw new HttpException(error, HttpStatus.BAD_REQUEST);
+  //   }
+  // }
+
   @Get()
   @HttpCode(HttpStatus.OK)
-  async getAllService(
+  async getAllServices(
     @Query()
-    pageOptionsDto: PageOptionsDto,
+    pageOptionsDto: ServiceOptionDto,
   ): Promise<PageDto<Service>> {
     try {
-      return await this.shopService.getUsers(pageOptionsDto);
+      return await this.shopService.getAllEntities(
+        pageOptionsDto,
+        "service",
+        pageOptionsDto.serviceOrderName,
+        ["name", "description"],
+      );
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

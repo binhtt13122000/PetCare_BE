@@ -1,21 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsEnum, IsOptional, Max, Min } from "class-validator";
-import { OrderType, ServiceOrderName } from "src/enum";
+import { OrderType } from "src/enum";
 
 export class PageOptionsDto {
   @ApiPropertyOptional({ enum: OrderType, default: OrderType.ASC })
   @IsEnum(OrderType)
   @IsOptional()
   readonly orderType?: OrderType = OrderType.ASC;
-
-  @ApiPropertyOptional({ enum: ServiceOrderName, default: ServiceOrderName.ID })
-  @IsEnum(ServiceOrderName)
-  @IsOptional()
-  readonly serviceOrderName?: ServiceOrderName = ServiceOrderName.ID;
-
-  @ApiProperty({ required: false })
-  status?: boolean;
 
   @ApiPropertyOptional({
     minimum: 1,
@@ -38,10 +30,7 @@ export class PageOptionsDto {
   readonly limit?: number = 10;
 
   @ApiProperty({ required: false })
-  readonly name?: string;
-
-  @ApiProperty({ required: false })
-  readonly description?: string;
+  readonly filtering?: string;
 
   get skip(): number {
     return (this.page - 1) * this.limit;
