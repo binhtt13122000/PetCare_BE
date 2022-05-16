@@ -28,6 +28,7 @@ export class Message {
   @ApiProperty()
   createdTime: Date;
 
+  @ApiProperty({ type: String })
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "Room" })
   room: Room;
 }

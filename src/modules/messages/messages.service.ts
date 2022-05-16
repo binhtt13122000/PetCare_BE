@@ -17,9 +17,7 @@ export class MessagesService {
   async findMessageByRoomId(roomId: string): Promise<Message[]> {
     return this.messageModel
       .find({
-        room: {
-          _id: roomId,
-        },
+        room: roomId,
       })
       .exec();
   }
