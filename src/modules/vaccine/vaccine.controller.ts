@@ -50,7 +50,7 @@ export class VaccineController {
     }
   }
 
-  @Delete()
+  @Delete(":id")
   async delete(id: number): Promise<Vaccine> {
     try {
       const vaccine: Vaccine = await this.vaccineService.findById(id);

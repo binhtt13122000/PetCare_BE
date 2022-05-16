@@ -90,7 +90,7 @@ export class CustomerController {
       if (!user) {
         throw new HttpException("Not found!", HttpStatus.NOT_FOUND);
       }
-      await this.userService.update(id, {
+      await this.userService.update(user.id, {
         ...user,
         isActive: !user.isActive,
       });
@@ -122,7 +122,7 @@ export class CustomerController {
       if (!user.isActive) {
         throw new HttpException("Inactive!", HttpStatus.BAD_REQUEST);
       }
-      await this.userService.update(id, {
+      await this.userService.update(user.id, {
         ...user,
         isActive: false,
       });

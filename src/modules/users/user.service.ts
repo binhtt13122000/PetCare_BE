@@ -9,10 +9,16 @@ export class UserService extends BaseService<Account, UserRepository> {
     super(userRepository);
   }
 
-  findByPhoneNumber(phoneNumber: string): Promise<Account | null> {
+  validate(phoneNumber: string): Promise<Account | null> {
     return this.userRepository.findOne({
       where: { phoneNumber: phoneNumber },
       relations: ["role"],
+    });
+  }
+
+  findByPhoneNumber(phoneNumber: string): Promise<Account | null> {
+    return this.userRepository.findOne({
+      where: { phoneNumber: phoneNumber },
     });
   }
 }

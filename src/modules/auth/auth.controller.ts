@@ -298,7 +298,7 @@ export class AuthController {
     }
   }
 
-  @Post("/refresh")
+  @Post("refresh")
   @ApiOperation({ description: "Get AccessToken from RefreshToken" })
   @HttpCode(200)
   refresh(@Body() body: RefreshTokenBodyDTO): Promise<Tokens> {

@@ -20,7 +20,7 @@ export class AuthService {
   ) {}
 
   async validateUser(phoneNumber: string): Promise<Account | null> {
-    const user = await this.userService.findByPhoneNumber(phoneNumber);
+    const user = await this.userService.validate(phoneNumber);
 
     return user;
   }
@@ -29,7 +29,7 @@ export class AuthService {
     phoneNumber: string,
     password: string,
   ): Promise<Account | null> {
-    const user = await this.userService.findByPhoneNumber(phoneNumber);
+    const user = await this.userService.validate(phoneNumber);
     if (user && bcrypt.compareSync(password, user.password)) {
       return user;
     }
