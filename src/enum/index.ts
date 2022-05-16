@@ -25,7 +25,7 @@ export enum PostEnum {
   PUBLISHED = "PUBLISHED",
   WAITING_FOR_PAYMENT = "WAITING_FOR_PAYMENT",
   CANCELED = "CANCELED",
-  CLOSED = "CLOSED",
+  // CLOSED = "CLOSED",
 }
 
 export enum SaleTransactionEnum {
@@ -88,4 +88,15 @@ export enum TicketStatusEnum {
   CANCELED = "CANCELED",
   SUCCESS = "SUCCESS",
   EXPIRED = "EXPIRED",
+}
+
+export enum OrderType {
+  DESC = "DESC",
+  ASC = "ASC",
+}
+
+export enum PostOrderName {
+  BREEDNAME = "name",
+  PROVISIONALTOTAL = "provisionalTotal",
+  PRICE = "price",
 }

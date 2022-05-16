@@ -1,8 +1,13 @@
 import {
   Body,
   Controller,
+  Get,
+  HttpCode,
+  HttpException,
+  HttpStatus,
   Post,
   Put,
+  Query,
   UploadedFiles,
   UseInterceptors,
 } from "@nestjs/common";
@@ -16,6 +21,9 @@ import { Media } from "src/entities/transaction_service/media.entity";
 import { uploadService } from "src/external/uploadFile.service";
 import { PetEnum } from "src/enum";
 import { UpdatePostDTO } from "./dto/update-post.dto";
+import { PageDto } from "src/common/page.dto";
+import { PageOptionsDto } from "src/common/page-options.dto";
+import { PostsOptionDto } from "./dto/post-option.dto";
 @ApiTags("posts")
 @Controller("posts")
 export class PostsController {
@@ -67,6 +75,31 @@ export class PostsController {
     );
     body.medias = [...body.medias, ...medias];
     return this.postsService.update(body.id, new PostEntity(body));
+  }
+
+  @Get("/fetch-post")
+  @HttpCode(HttpStatus.OK)
+  async fethchAllPostList(
+    @Query()
+    pageOptionsDto: PostsOptionDto,
+  ): Promise<PageDto<PostEntity>> {
+    try {
+      if (
+        pageOptionsDto.ageRange ||
+        pageOptionsDto.breedName ||
+        pageOptionsDto.gender ||
+        pageOptionsDto.isSeed ||
+        pageOptionsDto.price ||
+        pageOptionsDto.orderName ||
+        pageOptionsDto.status ||
+        pageOptionsDto.type
+      ) {
+        return await this.postsService.fetchPost(pageOptionsDto);
+      }
+      return await this.postsService.featchPostList(pageOptionsDto);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
   }
 }
 
