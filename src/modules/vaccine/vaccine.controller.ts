@@ -39,11 +39,11 @@ export class VaccineController {
     }
   }
 
-  @Patch("/change-status")
-  async changeStatus(id: number): Promise<Vaccine> {
+  @Patch("change-status/:id")
+  async changeStatus(@Param() param: IdParams): Promise<Vaccine> {
     try {
-      const vaccine: Vaccine = await this.vaccineService.findById(id);
-      return this.vaccineService.update(id, {
+      const vaccine: Vaccine = await this.vaccineService.findById(param.id);
+      return this.vaccineService.update(param.id, {
         ...vaccine,
         isActive: !vaccine.isActive,
       });
