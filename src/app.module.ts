@@ -23,7 +23,6 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { RoomsModule } from "./modules/rooms/rooms.module";
 import { configService } from "src/config/config.service";
 import { BrachModule } from "./modules/branchs/branch.module";
-import { ChatGateway } from "./modules/chat/chat.gateway";
 import { BreedsModule } from "./modules/breeds/breeds.module";
 import { SpeciesModule } from "./modules/species/species.module";
 import { TransactionFeesModule } from "./modules/transaction-fees/transaction-fees.module";
@@ -31,6 +30,7 @@ import { VaccinePetRecordsModule } from "./modules/vaccine-pet-records/vaccine-p
 import { PromotionsModule } from "./modules/promotions/promotions.module";
 import { ServiceFeesModule } from "./modules/service-fees/service-fees.module";
 import { MessagesModule } from "./modules/messages/messages.module";
+import { ChatModule } from "./modules/chat/chat.module";
 
 const mongoConnectionString = configService.getMongoConnectionString();
 @Module({
@@ -59,10 +59,10 @@ const mongoConnectionString = configService.getMongoConnectionString();
     PromotionsModule,
     ServiceFeesModule,
     MessagesModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [
-    ChatGateway,
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,

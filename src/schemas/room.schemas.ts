@@ -9,6 +9,8 @@ export type RoomDocument = Room & Document;
 
 @Schema()
 export class Room {
+  _id?: string;
+
   @Prop()
   @ApiProperty()
   sellerId: number;
@@ -42,7 +44,7 @@ export class Room {
   status: RoomStatusEnum;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "Message" })
-  messages: Message[];
+  messages?: Message[];
 }
 
 export const RoomSchema = SchemaFactory.createForClass(Room);
