@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Param } from "@nestjs/common";
+import { Body, Controller, Get, Post, Param, Query } from "@nestjs/common";
 import { MessagesService } from "./messages.service";
 import { ApiTags } from "@nestjs/swagger";
 import { Message } from "src/schemas/message.schema";
@@ -14,7 +14,15 @@ export class MessagesController {
   }
 
   @Get("room/:roomId")
-  async find(@Param("roomId") roomId: string): Promise<Message[]> {
-    return this.messagesService.findMessageByRoomId(roomId);
+  async find(
+    @Param("roomId") roomId: string,
+    @Query("skip") skip: string,
+    @Query("limit") limit: string,
+  ): Promise<Message[]> {
+    return this.messagesService.findMessageByRoomId(
+      roomId,
+      Number(limit),
+      Number(skip),
+    );
   }
 }

@@ -14,10 +14,19 @@ export class MessagesService {
     return createdMessage.save();
   }
 
-  async findMessageByRoomId(roomId: string): Promise<Message[]> {
+  async findMessageByRoomId(
+    roomId: string,
+    limit: number,
+    skip: number,
+  ): Promise<Message[]> {
     return this.messageModel
       .find({
         room: roomId,
+      })
+      .limit(limit)
+      .skip(skip)
+      .sort({
+        createdTime: "desc",
       })
       .exec();
   }
