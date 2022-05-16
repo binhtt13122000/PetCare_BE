@@ -89,3 +89,10 @@ export enum TicketStatusEnum {
   SUCCESS = "SUCCESS",
   EXPIRED = "EXPIRED",
 }
+
+export enum RoomStatusEnum {
+  CREATED = "CREATED",
+  BLOCKED = "BLOCKED",
+  CLOSED = "CLOSED",
+  EXPIRED = "EXPIRED",
+}

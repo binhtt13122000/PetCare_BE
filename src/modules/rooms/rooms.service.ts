@@ -33,8 +33,4 @@ export class RoomsService {
         .exec()
     );
   }
-
-  // async getMessagesByRoomId(roomId: number): Promise<RoomDocument[]> {
-  //   return this.roomModel.findById(roomId).populate("fans").exec();
-  // }
 }

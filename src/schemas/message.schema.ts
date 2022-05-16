@@ -14,7 +14,7 @@ export enum MessageEnum {
 export class Message {
   @Prop()
   @ApiProperty()
-  senderId: number;
+  isSellerMessage: boolean;
 
   @Prop()
   @ApiProperty()
