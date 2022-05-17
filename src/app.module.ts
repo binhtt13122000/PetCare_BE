@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { CacheModule, Module } from "@nestjs/common";
 import { APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
@@ -60,6 +60,10 @@ const mongoConnectionString = configService.getMongoConnectionString();
     ServiceFeesModule,
     MessagesModule,
     ChatModule,
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 300,
+    }),
   ],
   controllers: [AppController],
   providers: [
