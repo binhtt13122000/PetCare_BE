@@ -22,7 +22,7 @@ import { Request } from "express";
 import { PaymentQuery } from "src/common";
 import { Cache } from "cache-manager";
 import { format } from "date-fns";
-import { OrderEnum } from "src/enum";
+import { OrderEnum, PaymentOrderMethodEnum } from "src/enum";
 import { ResponsePayment } from "./dto/response-payment.dto";
 
 @ApiTags("orders")
@@ -56,44 +56,48 @@ export class OrdersController {
     @Req() req: Request,
     @Query() query: PaymentQuery,
     @Body() body: UpdateOrderDTO,
-  ): Promise<ResponsePayment> {
+  ): Promise<ResponsePayment | Order> {
     try {
       const order = await this.ordersService.findById(body.id);
       if (!order) {
         throw new HttpException("not found", HttpStatus.NOT_FOUND);
       }
+      if (order.status === OrderEnum.SUCCESS) {
+        throw new HttpException("Paymented!", HttpStatus.NOT_FOUND);
+      }
+      switch (body.paymentMethod) {
+        case PaymentOrderMethodEnum.VNPAY:
+          const ipAddr: string = req.socket.remoteAddress;
+          const returnUrl =
+            configService.getApiRootURL() + "/v1/api/orders/vnpay_return";
+          const url = vnpayService.generatePaymentUrl(
+            format(new Date(), "yyyyMMddHHmmss") + body.id,
+            returnUrl,
+            body.orderTotal,
+            ipAddr.split(":").pop() || "127.0.0.1",
+            query.message,
+            query.locale,
+            "NCB",
+            undefined,
+          );
+          if (url) {
+            this.cacheManager.set("order_id_" + body.id, JSON.stringify(body), {
+              ttl: 300,
+            });
+            return { url };
+          }
+          break;
+        case PaymentOrderMethodEnum.CASH:
+          return await this.ordersService.update(body.id, {
+            ...order,
+            ...body,
+            status: OrderEnum.SUCCESS,
+          });
+        default:
+          break;
+      }
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
-    }
-    if (!query.paymentMethod) {
-      query.paymentMethod = "vnpay";
-    }
-    switch (query.paymentMethod) {
-      case "vnpay":
-        const ipAddr: string = req.socket.remoteAddress;
-        const returnUrl =
-          configService.getApiRootURL() + "/v1/api/orders/vnpay_return";
-        const url = vnpayService.generatePaymentUrl(
-          format(new Date(), "yyyyMMddHHmmss") + body.id,
-          returnUrl,
-          body.orderTotal,
-          ipAddr.split(":").pop() || "127.0.0.1",
-          query.message,
-          query.locale,
-          "NCB",
-          undefined,
-        );
-        if (url) {
-          this.cacheManager.set("order_id_" + body.id, JSON.stringify(body), {
-            ttl: 300,
-          });
-          return { url };
-        }
-        break;
-      case "momo":
-        break;
-      default:
-        break;
     }
   }
 
@@ -114,11 +118,15 @@ export class OrdersController {
           if (!order) {
             throw new HttpException("not found", HttpStatus.NOT_FOUND);
           }
+          if (order.status === OrderEnum.SUCCESS) {
+            throw new HttpException("Paymented!", HttpStatus.NOT_FOUND);
+          }
           this.cacheManager.del("order_id_" + id);
           await this.ordersService.update(updatedOrder.id, {
             ...order,
             ...updatedOrder,
             status: OrderEnum.SUCCESS,
+            payment: updatedOrder.orderTotal,
           });
         } catch (error) {
           throw new HttpException(error, HttpStatus.BAD_REQUEST);

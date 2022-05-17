@@ -14,7 +14,6 @@ import { PetsModule } from "./modules/pets/pets.module";
 import { SharedModule } from "./shared/shared.module";
 import { PostsModule } from "./modules/posts/posts.module";
 import { RolesModule } from "./modules/roles/roles.module";
-import { PaymentModule } from "./modules/payment/payment.module";
 import { ServicesModule } from "./modules/services/services.module";
 import { OrdersModule } from "./modules/orders/orders.module";
 import { MediasModule } from "./modules/medias/medias.module";
@@ -46,7 +45,6 @@ const mongoConnectionString = configService.getMongoConnectionString();
     SharedModule,
     PostsModule,
     RolesModule,
-    PaymentModule,
     ServicesModule,
     OrdersModule,
     MediasModule,

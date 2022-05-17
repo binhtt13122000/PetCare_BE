@@ -16,9 +16,20 @@ export class ChatGateway {
     private readonly roomService: RoomsService,
   ) {}
 
+  @SubscribeMessage("joinRoom")
+  handleJoinRoom(client: Socket, roomId: string): void {
+    client.join(roomId);
+    client.emit("joinedRoom", roomId);
+  }
+
+  @SubscribeMessage("leaveRoom")
+  handleLeaveRoom(client: Socket, roomId: string): void {
+    client.leave(roomId);
+    client.emit("leftRoom", roomId);
+  }
+
   @SubscribeMessage("chatToServer")
   async handleMessage(client: Socket, message: MessageDTO): Promise<void> {
-    // eslint-disable-next-line no-console
     if (message.room) {
       const createdRoom = await this.roomService.create({
         createdTime: message.createdTime,
@@ -35,25 +46,12 @@ export class ChatGateway {
         room: createdRoom._id,
       });
       client.join(createdRoom._id);
-      client.emit("chatToClient", createdMessage);
+      client.in("createdRoom._id").emit("chatToClient", createdMessage);
     } else {
       const createdMessage = await this.messageService.create({
         ...message,
       });
-      client.join(message.room);
-      client.emit("chatToClient", createdMessage);
+      client.in(message.room).emit("chatToClient", createdMessage);
     }
-  }
-
-  @SubscribeMessage("joinRoom")
-  handleRoomJoin(client: Socket, room: string): void {
-    client.join(room);
-    client.emit("joinedRoom", room);
-  }
-
-  @SubscribeMessage("leaveRoom")
-  handleRoomLeave(client: Socket, room: string): void {
-    client.leave(room);
-    client.emit("leftRoom", room);
   }
 }
