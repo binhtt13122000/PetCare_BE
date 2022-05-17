@@ -83,20 +83,7 @@ export class PostsController {
     pageOptionsDto: PostsOptionDto,
   ): Promise<PageDto<PostEntity>> {
     try {
-      if (
-        pageOptionsDto.ageRangeFrom ||
-        pageOptionsDto.ageRangeTo ||
-        pageOptionsDto.breedName ||
-        pageOptionsDto.gender ||
-        pageOptionsDto.isSeed ||
-        pageOptionsDto.price ||
-        pageOptionsDto.orderName ||
-        pageOptionsDto.status ||
-        pageOptionsDto.type
-      ) {
-        return await this.postsService.fetchPost(pageOptionsDto);
-      }
-      return await this.postsService.featchPostList(pageOptionsDto);
+      return await this.postsService.fetchPost(pageOptionsDto);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

@@ -13,26 +13,6 @@ export class PostsService extends BaseService<Post, PostsRepository> {
     super(postsRepository);
   }
 
-  async featchPostList(
-    pageOptionsDto: PostsOptionDto,
-  ): Promise<PageDto<PostEntity>> {
-    const queryBuilder = await this.postsRepository.createQueryBuilder("post");
-
-    queryBuilder
-      .innerJoinAndSelect("post.pet", "pet")
-      .innerJoinAndSelect("post.medias", "medias")
-      .innerJoinAndSelect("pet.breed", "breed")
-      .innerJoinAndSelect("breed.species", "species")
-      .where("post.status = :status", {
-        status: pageOptionsDto.status,
-      });
-
-    const { entities } = await queryBuilder.getRawAndEntities();
-    const itemCount = await queryBuilder.getCount();
-    const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
-    return new PageDto(entities, pageMetaDto);
-  }
-
   async fetchPost(
     pageOptionsDto: PostsOptionDto,
   ): Promise<PageDto<PostEntity>> {
