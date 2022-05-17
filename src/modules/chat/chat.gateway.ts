@@ -30,7 +30,7 @@ export class ChatGateway {
 
   @SubscribeMessage("chatToServer")
   async handleMessage(client: Socket, message: MessageDTO): Promise<void> {
-    if (message.room) {
+    if (!message.room) {
       const createdRoom = await this.roomService.create({
         createdTime: message.createdTime,
         isSellerMessage: true,
@@ -46,7 +46,7 @@ export class ChatGateway {
         room: createdRoom._id,
       });
       client.join(createdRoom._id);
-      client.in("createdRoom._id").emit("chatToClient", createdMessage);
+      client.in(createdRoom._id).emit("chatToClient", createdMessage);
     } else {
       const createdMessage = await this.messageService.create({
         ...message,

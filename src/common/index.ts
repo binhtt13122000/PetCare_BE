@@ -20,6 +20,8 @@ export class PaymentQuery {
   message: string;
   @ApiProperty({ enum: ["vi", "en"] })
   locale?: "vn" | "en";
+  @ApiProperty()
+  returnUrl: string;
 }
 
 export interface Message {
