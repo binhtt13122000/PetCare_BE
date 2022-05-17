@@ -20,7 +20,7 @@ export class Order extends BaseEntity {
   @Column({ type: "timestamp without time zone", nullable: true })
   paymentTime: Date;
   @Column({ type: "enum", enum: PaymentOrderMethodEnum, nullable: true })
-  paymentMethod: string;
+  paymentMethod: PaymentOrderMethodEnum;
   @Column({ type: "integer", nullable: false })
   provisionalTotal: number;
   @Column({ type: "integer", nullable: false })
