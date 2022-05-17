@@ -10,11 +10,11 @@ import {
   Query,
   Inject,
   CACHE_MANAGER,
+  HttpCode,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { OrdersService } from "./orders.service";
-import { CreateOrderDTO } from "./dto/create-order.dto";
-import { Order } from "src/entities/order_service/order.entity";
+
 import { UpdateOrderDTO } from "./dto/update-order.dto";
 import { configService } from "src/config/config.service";
 import { vnpayService } from "src/external/vnpay.service";
@@ -24,6 +24,10 @@ import { Cache } from "cache-manager";
 import { format } from "date-fns";
 import { OrderEnum, PaymentOrderMethodEnum } from "src/enum";
 import { ResponsePayment } from "./dto/response-payment.dto";
+import { OrderOptionDto } from "./dto/order-option.dto";
+import { PageDto } from "src/common/page.dto";
+import { CreateOrderDTO } from "./dto/create-order.dto";
+import { Order } from "src/entities/order_service/order.entity";
 
 @ApiTags("orders")
 @Controller("orders")
@@ -33,14 +37,14 @@ export class OrdersController {
     private readonly ordersService: OrdersService,
   ) {}
 
-  @Post()
-  async create(@Body() body: CreateOrderDTO): Promise<Order> {
-    try {
-      return this.ordersService.store(new Order(body));
-    } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
-    }
-  }
+  // @Post()
+  // async create(@Body() body: CreateOrderDTO): Promise<Order> {
+  //   try {
+  //     return this.ordersService.store(new Order(body));
+  //   } catch (error) {
+  //     throw new HttpException(error, HttpStatus.BAD_REQUEST);
+  //   }
+  // }
 
   @Put()
   async update(@Body() body: UpdateOrderDTO): Promise<Order> {
@@ -138,5 +142,17 @@ export class OrdersController {
         // this.cacheManager.del("order_id_" + id);
       },
     );
+  }
+
+  @Get("order")
+  @HttpCode(HttpStatus.OK)
+  async getOrderOfCustomer(
+    @Query() orderOptionDto: OrderOptionDto,
+  ): Promise<PageDto<Order>> {
+    try {
+      return await this.ordersService.fetchOrderDetails(orderOptionDto);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
   }
 }

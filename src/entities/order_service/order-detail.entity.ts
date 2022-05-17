@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -9,7 +10,7 @@ import { Order } from "./order.entity";
 import { Service } from "../service/service.entity";
 
 @Entity("order_detail")
-export class OrderDetail {
+export class OrderDetail extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
   @Column({ type: "integer", nullable: false })
@@ -28,4 +29,9 @@ export class OrderDetail {
   @ManyToOne(() => Service, (service) => service.orderDetails, {})
   @JoinColumn({ name: "serviceId", referencedColumnName: "id" })
   service: Service;
+
+  constructor(partial: Partial<OrderDetail>) {
+    super();
+    Object.assign(this, partial);
+  }
 }
