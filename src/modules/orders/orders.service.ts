@@ -23,24 +23,6 @@ export class OrdersService extends BaseService<Order, OrdersRepository> {
       .where("order.customerId = :customerId", {
         customerId: pageOptionsDto.customerId,
       });
-    // .innerJoinAndSelect("order.promotion", "promotion");
-
-    const { entities } = await queryBuilder.getRawAndEntities();
-    const itemCount = await queryBuilder.getCount();
-    const pageMetaDto = new PageMetaDto({ pageOptionsDto, itemCount });
-    return new PageDto(entities, pageMetaDto);
-  }
-
-  async fetchOrderDetails(
-    pageOptionsDto: OrderOptionDto,
-  ): Promise<PageDto<Order>> {
-    const queryBuilder = await this.ordersRepository.createQueryBuilder(
-      "order",
-    );
-
-    queryBuilder.where("order. = :customerId", {
-      customerId: pageOptionsDto.customerId,
-    });
 
     const { entities } = await queryBuilder.getRawAndEntities();
     const itemCount = await queryBuilder.getCount();

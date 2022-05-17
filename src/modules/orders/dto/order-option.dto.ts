@@ -9,8 +9,4 @@ export class OrderOptionDto extends OmitType(PageOptionsDto, [
   @ApiProperty({ required: false })
   @Type(() => Number)
   customerId: number;
-
-  @ApiProperty({ required: false })
-  @Type(() => Number)
-  orderId: number;
 }

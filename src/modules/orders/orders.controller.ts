@@ -37,14 +37,14 @@ export class OrdersController {
     private readonly ordersService: OrdersService,
   ) {}
 
-  // @Post()
-  // async create(@Body() body: CreateOrderDTO): Promise<Order> {
-  //   try {
-  //     return this.ordersService.store(new Order(body));
-  //   } catch (error) {
-  //     throw new HttpException(error, HttpStatus.BAD_REQUEST);
-  //   }
-  // }
+  @Post()
+  async create(@Body() body: CreateOrderDTO): Promise<Order> {
+    try {
+      return this.ordersService.store(new Order(body));
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
 
   @Put()
   async update(@Body() body: UpdateOrderDTO): Promise<Order> {
@@ -144,13 +144,13 @@ export class OrdersController {
     );
   }
 
-  @Get("order")
+  @Get()
   @HttpCode(HttpStatus.OK)
   async getOrderOfCustomer(
     @Query() orderOptionDto: OrderOptionDto,
   ): Promise<PageDto<Order>> {
     try {
-      return await this.ordersService.fetchOrderDetails(orderOptionDto);
+      return await this.ordersService.fetchOrders(orderOptionDto);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
