@@ -46,7 +46,7 @@ export class PostsOptionDto extends OmitType(PageOptionsDto, ["filtering"]) {
   @Min(0)
   @Max(99999999)
   @IsOptional()
-  price?: number = 1;
+  price?: number;
 
   @ApiProperty({ required: false })
   breedName?: string;
@@ -56,5 +56,12 @@ export class PostsOptionDto extends OmitType(PageOptionsDto, ["filtering"]) {
     maximum: 20,
     default: 1,
   })
-  ageRange?: number;
+  ageRangeFrom?: number;
+
+  @ApiPropertyOptional({
+    minimum: 0,
+    maximum: 20,
+    default: 1,
+  })
+  ageRangeTo?: number;
 }

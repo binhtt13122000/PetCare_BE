@@ -22,7 +22,6 @@ import { uploadService } from "src/external/uploadFile.service";
 import { PetEnum } from "src/enum";
 import { UpdatePostDTO } from "./dto/update-post.dto";
 import { PageDto } from "src/common/page.dto";
-import { PageOptionsDto } from "src/common/page-options.dto";
 import { PostsOptionDto } from "./dto/post-option.dto";
 @ApiTags("posts")
 @Controller("posts")
@@ -85,7 +84,8 @@ export class PostsController {
   ): Promise<PageDto<PostEntity>> {
     try {
       if (
-        pageOptionsDto.ageRange ||
+        pageOptionsDto.ageRangeFrom ||
+        pageOptionsDto.ageRangeTo ||
         pageOptionsDto.breedName ||
         pageOptionsDto.gender ||
         pageOptionsDto.isSeed ||

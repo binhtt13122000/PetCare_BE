@@ -25,7 +25,7 @@ export enum PostEnum {
   PUBLISHED = "PUBLISHED",
   WAITING_FOR_PAYMENT = "WAITING_FOR_PAYMENT",
   CANCELED = "CANCELED",
-  // CLOSED = "CLOSED",
+  CLOSED = "CLOSED",
 }
 
 export enum SaleTransactionEnum {
@@ -98,5 +98,4 @@ export enum OrderType {
 export enum PostOrderName {
   BREEDNAME = "name",
   PROVISIONALTOTAL = "provisionalTotal",
-  PRICE = "price",
 }
