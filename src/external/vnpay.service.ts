@@ -5,7 +5,7 @@ import crypto from "crypto";
 import { Request } from "express";
 export class VnPayService {
   generatePaymentUrl(
-    orderId: string,
+    vnp_TxnRef: string,
     returnUrl: string,
     amount: number,
     ipAddress: string,
@@ -31,7 +31,7 @@ export class VnPayService {
     vnp_Params["vnp_TmnCode"] = tmnCode;
     vnp_Params["vnp_Locale"] = locale;
     vnp_Params["vnp_CurrCode"] = currCode;
-    vnp_Params["vnp_TxnRef"] = orderId;
+    vnp_Params["vnp_TxnRef"] = vnp_TxnRef;
     vnp_Params["vnp_OrderInfo"] = orderInfo;
     vnp_Params["vnp_Amount"] = amount * 100;
     vnp_Params["vnp_ReturnUrl"] = returnUrl;
@@ -66,9 +66,17 @@ export class VnPayService {
     const signed = this.getSign(secretKey, vnp_Params);
 
     if (secureHash === signed) {
-      callbackSuccess();
+      if (
+        vnp_Params["vnp_ResponseCode"] === "00" &&
+        vnp_Params["vnp_TransactionStatus"] === "00"
+      ) {
+        callbackSuccess();
+      } else {
+        callBackFail();
+      }
     } else {
-      callBackFail();
+      // eslint-disable-next-line no-console
+      console.log("Error");
     }
   }
 

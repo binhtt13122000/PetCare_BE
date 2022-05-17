@@ -7,12 +7,14 @@ import {
   HttpStatus,
   Delete,
   Patch,
+  Param,
 } from "@nestjs/common";
 import { VaccineService } from "./vaccine.service";
 import { ApiTags } from "@nestjs/swagger";
 import { CreateVaccineDTO } from "./dto/create-vaccine.dto";
 import { UpdateVaccineDTO } from "./dto/update-vaccine.dto";
 import { Vaccine } from "src/entities/pet_service/vaccine.entity";
+import { IdParams } from "src/common";
 
 @ApiTags("vaccine")
 @Controller("vaccine")
@@ -37,11 +39,11 @@ export class VaccineController {
     }
   }
 
-  @Patch("/change-status")
-  async changeStatus(id: number): Promise<Vaccine> {
+  @Patch("change-status/:id")
+  async changeStatus(@Param() param: IdParams): Promise<Vaccine> {
     try {
-      const vaccine: Vaccine = await this.vaccineService.findById(id);
-      return this.vaccineService.update(id, {
+      const vaccine: Vaccine = await this.vaccineService.findById(param.id);
+      return this.vaccineService.update(param.id, {
         ...vaccine,
         isActive: !vaccine.isActive,
       });
@@ -50,11 +52,14 @@ export class VaccineController {
     }
   }
 
-  @Delete()
-  async delete(id: number): Promise<Vaccine> {
+  @Delete(":id")
+  async delete(@Param() params: IdParams): Promise<Vaccine> {
     try {
-      const vaccine: Vaccine = await this.vaccineService.findById(id);
-      return this.vaccineService.update(id, { ...vaccine, isActive: false });
+      const vaccine: Vaccine = await this.vaccineService.findById(params.id);
+      return this.vaccineService.update(params.id, {
+        ...vaccine,
+        isActive: false,
+      });
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

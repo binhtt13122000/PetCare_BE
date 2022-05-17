@@ -6,10 +6,10 @@ import {
   HttpException,
   HttpStatus,
   Get,
-  Res,
   Req,
-  Param,
   Query,
+  Inject,
+  CACHE_MANAGER,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { OrdersService } from "./orders.service";
@@ -18,13 +18,20 @@ import { Order } from "src/entities/order_service/order.entity";
 import { UpdateOrderDTO } from "./dto/update-order.dto";
 import { configService } from "src/config/config.service";
 import { vnpayService } from "src/external/vnpay.service";
-import { Request, Response } from "express";
-import { IdParams, PaymentQuery } from "src/common";
+import { Request } from "express";
+import { PaymentQuery } from "src/common";
+import { Cache } from "cache-manager";
+import { format } from "date-fns";
+import { OrderEnum } from "src/enum";
+import { ResponsePayment } from "./dto/response-payment.dto";
 
 @ApiTags("orders")
 @Controller("orders")
 export class OrdersController {
-  constructor(private readonly ordersService: OrdersService) {}
+  constructor(
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly ordersService: OrdersService,
+  ) {}
 
   @Post()
   async create(@Body() body: CreateOrderDTO): Promise<Order> {
@@ -44,13 +51,20 @@ export class OrdersController {
     }
   }
 
-  @Get("payment/:id")
-  deposit(
-    @Res() res: Response,
+  @Post("payment")
+  async deposit(
     @Req() req: Request,
     @Query() query: PaymentQuery,
-    @Param() param: IdParams,
-  ): void {
+    @Body() body: UpdateOrderDTO,
+  ): Promise<ResponsePayment> {
+    try {
+      const order = await this.ordersService.findById(body.id);
+      if (!order) {
+        throw new HttpException("not found", HttpStatus.NOT_FOUND);
+      }
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
     if (!query.paymentMethod) {
       query.paymentMethod = "vnpay";
     }
@@ -58,11 +72,11 @@ export class OrdersController {
       case "vnpay":
         const ipAddr: string = req.socket.remoteAddress;
         const returnUrl =
-          configService.getApiRootURL() + "v1/api/order/vnpay_return";
+          configService.getApiRootURL() + "/v1/api/orders/vnpay_return";
         const url = vnpayService.generatePaymentUrl(
-          String(param.id),
+          format(new Date(), "yyyyMMddHHmmss") + body.id,
           returnUrl,
-          query.total,
+          body.orderTotal,
           ipAddr.split(":").pop() || "127.0.0.1",
           query.message,
           query.locale,
@@ -70,7 +84,10 @@ export class OrdersController {
           undefined,
         );
         if (url) {
-          return res.redirect(url);
+          this.cacheManager.set("order_id_" + body.id, JSON.stringify(body), {
+            ttl: 300,
+          });
+          return { url };
         }
         break;
       case "momo":
@@ -84,13 +101,33 @@ export class OrdersController {
   vnPayReturn(@Req() req: Request): void {
     vnpayService.vnpayReturn(
       req,
-      () => {
-        // eslint-disable-next-line no-console
-        console.log(req);
+      async () => {
+        const vnp_Params = req.query;
+        const vnp_TxnRef = String(vnp_Params["vnp_TxnRef"]);
+        const id = vnp_TxnRef.slice(14);
+        const updateOrderJSON: string = await this.cacheManager.get(
+          "order_id_" + id,
+        );
+        const updatedOrder: UpdateOrderDTO = JSON.parse(updateOrderJSON);
+        try {
+          const order = await this.ordersService.findById(updatedOrder.id);
+          if (!order) {
+            throw new HttpException("not found", HttpStatus.NOT_FOUND);
+          }
+          this.cacheManager.del("order_id_" + id);
+          await this.ordersService.update(updatedOrder.id, {
+            ...order,
+            ...updatedOrder,
+            status: OrderEnum.SUCCESS,
+          });
+        } catch (error) {
+          throw new HttpException(error, HttpStatus.BAD_REQUEST);
+        }
       },
       () => {
         // eslint-disable-next-line no-console
         console.log("Payment Failed");
+        // this.cacheManager.del("order_id_" + id);
       },
     );
   }

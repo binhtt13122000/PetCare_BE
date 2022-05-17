@@ -15,4 +15,22 @@ export class RoomsService {
   async findAll(): Promise<Room[]> {
     return this.roomModel.find().exec();
   }
+
+  async getUserRooms(userId: number): Promise<Room[]> {
+    return (
+      this.roomModel
+        .find({
+          $or: [
+            {
+              ownerId: userId,
+            },
+            {
+              sellerId: userId,
+            },
+          ],
+        })
+        // .select(["-messages"])
+        .exec()
+    );
+  }
 }

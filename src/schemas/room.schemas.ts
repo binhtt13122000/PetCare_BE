@@ -3,18 +3,21 @@ import { Document } from "mongoose";
 import { ApiProperty } from "@nestjs/swagger";
 import { Message } from "./message.schema";
 import mongoose from "mongoose";
+import { RoomStatusEnum } from "src/enum";
 
 export type RoomDocument = Room & Document;
 
 @Schema()
 export class Room {
-  @Prop()
-  @ApiProperty()
-  participant1: number;
+  _id?: string;
 
   @Prop()
   @ApiProperty()
-  participant2: number;
+  sellerId: number;
+
+  @Prop()
+  @ApiProperty()
+  ownerId: number;
 
   @Prop()
   @ApiProperty()
@@ -26,10 +29,22 @@ export class Room {
 
   @Prop()
   @ApiProperty()
+  newestMessage: string;
+
+  @Prop()
+  @ApiProperty()
+  isSellerMessage: boolean;
+
+  @Prop()
+  @ApiProperty()
   createdTime: Date;
 
+  @Prop()
+  @ApiProperty({ enum: RoomStatusEnum, default: RoomStatusEnum.CREATED })
+  status: RoomStatusEnum;
+
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "Message" })
-  message: Message[];
+  messages?: Message[];
 }
 
 export const RoomSchema = SchemaFactory.createForClass(Room);

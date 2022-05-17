@@ -49,8 +49,8 @@ export class ServicesController {
     }
   }
 
-  @Delete()
-  async delete(id: number): Promise<Service> {
+  @Delete(":id")
+  async delete(@Param("id") id: string): Promise<Service> {
     try {
       const service = await this.shopService.findById(id);
       return this.shopService.update(id, { ...service, status: false });
@@ -59,8 +59,8 @@ export class ServicesController {
     }
   }
 
-  @Patch("/change-status")
-  async changeStatus(id: number): Promise<Service> {
+  @Patch("change-status/:id")
+  async changeStatus(@Param("id") id: string): Promise<Service> {
     try {
       const service = await this.shopService.findById(id);
       return this.shopService.update(id, {

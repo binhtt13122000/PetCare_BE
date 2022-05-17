@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { CacheModule, Module } from "@nestjs/common";
 import { APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
@@ -23,13 +23,14 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { RoomsModule } from "./modules/rooms/rooms.module";
 import { configService } from "src/config/config.service";
 import { BrachModule } from "./modules/branchs/branch.module";
-import { ChatGateway } from "./modules/chat/chat.gateway";
 import { BreedsModule } from "./modules/breeds/breeds.module";
 import { SpeciesModule } from "./modules/species/species.module";
 import { TransactionFeesModule } from "./modules/transaction-fees/transaction-fees.module";
 import { VaccinePetRecordsModule } from "./modules/vaccine-pet-records/vaccine-pet-records.module";
 import { PromotionsModule } from "./modules/promotions/promotions.module";
 import { ServiceFeesModule } from "./modules/service-fees/service-fees.module";
+import { MessagesModule } from "./modules/messages/messages.module";
+import { ChatModule } from "./modules/chat/chat.module";
 
 const mongoConnectionString = configService.getMongoConnectionString();
 @Module({
@@ -57,10 +58,15 @@ const mongoConnectionString = configService.getMongoConnectionString();
     BreedsModule,
     PromotionsModule,
     ServiceFeesModule,
+    MessagesModule,
+    ChatModule,
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 300,
+    }),
   ],
   controllers: [AppController],
   providers: [
-    ChatGateway,
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,

@@ -1,5 +1,6 @@
-import { Body, Controller, Post } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { IdParams } from "src/common";
 import { Room } from "src/schemas/room.schemas";
 import { RoomsService } from "./rooms.service";
 
@@ -11,5 +12,10 @@ export class RoomsController {
   @Post()
   async create(@Body() body: Room): Promise<Room> {
     return this.roomsService.create(body);
+  }
+
+  @Get("user/:id")
+  async findByUserId(@Param() params: IdParams): Promise<Room[]> {
+    return this.roomsService.getUserRooms(params.id);
   }
 }

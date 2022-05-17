@@ -99,3 +99,9 @@ export enum PostOrderName {
   BREEDNAME = "name",
   PROVISIONALTOTAL = "provisionalTotal",
 }
+export enum RoomStatusEnum {
+  CREATED = "CREATED",
+  BLOCKED = "BLOCKED",
+  CLOSED = "CLOSED",
+  EXPIRED = "EXPIRED",
+}

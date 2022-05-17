@@ -18,7 +18,8 @@ export class ResponseDataInterceptor implements NestInterceptor {
     if (
       response.req.url !== "/v1/api/payment" &&
       response.req.url !==
-        "/v1/api/orders/payment/1?promotionId=1&locale=vi&paymentMethod=vnpay&total=135000&message=CC"
+        "/v1/api/orders/payment/1?promotionId=1&locale=vi&paymentMethod=vnpay&total=135000&message=CC" &&
+      !String(response.req.url).startsWith("/v1/api/orders/payment")
     ) {
       return next.handle().pipe(
         map((data) => {
