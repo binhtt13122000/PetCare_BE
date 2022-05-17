@@ -90,6 +90,15 @@ export enum TicketStatusEnum {
   EXPIRED = "EXPIRED",
 }
 
+export enum OrderType {
+  DESC = "DESC",
+  ASC = "ASC",
+}
+
+export enum PostOrderName {
+  BREEDNAME = "name",
+  PROVISIONALTOTAL = "provisionalTotal",
+}
 export enum RoomStatusEnum {
   CREATED = "CREATED",
   BLOCKED = "BLOCKED",
