@@ -7,10 +7,6 @@ export class CreateCustomerDTO {
   @IsPhoneNumber()
   phoneNumber: string;
 
-  @ApiProperty({ required: false })
-  @IsString()
-  password: string;
-
   @ApiProperty()
   @IsString()
   firstName: string;
@@ -28,7 +24,4 @@ export class CreateCustomerDTO {
 
   @ApiProperty({ enum: GenderEnum })
   gender: GenderEnum;
-
-  @ApiProperty({ type: "string", format: "binary" })
-  file: Express.Multer.File;
 }
