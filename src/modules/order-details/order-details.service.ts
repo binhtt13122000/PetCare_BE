@@ -22,22 +22,15 @@ export class OrderDetailsService extends BaseService<
     const queryBuilder = await this.orderDetailRepository.createQueryBuilder(
       "order_detail",
     );
+    queryBuilder
+      .where("order_detail.orderId = :orderId", {
+        orderId: pageOptionsDto.orderId,
+      })
+      .innerJoinAndSelect("order_detail.order", "order")
+      .innerJoinAndSelect("order_detail.service", "service");
 
     if (isCheck) {
-      queryBuilder
-        .where("order_detail.orderId = :orderId", {
-          orderId: pageOptionsDto.orderId,
-        })
-        .innerJoinAndSelect("order_detail.order", "order")
-        .innerJoinAndSelect("order_detail.service", "service")
-        .innerJoinAndSelect("order.promotion", "promotion");
-    } else {
-      queryBuilder
-        .where("order_detail.orderId = :orderId", {
-          orderId: pageOptionsDto.orderId,
-        })
-        .innerJoinAndSelect("order_detail.order", "order")
-        .innerJoinAndSelect("order_detail.service", "service");
+      queryBuilder.innerJoinAndSelect("order.promotion", "promotion");
     }
 
     const { entities } = await queryBuilder.getRawAndEntities();

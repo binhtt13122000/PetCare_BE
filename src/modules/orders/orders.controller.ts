@@ -26,7 +26,7 @@ import { OrderEnum, PaymentOrderMethodEnum } from "src/enum";
 import { ResponsePayment } from "./dto/response-payment.dto";
 import { OrderOptionDto } from "./dto/order-option.dto";
 import { PageDto } from "src/common/page.dto";
-import { CreateOrderDTO } from "./dto/create-order.dto";
+// import { CreateOrderDTO } from "./dto/create-order.dto";
 import { Order } from "src/entities/order_service/order.entity";
 
 @ApiTags("orders")
@@ -37,14 +37,14 @@ export class OrdersController {
     private readonly ordersService: OrdersService,
   ) {}
 
-  @Post()
-  async create(@Body() body: CreateOrderDTO): Promise<Order> {
-    try {
-      return this.ordersService.store(new Order(body));
-    } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
-    }
-  }
+  // @Post()
+  // async create(@Body() body: CreateOrderDTO): Promise<Order> {
+  //   try {
+  //     return this.ordersService.store(new Order(body));
+  //   } catch (error) {
+  //     throw new HttpException(error, HttpStatus.BAD_REQUEST);
+  //   }
+  // }
 
   @Put()
   async update(@Body() body: UpdateOrderDTO): Promise<Order> {
