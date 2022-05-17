@@ -16,7 +16,6 @@ import { ApiTags } from "@nestjs/swagger";
 import { OrdersService } from "./orders.service";
 
 import { UpdateOrderDTO } from "./dto/update-order.dto";
-import { configService } from "src/config/config.service";
 import { vnpayService } from "src/external/vnpay.service";
 import { Request } from "express";
 import { PaymentQuery } from "src/common";
@@ -72,11 +71,9 @@ export class OrdersController {
       switch (body.paymentMethod) {
         case PaymentOrderMethodEnum.VNPAY:
           const ipAddr: string = req.socket.remoteAddress;
-          const returnUrl =
-            configService.getApiRootURL() + "/v1/api/orders/vnpay_return";
           const url = vnpayService.generatePaymentUrl(
             format(new Date(), "yyyyMMddHHmmss") + body.id,
-            returnUrl,
+            query.returnUrl,
             body.orderTotal,
             ipAddr.split(":").pop() || "127.0.0.1",
             query.message,
