@@ -54,6 +54,13 @@ export class Order extends BaseEntity {
   @JoinColumn({ name: "customerId", referencedColumnName: "id" })
   customer: Customer;
 
+  @Column({
+    type: "timestamp without time zone",
+    nullable: true,
+    default: () => "CURRENT_TIMESTAMP",
+  })
+  registerTime: Date;
+
   constructor(partial: Partial<Order>) {
     super();
     Object.assign(this, partial);

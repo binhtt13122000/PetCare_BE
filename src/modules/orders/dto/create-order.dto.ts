@@ -24,6 +24,10 @@ export class CreateOrderDetailDTO {
   order: Order = null;
   service: Service = null;
   @ApiProperty()
+  totalPrice: number;
+  @ApiProperty()
+  quantity: number;
+  @ApiProperty()
   price: number;
   @ApiProperty({ required: false })
   description: string;

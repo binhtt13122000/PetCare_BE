@@ -14,6 +14,10 @@ export class OrderDetail {
   id: number;
   @Column({ type: "integer", nullable: false })
   price: number;
+  @Column({ type: "integer", nullable: true })
+  quantity: number;
+  @Column({ type: "integer", nullable: true })
+  totalPrice: number;
   @Column({ type: "text", nullable: true })
   description: string;
 

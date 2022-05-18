@@ -18,6 +18,8 @@ export class UpdateOrderDTO extends OmitType(CreateOrderDTO, [
   promotionId: number;
   @ApiProperty({ required: false })
   payment?: number;
+  @ApiProperty()
+  point: number;
 }
 
 export class UpdateOrderDetailDTO {
@@ -26,6 +28,10 @@ export class UpdateOrderDetailDTO {
   orderId: number = null;
   order: Order = null;
   service: Service = null;
+  @ApiProperty()
+  totalPrice: number;
+  @ApiProperty()
+  quantity: number;
   @ApiProperty()
   price: number;
   @ApiProperty({ required: false })

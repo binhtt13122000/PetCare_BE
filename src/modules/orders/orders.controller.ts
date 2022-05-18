@@ -23,6 +23,7 @@ import { Cache } from "cache-manager";
 import { format } from "date-fns";
 import { OrderEnum, PaymentOrderMethodEnum } from "src/enum";
 import { ResponsePayment } from "./dto/response-payment.dto";
+import { CustomerService } from "../customer/customer.service";
 
 @ApiTags("orders")
 @Controller("orders")
@@ -30,6 +31,7 @@ export class OrdersController {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly ordersService: OrdersService,
+    private readonly customerService: CustomerService,
   ) {}
 
   @Post()
@@ -112,7 +114,13 @@ export class OrdersController {
         const updatedOrder: UpdateOrderDTO = JSON.parse(updateOrderJSON);
         try {
           const order = await this.ordersService.findById(updatedOrder.id);
+          const customer = await this.customerService.findById(
+            updatedOrder.customerId,
+          );
           if (!order) {
+            throw new HttpException("not found", HttpStatus.NOT_FOUND);
+          }
+          if (!customer) {
             throw new HttpException("not found", HttpStatus.NOT_FOUND);
           }
           if (order.status === OrderEnum.SUCCESS) {
@@ -124,6 +132,10 @@ export class OrdersController {
             ...updatedOrder,
             status: OrderEnum.SUCCESS,
             payment: updatedOrder.orderTotal,
+          });
+          await this.customerService.update(customer.id, {
+            ...customer,
+            point: customer.point + updatedOrder.point,
           });
         } catch (error) {
           throw new HttpException(error, HttpStatus.BAD_REQUEST);
