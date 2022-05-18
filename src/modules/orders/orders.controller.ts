@@ -10,11 +10,11 @@ import {
   Query,
   Inject,
   CACHE_MANAGER,
+  HttpCode,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { OrdersService } from "./orders.service";
-import { CreateOrderDTO } from "./dto/create-order.dto";
-import { Order } from "src/entities/order_service/order.entity";
+
 import { UpdateOrderDTO } from "./dto/update-order.dto";
 import { vnpayService } from "src/external/vnpay.service";
 import { Request } from "express";
@@ -23,6 +23,10 @@ import { Cache } from "cache-manager";
 import { format } from "date-fns";
 import { OrderEnum, PaymentOrderMethodEnum } from "src/enum";
 import { ResponsePayment } from "./dto/response-payment.dto";
+import { OrderOptionDto } from "./dto/order-option.dto";
+import { PageDto } from "src/common/page.dto";
+import { CreateOrderDTO } from "./dto/create-order.dto";
+import { Order } from "src/entities/order_service/order.entity";
 import { CustomerService } from "../customer/customer.service";
 
 @ApiTags("orders")
@@ -147,5 +151,17 @@ export class OrdersController {
         // this.cacheManager.del("order_id_" + id);
       },
     );
+  }
+
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  async getOrderOfCustomer(
+    @Query() orderOptionDto: OrderOptionDto,
+  ): Promise<PageDto<Order>> {
+    try {
+      return await this.ordersService.fetchOrders(orderOptionDto);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
   }
 }

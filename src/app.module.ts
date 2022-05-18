@@ -30,6 +30,7 @@ import { PromotionsModule } from "./modules/promotions/promotions.module";
 import { ServiceFeesModule } from "./modules/service-fees/service-fees.module";
 import { MessagesModule } from "./modules/messages/messages.module";
 import { ChatModule } from "./modules/chat/chat.module";
+import { OrderDetailsModule } from "./modules/order-details/order-details.module";
 
 const mongoConnectionString = configService.getMongoConnectionString();
 @Module({
@@ -47,6 +48,7 @@ const mongoConnectionString = configService.getMongoConnectionString();
     RolesModule,
     ServicesModule,
     OrdersModule,
+    OrderDetailsModule,
     MediasModule,
     SaleTransactionsModule,
     RoomsModule,
