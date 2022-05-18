@@ -33,6 +33,10 @@ export class Order extends BaseEntity {
   status: OrderEnum;
   @Column({ type: "text", nullable: true })
   description: string;
+  @Column({ type: "integer", nullable: true, default: 0 })
+  star: number;
+  @Column({ type: "text", nullable: true })
+  review: string;
   //references
   @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.order, {
     cascade: true,
