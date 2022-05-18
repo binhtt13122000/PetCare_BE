@@ -34,4 +34,6 @@ export class CreateOrderDetailDTO extends OrderDetail {
   description: string;
   @ApiProperty()
   serviceId: number;
+  @ApiProperty({ enum: OrderEnum, default: OrderEnum.DRAFT })
+  status: OrderEnum;
 }

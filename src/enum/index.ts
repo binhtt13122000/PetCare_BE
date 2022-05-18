@@ -11,6 +11,7 @@ export enum BreedingTransactionEnum {
 export enum OrderEnum {
   SUCCESS = "SUCCESS",
   WAITING = "WAITING",
+  DRAFT = "DRAFT",
 }
 
 export enum PetEnum {
