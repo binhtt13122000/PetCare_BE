@@ -34,7 +34,9 @@ export class Order extends BaseEntity {
   @Column({ type: "text", nullable: true })
   description: string;
   //references
-  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.order)
+  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.order, {
+    cascade: true,
+  })
   orderDetails: OrderDetail[];
 
   @Column({ name: "branchId" })
