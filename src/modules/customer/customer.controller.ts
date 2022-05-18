@@ -61,17 +61,24 @@ export class CustomerController {
     @Body() body: UpdateCustomerDTO,
   ): Promise<Customer> {
     try {
-      let avatar = null;
+      const updatedCustomer = await this.customerService.findById(body.id);
+      if (!updatedCustomer) {
+        throw new HttpException("not found", HttpStatus.BAD_REQUEST);
+      }
+      let avatar: string = null;
       if (file) {
-        avatar = await uploadService.uploadFile(file);
+        const { url } = await uploadService.uploadFile(file);
+        avatar = url;
         await this.fileProducerService.deleteFile(body.avatar);
       }
       const customer: Partial<Customer> = {
         ...body,
         avatar: file ? avatar : body.avatar,
       };
-
-      return await this.customerService.update(customer.id, customer);
+      return await this.customerService.update(customer.id, {
+        ...updatedCustomer,
+        ...customer,
+      });
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -135,27 +142,17 @@ export class CustomerController {
     }
   }
 
-  @ApiConsumes("multipart/form-data")
-  @UseInterceptors(FileInterceptor("file"))
   @Post()
-  async create(
-    @Body() body: CreateCustomerDTO,
-    @UploadedFile() file: Express.Multer.File,
-  ): Promise<Customer> {
+  async create(@Body() body: CreateCustomerDTO): Promise<Customer> {
     try {
-      let avatar = null;
-      if (file) {
-        avatar = await uploadService.uploadFile(file);
-      }
       const customer: Partial<Customer> = {
         ...body,
-        avatar: avatar,
       };
 
-      body.password = await bcrypt.hash(DEFAULT_PASSWORD, 12);
+      const password = await bcrypt.hash(DEFAULT_PASSWORD, 12);
 
       const account: Partial<Account> = {
-        password: body.password,
+        password: password,
         phoneNumber: body.phoneNumber,
         isActive: true,
         roleId: RoleIndexEnum.CUSTOMER,

@@ -15,12 +15,16 @@ export class OrderDetail extends BaseEntity {
   id: number;
   @Column({ type: "integer", nullable: false })
   price: number;
+  @Column({ type: "integer", nullable: true })
+  quantity: number;
+  @Column({ type: "integer", nullable: true })
+  totalPrice: number;
   @Column({ type: "text", nullable: true })
   description: string;
 
   @Column({ name: "orderId" })
   orderId: number;
-  @ManyToOne(() => Order, (order) => order.orderDetails, {})
+  @ManyToOne(() => Order, (order) => order.orderDetails)
   @JoinColumn({ name: "orderId", referencedColumnName: "id" })
   order: Order;
 

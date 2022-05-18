@@ -34,7 +34,9 @@ export class Order extends BaseEntity {
   @Column({ type: "text", nullable: true })
   description: string;
   //references
-  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.order)
+  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.order, {
+    cascade: true,
+  })
   orderDetails: OrderDetail[];
 
   @Column({ name: "branchId" })
@@ -53,6 +55,13 @@ export class Order extends BaseEntity {
   @ManyToOne(() => Customer, (customer) => customer.orders, {})
   @JoinColumn({ name: "customerId", referencedColumnName: "id" })
   customer: Customer;
+
+  @Column({
+    type: "timestamp without time zone",
+    nullable: true,
+    default: () => "CURRENT_TIMESTAMP",
+  })
+  registerTime: Date;
 
   constructor(partial: Partial<Order>) {
     super();
