@@ -23,7 +23,9 @@ export class OrderDetail {
 
   @Column({ name: "orderId" })
   orderId: number;
-  @ManyToOne(() => Order, (order) => order.orderDetails, {})
+  @ManyToOne(() => Order, (order) => order.orderDetails, {
+    cascade: true,
+  })
   @JoinColumn({ name: "orderId", referencedColumnName: "id" })
   order: Order;
 
