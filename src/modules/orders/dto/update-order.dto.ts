@@ -20,6 +20,10 @@ export class UpdateOrderDTO extends OmitType(CreateOrderDTO, [
   payment?: number;
   @ApiProperty()
   point: number;
+  @ApiProperty()
+  star: number;
+  @ApiProperty()
+  review: string;
 }
 
 export class UpdateOrderDetailDTO {

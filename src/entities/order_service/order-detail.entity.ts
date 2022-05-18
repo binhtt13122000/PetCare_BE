@@ -27,7 +27,6 @@ export class OrderDetail extends BaseEntity {
   @ManyToOne(() => Order, (order) => order.orderDetails)
   @JoinColumn({ name: "orderId", referencedColumnName: "id" })
   order: Order;
-
   @Column({ name: "serviceId" })
   serviceId: number;
   @ManyToOne(() => Service, (service) => service.orderDetails, {})
