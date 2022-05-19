@@ -34,7 +34,7 @@ export class SaleTransaction extends BaseEntity {
   placeMeeting: string;
   @Column({
     type: "timestamp without time zone",
-    nullable: false,
+    nullable: true,
   })
   @IsDate()
   transactionTime: Date;
