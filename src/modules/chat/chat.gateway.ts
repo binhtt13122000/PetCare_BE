@@ -1,5 +1,9 @@
-import { SubscribeMessage, WebSocketGateway } from "@nestjs/websockets";
-import { Socket } from "socket.io";
+import {
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from "@nestjs/websockets";
+import { Socket, Server } from "socket.io";
 import { MessagesService } from "../messages/messages.service";
 import { RoomsService } from "../rooms/rooms.service";
 import { MessageDTO } from "./message.dto";
@@ -11,6 +15,8 @@ import { RoomStatusEnum } from "src/enum";
   },
 })
 export class ChatGateway {
+  @WebSocketServer()
+  server: Server;
   constructor(
     private readonly messageService: MessagesService,
     private readonly roomService: RoomsService,
@@ -46,7 +52,7 @@ export class ChatGateway {
         room: createdRoom._id,
       });
       client.join(createdRoom._id);
-      client.in(createdRoom._id).emit("chatToClient", createdMessage);
+      this.server.in(createdRoom._id).emit("chatToClient", createdMessage);
     } else {
       const createdMessage = await this.messageService.create({
         content: message.content,
@@ -55,7 +61,7 @@ export class ChatGateway {
         room: message.room || "",
         type: message.type,
       });
-      client.in(message.room).emit("chatToClient", createdMessage);
+      this.server.in(message.room).emit("chatToClient", createdMessage);
     }
   }
 }
