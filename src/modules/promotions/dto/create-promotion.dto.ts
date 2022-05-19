@@ -29,10 +29,15 @@ export class CreatePromotionDTO {
   @Type(() => Number)
   maxMoneyPromo: number;
 
+  @ApiProperty()
+  @IsNumber()
+  @Type(() => Number)
+  point: number;
+
   @ApiProperty({ required: false })
   @IsNumber()
   @Type(() => Number)
-  customerId: number;
+  branchId: number;
 
   @ApiProperty()
   startTime: Date;

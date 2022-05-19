@@ -35,6 +35,12 @@ export class Room {
   @ApiProperty()
   isSellerMessage: boolean;
 
+  @Prop({ required: false })
+  sellerLastViewTime?: Date;
+
+  @Prop({ required: false })
+  buyerLastViewTime?: Date;
+
   @Prop()
   @ApiProperty()
   createdTime: Date;

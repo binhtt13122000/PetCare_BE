@@ -22,12 +22,6 @@ export class ChatGateway {
     private readonly roomService: RoomsService,
   ) {}
 
-  @SubscribeMessage("joinRoom")
-  handleJoinRoom(client: Socket, roomId: string): void {
-    client.join(roomId);
-    client.emit("joinedRoom", roomId);
-  }
-
   @SubscribeMessage("leaveRoom")
   handleLeaveRoom(client: Socket, roomId: string): void {
     client.leave(roomId);

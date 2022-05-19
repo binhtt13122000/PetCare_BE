@@ -6,11 +6,11 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Customer } from "../user_management_service/customer.entity";
 import { OneToMany } from "typeorm";
 import { Order } from "../order_service/order.entity";
 import { SaleTransaction } from "../transaction_service/sale-transaction.entity";
 import { BreedingTransaction } from "../transaction_service/breeding-transaction.entity";
+import { Branch } from "../user_management_service/branch.entity";
 
 @Entity("promotion")
 export class Promotion extends BaseEntity {
@@ -33,11 +33,14 @@ export class Promotion extends BaseEntity {
   @Column({ type: "integer", nullable: false })
   maxMoneyPromo: number;
 
-  @Column({ name: "customerId", nullable: true })
-  customerId: number;
-  @ManyToOne(() => Customer, (customer) => customer.promotions, {})
-  @JoinColumn({ name: "customerId", referencedColumnName: "id" })
-  customer: Customer;
+  @Column({ type: "integer", nullable: true, default: 0 })
+  point: number;
+
+  @Column({ name: "branchId", nullable: true })
+  branchId: number;
+  @ManyToOne(() => Branch, (branch) => branch.promotions, {})
+  @JoinColumn({ name: "branchId", referencedColumnName: "id" })
+  branch: Branch;
 
   @OneToMany(() => Order, (order) => order.promotion)
   orders: Order[];

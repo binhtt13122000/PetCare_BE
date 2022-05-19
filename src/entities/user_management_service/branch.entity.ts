@@ -21,6 +21,7 @@ import { BreedingTransaction } from "../transaction_service/breeding-transaction
 import { HealthRecord } from "../health_service/health-record.entity";
 import { VaccinePetRecord } from "src/entities/pet_service/vaccine-pet-record.entity";
 import { Ticket } from "../service/ticket.entity";
+import { Promotion } from "../service/promotion.entity";
 
 @Entity("branch")
 export class Branch extends BaseEntity {
@@ -32,6 +33,9 @@ export class Branch extends BaseEntity {
   @Column({ type: "text", nullable: false })
   @IsString()
   representativeName: string;
+  @Column({ type: "text", nullable: true })
+  @IsString()
+  name: string;
   @Column({ type: "text", nullable: false, unique: true })
   @IsPhoneNumber()
   phoneNumber: string;
@@ -58,6 +62,9 @@ export class Branch extends BaseEntity {
   @Column({ type: "bool", default: true })
   @IsBoolean()
   isActive: boolean;
+
+  @OneToMany(() => Promotion, (promotion) => promotion.branch)
+  promotions: Promotion[];
 
   @OneToMany(() => Order, (order) => order.branch)
   orders: Order[];

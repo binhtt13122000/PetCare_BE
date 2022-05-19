@@ -16,7 +16,6 @@ import {
   BaseEntity,
 } from "typeorm";
 import { PetOwner } from "../pet_service/pet-owner.entity";
-import { Promotion } from "../service/promotion.entity";
 import { Follow } from "./follow.entity";
 import { Report } from "./report.entity";
 import { Order } from "../order_service/order.entity";
@@ -94,9 +93,6 @@ export class Customer extends BaseEntity {
 
   @OneToMany(() => PetOwner, (petOwner) => petOwner.customer)
   petOwners: PetOwner[];
-
-  @OneToMany(() => Promotion, (promotion) => promotion.customer)
-  promotions: Promotion[];
 
   @OneToMany(() => Order, (order) => order.customer)
   orders: Order[];
