@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Order } from "src/entities/order_service/order.entity";
-import { OrderEnum } from "src/enum";
+import { OrderEnum, PaymentOrderMethodEnum } from "src/enum";
 import { Service } from "src/entities/service/service.entity";
 import { OrderDetail } from "src/entities/order_service/order-detail.entity";
 export class CreateOrderDTO {
@@ -8,7 +8,8 @@ export class CreateOrderDTO {
   provisionalTotal: number;
   @ApiProperty()
   orderTotal: number;
-  status: OrderEnum = OrderEnum.WAITING;
+  @ApiProperty({ enum: OrderEnum, default: OrderEnum.DRAFT })
+  status: OrderEnum;
   @ApiProperty({ required: false })
   description: string;
   @ApiProperty()
@@ -17,6 +18,14 @@ export class CreateOrderDTO {
   branchId: number;
   @ApiProperty()
   customerId: number;
+  @ApiProperty()
+  point: number;
+  @ApiProperty({ required: false })
+  paymentTime: Date;
+  @ApiProperty({ required: false })
+  paymentMethod: PaymentOrderMethodEnum;
+  @ApiProperty({ required: false })
+  payment?: number;
 }
 
 export class CreateOrderDetailDTO extends OrderDetail {
@@ -34,6 +43,4 @@ export class CreateOrderDetailDTO extends OrderDetail {
   description: string;
   @ApiProperty()
   serviceId: number;
-  @ApiProperty({ enum: OrderEnum, default: OrderEnum.DRAFT })
-  status: OrderEnum;
 }
