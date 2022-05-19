@@ -1,5 +1,5 @@
 import { Model } from "mongoose";
-import { Injectable } from "@nestjs/common";
+import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Room, RoomDocument } from "src/schemas/room.schemas";
 
@@ -10,6 +10,16 @@ export class RoomsService {
   async create(createRoomDTO: Room): Promise<Room> {
     const createdRoom = new this.roomModel(createRoomDTO);
     return createdRoom.save();
+  }
+
+  async updateRoom(updateRoomDTO: Room): Promise<Room> {
+    const room = await this.roomModel.findById(updateRoomDTO._id);
+    if (room) {
+      throw new HttpException("not found", HttpStatus.NOT_FOUND);
+    }
+    return await this.roomModel
+      .findByIdAndUpdate(updateRoomDTO._id, { ...room, ...updateRoomDTO })
+      .exec();
   }
 
   async findAll(): Promise<Room[]> {

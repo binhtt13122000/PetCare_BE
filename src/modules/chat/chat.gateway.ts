@@ -8,6 +8,7 @@ import { MessagesService } from "../messages/messages.service";
 import { RoomsService } from "../rooms/rooms.service";
 import { MessageDTO } from "./message.dto";
 import { RoomStatusEnum } from "src/enum";
+import { Room } from "src/schemas/room.schemas";
 
 @WebSocketGateway({
   cors: {
@@ -22,10 +23,20 @@ export class ChatGateway {
     private readonly roomService: RoomsService,
   ) {}
 
+  @SubscribeMessage("joinRoom")
+  handleJoinRoom(client: Socket, roomId: string): void {
+    client.join(roomId);
+  }
+
   @SubscribeMessage("leaveRoom")
   handleLeaveRoom(client: Socket, roomId: string): void {
     client.leave(roomId);
-    client.emit("leftRoom", roomId);
+  }
+
+  @SubscribeMessage("updateRoom")
+  handleUpdateRoom(client: Socket, room: Room): void {
+    this.roomService;
+    client.emit("updatedRoom", room);
   }
 
   @SubscribeMessage("chatToServer")

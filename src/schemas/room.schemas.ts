@@ -9,6 +9,7 @@ export type RoomDocument = Room & Document;
 
 @Schema()
 export class Room {
+  @ApiProperty({ required: false })
   _id?: string;
 
   @Prop()
@@ -36,10 +37,24 @@ export class Room {
   isSellerMessage: boolean;
 
   @Prop({ required: false })
+  @ApiProperty({ required: false })
   sellerLastViewTime?: Date;
 
   @Prop({ required: false })
+  @ApiProperty({ required: false })
   buyerLastViewTime?: Date;
+
+  @Prop({ required: false })
+  @ApiProperty({ required: false })
+  transactionTime?: Date;
+
+  @Prop({ required: false })
+  @ApiProperty({ required: false })
+  transactionPlace?: string;
+
+  @Prop({ description: false })
+  @ApiProperty({ required: false })
+  description?: string;
 
   @Prop()
   @ApiProperty()
