@@ -26,6 +26,21 @@ export class RoomsService {
     return this.roomModel.find().exec();
   }
 
+  async findByBuyerAndPost(buyerId: number, postId: number): Promise<Room> {
+    return this.roomModel
+      .findOne({
+        $and: [
+          {
+            buyerId: buyerId,
+          },
+          {
+            postId: postId,
+          },
+        ],
+      })
+      .exec();
+  }
+
   async getUserRooms(userId: number): Promise<Room[]> {
     return (
       this.roomModel
