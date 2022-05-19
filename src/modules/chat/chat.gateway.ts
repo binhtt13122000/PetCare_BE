@@ -35,7 +35,7 @@ export class ChatGateway {
 
   @SubscribeMessage("updateRoom")
   handleUpdateRoom(client: Socket, room: Room): void {
-    this.roomService;
+    this.roomService.updateRoom(room);
     client.emit("updatedRoom", room);
   }
 
