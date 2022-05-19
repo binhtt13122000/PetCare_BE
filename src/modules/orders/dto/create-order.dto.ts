@@ -2,6 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Order } from "src/entities/order_service/order.entity";
 import { OrderEnum } from "src/enum";
 import { Service } from "src/entities/service/service.entity";
+import { OrderDetail } from "src/entities/order_service/order-detail.entity";
 export class CreateOrderDTO {
   @ApiProperty()
   provisionalTotal: number;
@@ -11,14 +12,14 @@ export class CreateOrderDTO {
   @ApiProperty({ required: false })
   description: string;
   @ApiProperty()
-  orderDetails: CreateOrderDetailDTO[];
+  orderDetails: Partial<CreateOrderDetailDTO[]>;
   @ApiProperty()
   branchId: number;
   @ApiProperty()
   customerId: number;
 }
 
-export class CreateOrderDetailDTO {
+export class CreateOrderDetailDTO extends OrderDetail {
   id: number = null;
   orderId: number = null;
   order: Order = null;
