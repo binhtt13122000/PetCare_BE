@@ -33,10 +33,10 @@ export class ChatGateway {
     if (!message.room) {
       const createdRoom = await this.roomService.create({
         createdTime: message.createdTime,
-        isSellerMessage: true,
+        isSellerMessage: false,
         newestMessage: message.content,
         newestMessageTime: message.createdTime,
-        ownerId: message.ownerId,
+        buyerId: message.buyerId,
         postId: message.postId,
         sellerId: message.sellerId,
         status: RoomStatusEnum.CREATED,
@@ -49,7 +49,11 @@ export class ChatGateway {
       client.in(createdRoom._id).emit("chatToClient", createdMessage);
     } else {
       const createdMessage = await this.messageService.create({
-        ...message,
+        content: message.content,
+        createdTime: message.createdTime,
+        isSellerMessage: message.isSellerMessage,
+        room: message.room || "",
+        type: message.type,
       });
       client.in(message.room).emit("chatToClient", createdMessage);
     }

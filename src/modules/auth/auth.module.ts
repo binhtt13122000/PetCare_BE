@@ -21,7 +21,7 @@ import { CustomerModule } from "../customer/customer.module";
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get("JWT_SECRET_KEY"),
-        signOptions: { expiresIn: "7d" },
+        signOptions: { expiresIn: 10 },
       }),
       inject: [ConfigService],
     }),

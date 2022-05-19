@@ -9,9 +9,9 @@ export class MessageDTO {
 
   createdTime: Date;
 
-  room: string;
+  room?: string;
 
-  ownerId?: number;
+  buyerId?: number;
 
   postId?: number;
 

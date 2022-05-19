@@ -17,7 +17,7 @@ export class Room {
 
   @Prop()
   @ApiProperty()
-  ownerId: number;
+  buyerId: number;
 
   @Prop()
   @ApiProperty()
