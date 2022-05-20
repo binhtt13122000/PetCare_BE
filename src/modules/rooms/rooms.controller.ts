@@ -29,4 +29,9 @@ export class RoomsController {
       Number(postId),
     );
   }
+
+  @Get(":id")
+  async findRoomByRoomId(@Param() params: IdParams): Promise<Room> {
+    return this.roomsService.findRoomById(params.id);
+  }
 }
