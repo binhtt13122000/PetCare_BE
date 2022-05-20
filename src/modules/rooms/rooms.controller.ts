@@ -19,6 +19,11 @@ export class RoomsController {
     return this.roomsService.getUserRooms(params.id);
   }
 
+  @Get(":id")
+  async findByRoomId(@Param("id") id: string): Promise<Room> {
+    return this.roomsService.findById(id);
+  }
+
   @Get("buyer/:buyerId/post/:postId")
   async findBySellerAndPost(
     @Param("buyerId") buyerId: string,

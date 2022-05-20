@@ -26,6 +26,10 @@ export class RoomsService {
     return this.roomModel.find().exec();
   }
 
+  async findById(id: string): Promise<Room> {
+    return this.roomModel.findById(id).exec();
+  }
+
   async findByBuyerAndPost(buyerId: number, postId: number): Promise<Room> {
     return this.roomModel
       .findOne({
