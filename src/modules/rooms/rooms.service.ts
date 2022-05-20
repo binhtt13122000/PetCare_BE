@@ -62,4 +62,10 @@ export class RoomsService {
         .exec()
     );
   }
+
+  async findRoomById(id: string): Promise<Room> {
+    const room = await this.roomModel.findById(id);
+
+    return room;
+  }
 }
