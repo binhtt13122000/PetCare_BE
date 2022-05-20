@@ -11,6 +11,8 @@ import {
   Inject,
   CACHE_MANAGER,
   HttpCode,
+  NotFoundException,
+  BadGatewayException,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { OrdersService } from "./orders.service";
@@ -41,7 +43,7 @@ export class OrdersController {
   @Post()
   async create(@Body() body: CreateOrderDTO): Promise<Order> {
     try {
-      return this.ordersService.store(new Order(body));
+      return this.ordersService.store(body);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -50,6 +52,13 @@ export class OrdersController {
   @Put()
   async update(@Body() body: UpdateOrderDTO): Promise<Order> {
     try {
+      const order = await this.ordersService.findById(body.id);
+      if (!order) {
+        throw new NotFoundException("Not found");
+      }
+      if (order.status !== OrderEnum.DRAFT) {
+        throw new BadGatewayException("Cannot update");
+      }
       return await this.ordersService.update(body.id, body);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);

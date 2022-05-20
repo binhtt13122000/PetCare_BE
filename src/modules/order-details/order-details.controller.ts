@@ -1,16 +1,21 @@
 import {
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
+  Param,
   Query,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { IdParams } from "src/common";
 import { PageDto } from "src/common/page.dto";
 import { OrderDetail } from "src/entities/order_service/order-detail.entity";
 import { OrdersService } from "../orders/orders.service";
 import { OrderDetailOptionDto } from "./dto/order-detail-option.dto";
 import { OrderDetailsService } from "./order-details.service";
+import { NotFoundException } from "@nestjs/common";
+import { DeleteResult } from "typeorm";
 
 @Controller("order-details")
 @ApiTags("order-details")
@@ -37,6 +42,23 @@ export class OrderDetailsController {
           false,
         );
       }
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Delete()
+  async delete(@Param() params: IdParams): Promise<boolean> {
+    try {
+      const orderDetail = await this.orderDetailsService.findById(params.id);
+      if (!orderDetail) {
+        throw new NotFoundException("not found");
+      }
+      const deleteResult: DeleteResult = await this.orderDetailsService.delete(
+        params.id,
+      );
+
+      return deleteResult.affected && deleteResult.affected > 0;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

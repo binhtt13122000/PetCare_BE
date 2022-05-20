@@ -10,6 +10,7 @@ import { MessageDTO } from "./message.dto";
 import { RoomStatusEnum } from "src/enum";
 import { Room } from "src/schemas/room.schemas";
 import { CustomerService } from "../customer/customer.service";
+import { NotFoundException } from "@nestjs/common";
 
 @WebSocketGateway({
   cors: {
@@ -68,12 +69,22 @@ export class ChatGateway {
       client.join(createdRoom._id);
       this.server.in(createdRoom._id).emit("chatToClient", createdMessage);
     } else {
+      const room = await this.roomService.findById(message.room);
+      if (!room) {
+        throw new NotFoundException("not found");
+      }
       const createdMessage = await this.messageService.create({
         content: message.content,
         createdTime: message.createdTime,
         isSellerMessage: message.isSellerMessage,
         room: message.room || "",
         type: message.type,
+      });
+      await this.roomService.create({
+        ...room,
+        isSellerMessage: message.isSellerMessage,
+        newestMessageTime: message.createdTime,
+        newestMessage: message.content,
       });
       this.server.in(message.room).emit("chatToClient", createdMessage);
     }
