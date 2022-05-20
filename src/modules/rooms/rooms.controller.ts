@@ -1,5 +1,13 @@
-import { Body, Controller, Get, Param, Post } from "@nestjs/common";
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+} from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import mongoose from "mongoose";
 import { IdParams } from "src/common";
 import { Room } from "src/schemas/room.schemas";
 import { RoomsService } from "./rooms.service";
@@ -21,6 +29,9 @@ export class RoomsController {
 
   @Get(":id")
   async findByRoomId(@Param("id") id: string): Promise<Room> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new BadRequestException("id is not valid");
+    }
     return this.roomsService.findById(id);
   }
 
