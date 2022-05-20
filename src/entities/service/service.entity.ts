@@ -9,6 +9,7 @@ import { IsBoolean, IsInt, IsString } from "class-validator";
 import { HealthService } from "../health_service/health-service.entity";
 import { OrderDetail } from "../order_service/order-detail.entity";
 import { ServiceFee } from "./service-fee.entity";
+import { ServiceTicket } from "./service-ticket.entity";
 
 @Entity("service")
 export class Service extends BaseEntity {
@@ -32,6 +33,8 @@ export class Service extends BaseEntity {
   unit: string;
   @Column({ type: "text", nullable: true })
   healthCheckTemplate: string;
+  @Column({ type: "integer", nullable: true })
+  estimatedTime: number;
 
   @OneToMany(() => HealthService, (healthService) => healthService.service)
   healthServices: HealthService[];
@@ -41,6 +44,9 @@ export class Service extends BaseEntity {
 
   @OneToMany(() => ServiceFee, (serviceFee) => serviceFee.id)
   serviceFees: ServiceFee[];
+
+  @OneToMany(() => ServiceTicket, (serviceTicket) => serviceTicket.service)
+  serviceTickets: ServiceTicket[];
 
   constructor(partial: Partial<Service>) {
     super();

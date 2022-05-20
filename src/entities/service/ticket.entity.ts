@@ -5,10 +5,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Branch } from "../user_management_service/branch.entity";
 import { Customer } from "../user_management_service/customer.entity";
+import { ServiceTicket } from "./service-ticket.entity";
 
 @Entity("ticket")
 export class Ticket extends BaseEntity {
@@ -24,8 +26,11 @@ export class Ticket extends BaseEntity {
     type: "timestamp without time zone",
     nullable: false,
   })
-  meetingTime: Date;
-
+  meetingDate: Date;
+  @Column({ type: "integer", nullable: true })
+  startTime: number;
+  @Column({ type: "integer", nullable: true })
+  endTime: number;
   @Column({ name: "branchId" })
   branchId: number;
   @ManyToOne(() => Branch, (branch) => branch.tickets, {})
@@ -37,6 +42,11 @@ export class Ticket extends BaseEntity {
   @ManyToOne(() => Customer, (customer) => customer.tickets, {})
   @JoinColumn({ name: "customerId", referencedColumnName: "id" })
   customer: Customer;
+
+  @OneToMany(() => ServiceTicket, (serviceTicket) => serviceTicket.ticket, {
+    cascade: true,
+  })
+  serviceTickets: ServiceTicket[];
 
   @Column({ type: "enum", enum: TicketStatusEnum })
   status: TicketStatusEnum;

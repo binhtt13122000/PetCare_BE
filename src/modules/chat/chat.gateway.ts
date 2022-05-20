@@ -9,6 +9,7 @@ import { RoomsService } from "../rooms/rooms.service";
 import { MessageDTO } from "./message.dto";
 import { RoomStatusEnum } from "src/enum";
 import { Room } from "src/schemas/room.schemas";
+import { CustomerService } from "../customer/customer.service";
 
 @WebSocketGateway({
   cors: {
@@ -21,6 +22,7 @@ export class ChatGateway {
   constructor(
     private readonly messageService: MessagesService,
     private readonly roomService: RoomsService,
+    private readonly customerService: CustomerService,
   ) {}
 
   @SubscribeMessage("joinRoom")
@@ -50,6 +52,12 @@ export class ChatGateway {
         buyerId: message.buyerId,
         postId: message.postId,
         sellerId: message.sellerId,
+        sellerJson: JSON.stringify(
+          await this.customerService.findById(message.sellerId),
+        ),
+        buyerJson: JSON.stringify(
+          await this.customerService.findById(message.buyerId),
+        ),
         status: RoomStatusEnum.CREATED,
       });
       const createdMessage = await this.messageService.create({

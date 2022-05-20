@@ -22,6 +22,14 @@ export class Room {
 
   @Prop()
   @ApiProperty()
+  sellerJson: string;
+
+  @Prop()
+  @ApiProperty()
+  buyerJson: string;
+
+  @Prop()
+  @ApiProperty()
   postId: number;
 
   @Prop()

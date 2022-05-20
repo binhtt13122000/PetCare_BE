@@ -85,7 +85,6 @@ export enum PaymentOrderMethodEnum {
 
 export enum TicketStatusEnum {
   CREATED = "CREATED",
-  CONFIRMED = "CONFIRMED",
   CANCELED = "CANCELED",
   SUCCESS = "SUCCESS",
   EXPIRED = "EXPIRED",
