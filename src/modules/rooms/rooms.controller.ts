@@ -30,8 +30,8 @@ export class RoomsController {
     );
   }
 
-  @Get(":id")
-  async findRoomByRoomId(@Param() params: IdParams): Promise<Room> {
-    return this.roomsService.findRoomById(params.id);
+  @Get(":roomId")
+  async findRoomByRoomId(@Param("roomId") roomId: string): Promise<Room> {
+    return this.roomsService.findRoomById(roomId);
   }
 }

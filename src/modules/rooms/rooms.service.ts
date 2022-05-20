@@ -59,12 +59,9 @@ export class RoomsService {
     );
   }
 
-  async findRoomById(id: number): Promise<Room> {
+  async findRoomById(id: string): Promise<Room> {
     const room = await this.roomModel.findById(id);
 
-    if (room) {
-      throw new HttpException("not found", HttpStatus.NOT_FOUND);
-    }
     return room;
   }
 }
