@@ -36,9 +36,10 @@ export class ChatGateway {
   }
 
   @SubscribeMessage("updateRoom")
-  handleUpdateRoom(client: Socket, room: Room): void {
-    this.roomService.updateRoom(room);
-    client.emit("updatedRoom", room);
+  async handleUpdateRoom(client: Socket, room: Room): Promise<void> {
+    const updatedRoom = await this.roomService.updateRoom(room);
+    client.join(room._id);
+    this.server.in(room._id).emit("updatedRoom", updatedRoom);
   }
 
   @SubscribeMessage("chatToServer")
