@@ -80,7 +80,7 @@ export class ChatGateway {
         room: message.room || "",
         type: message.type,
       });
-      await this.roomService.create({
+      await this.roomService.updateRoom({
         ...room,
         isSellerMessage: message.isSellerMessage,
         newestMessageTime: message.createdTime,
