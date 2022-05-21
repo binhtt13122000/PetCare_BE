@@ -14,11 +14,12 @@ export class RoomsService {
 
   async updateRoom(updateRoomDTO: Room): Promise<Room> {
     const room = await this.roomModel.findById(updateRoomDTO._id);
-    if (room) {
+    if (!room) {
       throw new HttpException("not found", HttpStatus.NOT_FOUND);
     }
+    const returnedRoom = { ...room, ...updateRoomDTO };
     return await this.roomModel
-      .findByIdAndUpdate(updateRoomDTO._id, { ...room, ...updateRoomDTO })
+      .findByIdAndUpdate(updateRoomDTO._id, returnedRoom)
       .exec();
   }
 

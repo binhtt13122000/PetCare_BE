@@ -56,7 +56,7 @@ export class OrdersController {
       if (!order) {
         throw new NotFoundException("Not found");
       }
-      if (order.status !== OrderEnum.DRAFT) {
+      if (order.status === OrderEnum.SUCCESS) {
         throw new BadGatewayException("Cannot update");
       }
       return await this.ordersService.update(body.id, body);
