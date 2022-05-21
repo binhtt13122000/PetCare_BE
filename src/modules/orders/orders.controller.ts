@@ -59,7 +59,9 @@ export class OrdersController {
       if (order.status === OrderEnum.SUCCESS) {
         throw new BadGatewayException("Cannot update");
       }
-      return await this.ordersService.update(body.id, body);
+      const instance = await this.ordersService.findById(body.id);
+      Object.assign(instance, body);
+      return instance.save();
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
