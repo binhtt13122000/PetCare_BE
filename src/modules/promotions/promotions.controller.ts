@@ -13,6 +13,7 @@ import {
 import { ApiTags } from "@nestjs/swagger";
 import { IdParams } from "src/common";
 import { Promotion } from "src/entities/service/promotion.entity";
+import { DeleteResult } from "typeorm";
 import { CreatePromotionDTO } from "./dto/create-promotion.dto";
 import { UpdatePromotionDTO } from "./dto/update-promotion.dto";
 import { PromotionsService } from "./promotions.service";
@@ -59,16 +60,13 @@ export class PromotionsController {
   }
 
   @Delete(":id")
-  async delete(@Param() params: IdParams): Promise<Promotion> {
+  async delete(@Param() params: IdParams): Promise<DeleteResult> {
     try {
       const promotion = await this.promotionsService.findById(params.id);
-      if (!promotion.status) {
+      if (promotion.status) {
         throw Error("Cannot delete this promotion");
       }
-      return await this.promotionsService.update(promotion.id, {
-        ...promotion,
-        status: false,
-      });
+      return await this.promotionsService.delete(promotion.id);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
