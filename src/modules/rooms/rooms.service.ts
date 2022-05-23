@@ -47,20 +47,20 @@ export class RoomsService {
   }
 
   async getUserRooms(userId: number): Promise<Room[]> {
-    return (
-      this.roomModel
-        .find({
-          $or: [
-            {
-              ownerId: userId,
-            },
-            {
-              sellerId: userId,
-            },
-          ],
-        })
-        // .select(["-messages"])
-        .exec()
-    );
+    return this.roomModel
+      .find({
+        $or: [
+          {
+            ownerId: userId,
+          },
+          {
+            sellerId: userId,
+          },
+        ],
+      })
+      .sort({
+        newestMessageTime: "desc",
+      })
+      .exec();
   }
 }
