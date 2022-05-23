@@ -60,6 +60,14 @@ export class Room {
   @ApiProperty()
   createdTime: Date;
 
+  @Prop({ required: false })
+  @ApiProperty({ required: false })
+  transactionId?: number;
+
+  @Prop({ required: false })
+  @ApiProperty({ required: false })
+  type?: "SALE" | "BREED";
+
   @Prop()
   @ApiProperty({ enum: RoomStatusEnum, default: RoomStatusEnum.CREATED })
   status: RoomStatusEnum;

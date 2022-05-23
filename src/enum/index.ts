@@ -104,4 +104,5 @@ export enum RoomStatusEnum {
   BLOCKED = "BLOCKED",
   CLOSED = "CLOSED",
   EXPIRED = "EXPIRED",
+  REQUESTED = "REQUESTED",
 }
