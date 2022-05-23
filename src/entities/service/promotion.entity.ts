@@ -20,9 +20,9 @@ export class Promotion extends BaseEntity {
   name: string;
   @Column({ type: "integer", nullable: false })
   promo: number;
-  @Column({ type: "timestamp without time zone", nullable: false })
+  @Column({ type: "timestamp without time zone", nullable: true })
   startTime: Date;
-  @Column({ type: "timestamp without time zone", nullable: false })
+  @Column({ type: "timestamp without time zone", nullable: true })
   expireTime: Date;
   @Column({ type: "text", nullable: true })
   description: string;
