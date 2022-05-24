@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsInt, IsString } from "class-validator";
+import { IsString } from "class-validator";
 import { PostEnum, ServiceEnum } from "src/enum";
 
 export class CreatePostDTO {
@@ -7,13 +7,10 @@ export class CreatePostDTO {
   @IsString()
   title: string;
   @ApiProperty()
-  @IsInt()
   sellerReceive: number;
   @ApiProperty()
-  @IsInt()
   shopFee: number;
   @ApiProperty()
-  @IsInt()
   provisionalTotal: number;
   @ApiProperty()
   createTime: Date;
@@ -27,11 +24,9 @@ export class CreatePostDTO {
   @ApiProperty({ enum: PostEnum })
   status: PostEnum;
   @ApiProperty()
-  @IsInt()
   petId: number;
 
   @ApiProperty()
-  @IsInt()
   customerId: number;
 
   @ApiProperty({ type: "array", items: { type: "string", format: "binary" } })
