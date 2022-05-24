@@ -1,4 +1,5 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { ServiceEnum } from "src/enum/index";
 
 @Entity("transaction_fee")
 export class TransactionFee extends BaseEntity {
@@ -10,6 +11,12 @@ export class TransactionFee extends BaseEntity {
   max: number;
   @Column({ type: "int", nullable: false })
   price: number;
+  @Column({
+    type: "enum",
+    nullable: true,
+    enum: ServiceEnum,
+  })
+  type: ServiceEnum;
   constructor(partial: Partial<TransactionFee>) {
     super();
     Object.assign(this, partial);

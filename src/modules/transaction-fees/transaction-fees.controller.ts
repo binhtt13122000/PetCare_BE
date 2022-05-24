@@ -13,7 +13,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { IdParams } from "src/common";
 import { TransactionFee } from "src/entities/service/transaction-fee.entity";
 import { DeleteResult } from "typeorm";
-import { CreateTrasactionFeeDTO } from "./dto/create-transaction-fee.dto";
+import { CreateTransactionFeeDTO } from "./dto/create-transaction-fee.dto";
 import { UpdateTransactionFeeDTO } from "./dto/update-transaction-fee.dto";
 import { TransactionFeesService } from "./transaction-fees.service";
 
@@ -43,7 +43,7 @@ export class TransactionFeesController {
   }
 
   @Post()
-  async create(@Body() body: CreateTrasactionFeeDTO): Promise<TransactionFee> {
+  async create(@Body() body: CreateTransactionFeeDTO): Promise<TransactionFee> {
     try {
       return await this.transactionFeesServices.store(new TransactionFee(body));
     } catch (error) {
