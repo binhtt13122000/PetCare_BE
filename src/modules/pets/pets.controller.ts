@@ -18,11 +18,15 @@ import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { UpdatePetDTO } from "./dto/update-pet.dto";
 import { PetEnum } from "src/enum";
 import { PetOwner } from "src/entities/pet_service/pet-owner.entity";
+import { FileProducerService } from "src/shared/file/file.producer.service";
 
 @Controller("pets")
 @ApiTags("pets")
 export class PetsController {
-  constructor(private readonly petsService: PetsService) {}
+  constructor(
+    private readonly petsService: PetsService,
+    private readonly fileProducerService: FileProducerService,
+  ) {}
 
   @ApiConsumes("multipart/form-data")
   @Post()
@@ -64,8 +68,9 @@ export class PetsController {
     try {
       let avatar = null;
       if (file) {
-        avatar = await uploadService.uploadFile(file);
-        await uploadService.removeImage(body.avatar);
+        const { url } = await uploadService.uploadFile(file);
+        avatar = url;
+        await this.fileProducerService.deleteFile(body.avatar);
       }
       const pet: Partial<Pet> = {
         ...body,

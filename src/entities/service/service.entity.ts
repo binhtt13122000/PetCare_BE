@@ -39,7 +39,9 @@ export class Service extends BaseEntity {
   @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.service)
   orderDetails: OrderDetail[];
 
-  @OneToMany(() => ServiceFee, (serviceFee) => serviceFee.id)
+  @OneToMany(() => ServiceFee, (serviceFee) => serviceFee.service, {
+    cascade: true,
+  })
   serviceFees: ServiceFee[];
 
   @OneToMany(() => ServiceTicket, (serviceTicket) => serviceTicket.service)

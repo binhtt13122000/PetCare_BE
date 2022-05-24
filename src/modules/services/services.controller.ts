@@ -16,11 +16,16 @@ import { CreateServiceDTO } from "./dto/create-service.dto";
 import { Service } from "src/entities/service/service.entity";
 import { UpdateServiceDTO } from "./dto/update-service.dto";
 import { IdParams } from "src/common";
+import { ServiceFeesService } from "../service-fees/service-fees.service";
+import { ServiceFee } from "../../entities/service/service-fee.entity";
 
 @Controller("services")
 @ApiTags("services")
 export class ServicesController {
-  constructor(private readonly shopService: ShopService) {}
+  constructor(
+    private readonly shopService: ShopService,
+    private readonly serviceFeesService: ServiceFeesService,
+  ) {}
 
   @Get(":id")
   async getOne(@Param() params: IdParams): Promise<Service> {
@@ -34,7 +39,17 @@ export class ServicesController {
   @Post()
   async create(@Body() body: CreateServiceDTO): Promise<Service> {
     try {
-      return await this.shopService.store(new Service(body));
+      const { price, ...rest } = body;
+      const serviceFee = new ServiceFee({
+        max: undefined,
+        min: 0,
+        price: price,
+      });
+      const service = new Service({
+        ...rest,
+        serviceFees: [serviceFee],
+      });
+      return await this.shopService.store(service);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

@@ -1,6 +1,7 @@
 import { GenderEnum, PetEnum } from "src/enum";
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString, IsInt, IsBoolean } from "class-validator";
+import { Type } from "class-transformer";
 export class CreatePetDTO {
   @ApiProperty()
   @IsString()
@@ -8,10 +9,6 @@ export class CreatePetDTO {
 
   @ApiProperty()
   dob: Date;
-
-  @ApiProperty()
-  @IsInt()
-  ageRange: number;
 
   @ApiProperty({ enum: GenderEnum })
   gender: GenderEnum;
@@ -22,6 +19,7 @@ export class CreatePetDTO {
 
   @ApiProperty()
   @IsBoolean()
+  @Type(() => Boolean)
   isSeed: boolean;
 
   @ApiProperty({ enum: PetEnum })
@@ -33,10 +31,12 @@ export class CreatePetDTO {
 
   @ApiProperty()
   @IsInt()
+  @Type(() => Number)
   breedId: number;
 
   @ApiProperty()
   @IsInt()
+  @Type(() => Number)
   ownerId: number;
 
   @ApiProperty()
