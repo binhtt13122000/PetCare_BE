@@ -6,7 +6,7 @@ export class UpdateBranchDTO extends CreateBranchDTO {
   @ApiProperty({ required: false })
   image: string;
   @ApiProperty({ type: "string", format: "binary", required: false })
-  files: Express.Multer.File;
+  file: Express.Multer.File;
   @ApiProperty({ required: false })
   isActive: boolean;
 }
