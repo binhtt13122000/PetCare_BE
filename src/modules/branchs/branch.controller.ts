@@ -77,7 +77,8 @@ export class BranchController {
       }
       let image = null;
       if (file) {
-        image = await uploadService.uploadFile(file);
+        const { url } = await uploadService.uploadFile(file);
+        image = url;
         if (body.image) {
           await this.fileProducerService.deleteFile(body.image);
         }
