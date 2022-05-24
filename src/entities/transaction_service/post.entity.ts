@@ -11,7 +11,6 @@ import { Media } from "./media.entity";
 import { Pet } from "../pet_service/pet.entity";
 import { BreedingTransaction } from "./breeding-transaction.entity";
 import { SaleTransaction } from "./sale-transaction.entity";
-import { IsDate, IsInt } from "class-validator";
 import { Branch } from "../user_management_service/branch.entity";
 import { Customer } from "../user_management_service/customer.entity";
 import { PostEnum, ServiceEnum } from "src/enum";
@@ -23,41 +22,33 @@ export class Post extends BaseEntity {
   @Column({ type: "text", nullable: false })
   title: string;
   @Column({ type: "integer", nullable: false })
-  @IsInt()
   sellerReceive: number;
   @Column({ type: "integer", nullable: false })
-  @IsInt()
   shopFee: number;
   @Column({ type: "integer", nullable: false })
-  @IsInt()
   provisionalTotal: number;
   @Column({
     type: "timestamp without time zone",
     nullable: false,
     default: () => "CURRENT_TIMESTAMP",
   })
-  @IsDate()
   createTime: Date;
   @Column({ type: "timestamp without time zone", nullable: true })
-  @IsDate()
   meetingTime: Date;
   @Column({
     type: "timestamp without time zone",
     nullable: true,
   })
-  @IsDate()
   approveTime: Date;
   @Column({
     type: "timestamp without time zone",
     nullable: true,
   })
-  @IsDate()
   cancelTime: Date;
   @Column({
     type: "timestamp without time zone",
     nullable: true,
   })
-  @IsDate()
   rejectTime: Date;
   @Column({ type: "enum", enum: ServiceEnum })
   type: ServiceEnum;
