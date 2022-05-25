@@ -53,6 +53,7 @@ export class ChatGateway {
         postId: message.postId,
         sellerId: message.sellerId,
         status: RoomStatusEnum.CREATED,
+        type: message.roomType,
       });
       const createdMessage = await this.messageService.create({
         ...message,

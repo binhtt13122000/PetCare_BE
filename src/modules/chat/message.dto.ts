@@ -16,4 +16,6 @@ export class MessageDTO {
   postId?: number;
 
   sellerId?: number;
+
+  roomType?: "SALE" | "BREED";
 }
