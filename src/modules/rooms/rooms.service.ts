@@ -17,9 +17,9 @@ export class RoomsService {
     if (!room) {
       throw new HttpException("not found", HttpStatus.NOT_FOUND);
     }
-    const returnedRoom = { ...room, ...updateRoomDTO };
+    const returnedRoom = { ...room.toObject, ...updateRoomDTO };
     return await this.roomModel
-      .findByIdAndUpdate(updateRoomDTO._id, returnedRoom)
+      .findByIdAndUpdate(updateRoomDTO._id, returnedRoom, { new: true })
       .exec();
   }
 

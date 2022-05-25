@@ -29,6 +29,9 @@ export class CreatePostDTO {
   @ApiProperty()
   customerId: number;
 
+  @ApiProperty()
+  branchId: number;
+
   @ApiProperty({ type: "array", items: { type: "string", format: "binary" } })
   files: Array<Express.Multer.File>;
 }

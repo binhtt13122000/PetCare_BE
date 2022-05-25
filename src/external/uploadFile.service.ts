@@ -6,8 +6,12 @@ export class UploadFileService {
   async uploadFile(
     file: Express.Multer.File,
   ): Promise<{ url: string | null; type: string }> {
-    let contentType = file.mimetype.startsWith("image") && "image/jpeg";
-    contentType = file.mimetype.startsWith("video") && "video/mp4";
+    let contentType = null;
+    if (file.mimetype.startsWith("image")) {
+      contentType = "image/jpeg";
+    } else if (file.mimetype.startsWith("video")) {
+      contentType = "video/mp4";
+    }
     return new Promise<{ url: string | null; type: string }>(
       (resolve, reject) => {
         const BUCKET = configService.getBucket();

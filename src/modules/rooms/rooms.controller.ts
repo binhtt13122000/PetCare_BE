@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import mongoose from "mongoose";
@@ -44,5 +45,10 @@ export class RoomsController {
       Number(buyerId),
       Number(postId),
     );
+  }
+
+  @Put()
+  async update(@Body() body: Room): Promise<Room> {
+    return this.roomsService.updateRoom(body);
   }
 }
