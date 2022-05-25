@@ -5,13 +5,14 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { IsDate, IsInt, IsString, Max, Min } from "class-validator";
+import { IsString, Max, Min } from "class-validator";
 import { Customer } from "../user_management_service/customer.entity";
 import { Pet } from "../pet_service/pet.entity";
 import { Post } from "./post.entity";
 import { Promotion } from "../service/promotion.entity";
 import { BaseEntity } from "typeorm";
 import { SaleTransactionEnum } from "src/enum";
+import { Type } from "class-transformer";
 
 @Entity("sale_transaction")
 export class SaleTransaction extends BaseEntity {
@@ -22,13 +23,11 @@ export class SaleTransaction extends BaseEntity {
     nullable: false,
     default: () => "CURRENT_TIMESTAMP",
   })
-  @IsDate()
   createdTime: Date;
   @Column({
     type: "timestamp without time zone",
     nullable: false,
   })
-  @IsDate()
   meetingTime: Date;
   @Column({ type: "text", nullable: false })
   placeMeeting: string;
@@ -36,26 +35,25 @@ export class SaleTransaction extends BaseEntity {
     type: "timestamp without time zone",
     nullable: true,
   })
-  @IsDate()
   transactionTime: Date;
   @Column({ type: "int", nullable: false })
-  @IsInt()
+  @Type(() => Number)
   @Min(0)
   sellerReceive: number;
   @Column({ type: "int", nullable: false })
-  @IsInt()
+  @Type(() => Number)
   @Min(0)
   transactionFee: number;
   @Column({ type: "int", nullable: false })
-  @IsInt()
+  @Type(() => Number)
   @Min(0)
   provisionalTotal: number;
   @Column({ type: "int", nullable: false })
-  @IsInt()
+  @Type(() => Number)
   @Min(0)
   discount: number;
   @Column({ type: "int", nullable: false })
-  @IsInt()
+  @Type(() => Number)
   @Min(0)
   transactionTotal: number;
   @Column({ type: "text", nullable: true })
@@ -65,7 +63,7 @@ export class SaleTransaction extends BaseEntity {
   @IsString()
   paymentMethod: string;
   @Column({ type: "int", nullable: false })
-  @IsInt()
+  @Type(() => Number)
   @Min(0)
   @Max(5)
   star: number;

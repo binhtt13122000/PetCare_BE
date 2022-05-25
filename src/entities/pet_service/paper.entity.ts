@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Pet } from "./pet.entity";
-import { IsDate, IsString } from "class-validator";
+import { IsString } from "class-validator";
 import { PaperEnum } from "src/enum";
 
 @Entity("paper")
@@ -18,7 +18,6 @@ export class Paper extends BaseEntity {
   @IsString()
   name: string;
   @Column({ type: "timestamp without time zone", nullable: false })
-  @IsDate()
   date: Date;
   @Column({ type: "text", nullable: true })
   evidence: string;

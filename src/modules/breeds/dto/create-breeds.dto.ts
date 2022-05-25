@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsString, IsInt } from "class-validator";
+import { Type } from "class-transformer";
+import { IsBoolean, IsString } from "class-validator";
 
 export class CreateBreedsDTO {
   @ApiProperty()
@@ -14,6 +15,6 @@ export class CreateBreedsDTO {
   isActive: boolean;
 
   @ApiProperty()
-  @IsInt()
+  @Type(() => Number)
   speciesId: number;
 }

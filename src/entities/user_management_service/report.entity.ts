@@ -1,4 +1,3 @@
-import { IsDate } from "class-validator";
 import { ReportEnum } from "src/enum";
 import {
   Column,
@@ -27,7 +26,6 @@ export class Report {
     type: "timestamp without time zone",
     default: () => "CURRENT_TIMESTAMP",
   })
-  @IsDate()
   createdTime: Date;
 
   @Column({ name: "reporterId" })
