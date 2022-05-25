@@ -42,19 +42,19 @@ export class SaleTransaction extends BaseEntity {
   @IsInt()
   @Min(0)
   sellerReceive: number;
-  @Column({ type: "int", nullable: false })
+  @Column({ type: "int", nullable: true })
   @IsInt()
   @Min(0)
   transactionFee: number;
-  @Column({ type: "int", nullable: false })
+  @Column({ type: "int", nullable: true })
   @IsInt()
   @Min(0)
   provisionalTotal: number;
-  @Column({ type: "int", nullable: false })
+  @Column({ type: "int", nullable: true })
   @IsInt()
   @Min(0)
   discount: number;
-  @Column({ type: "int", nullable: false })
+  @Column({ type: "int", nullable: true })
   @IsInt()
   @Min(0)
   transactionTotal: number;
@@ -64,7 +64,7 @@ export class SaleTransaction extends BaseEntity {
   @Column({ type: "text", nullable: true })
   @IsString()
   paymentMethod: string;
-  @Column({ type: "int", nullable: false })
+  @Column({ type: "int", nullable: true })
   @IsInt()
   @Min(0)
   @Max(5)
