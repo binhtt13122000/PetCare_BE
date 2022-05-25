@@ -2,7 +2,6 @@ import {
   IsNumber,
   Max,
   Min,
-  IsInt,
   IsString,
   IsEmail,
   IsPhoneNumber,
@@ -24,6 +23,7 @@ import { SaleTransaction } from "../transaction_service/sale-transaction.entity"
 import { BreedingTransaction } from "../transaction_service/breeding-transaction.entity";
 import { GenderEnum } from "src/enum";
 import { Ticket } from "../service/ticket.entity";
+import { Type } from "class-transformer";
 
 @Entity("customer")
 export class Customer extends BaseEntity {
@@ -55,15 +55,15 @@ export class Customer extends BaseEntity {
   star: number;
   @Column({ type: "int", nullable: true, default: 0 })
   @Min(0)
-  @IsInt()
+  @Type(() => Number)
   point: number;
   @Column({ type: "int", nullable: true, default: 0 })
   @Min(0)
-  @IsInt()
+  @Type(() => Number)
   numberFollowers: number;
   @Column({ type: "int", nullable: true, default: 0 })
   @Min(0)
-  @IsInt()
+  @Type(() => Number)
   numberReviewers: number;
   @Column({ type: "text", nullable: true })
   @IsString()

@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsInt, Min, IsString, Max } from "class-validator";
+import { Type } from "class-transformer";
+import { Min, IsString, Max } from "class-validator";
 import { SaleTransactionEnum } from "src/enum";
 
 export class UpdateSaleTransactionDTO {
@@ -12,11 +13,11 @@ export class UpdateSaleTransactionDTO {
   @ApiProperty()
   transactionTime: Date;
   @ApiProperty()
-  @IsInt()
+  @Type(() => Number)
   @Min(0)
   discount: number;
   @ApiProperty()
-  @IsInt()
+  @Type(() => Number)
   @Min(0)
   transactionTotal: number;
   @ApiProperty()
@@ -25,7 +26,7 @@ export class UpdateSaleTransactionDTO {
   @IsString()
   paymentMethod: string;
   @ApiProperty()
-  @IsInt()
+  @Type(() => Number)
   @Min(0)
   @Max(5)
   star: number;

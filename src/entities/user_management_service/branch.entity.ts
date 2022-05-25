@@ -2,7 +2,6 @@ import {
   IsNumber,
   Max,
   Min,
-  IsInt,
   IsPhoneNumber,
   IsString,
   IsEmail,
@@ -23,6 +22,7 @@ import { VaccinePetRecord } from "src/entities/pet_service/vaccine-pet-record.en
 import { Ticket } from "../service/ticket.entity";
 import { Promotion } from "../service/promotion.entity";
 
+import { Type } from "class-transformer";
 @Entity("branch")
 export class Branch extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
@@ -54,10 +54,11 @@ export class Branch extends BaseEntity {
   @Min(0)
   @Max(5)
   @IsNumber()
+  @Type(() => Number)
   star: number;
   @Column({ type: "int", nullable: true, default: 0 })
   @Min(0)
-  @IsInt()
+  @Type(() => Number)
   numberReviewers: number;
   @Column({ type: "bool", default: true })
   @IsBoolean()

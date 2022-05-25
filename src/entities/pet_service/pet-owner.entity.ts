@@ -1,4 +1,4 @@
-import { IsBoolean, IsDate } from "class-validator";
+import { IsBoolean } from "class-validator";
 import {
   Column,
   Entity,
@@ -17,7 +17,6 @@ export class PetOwner {
   @IsBoolean()
   isCurrentOwner: boolean;
   @Column({ type: "timestamp without time zone", nullable: false })
-  @IsDate()
   date: Date;
 
   @Column({ name: "petId" })

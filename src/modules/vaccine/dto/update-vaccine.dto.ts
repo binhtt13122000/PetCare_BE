@@ -1,8 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsInt } from "class-validator";
+import { Type } from "class-transformer";
 import { CreateVaccineDTO } from "./create-vaccine.dto";
 export class UpdateVaccineDTO extends CreateVaccineDTO {
   @ApiProperty()
-  @IsInt()
+  @Type(() => Number)
   id: number;
 }

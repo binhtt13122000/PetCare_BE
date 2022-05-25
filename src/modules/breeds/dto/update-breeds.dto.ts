@@ -1,9 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsInt } from "class-validator";
+import { Type } from "class-transformer";
 import { CreateBreedsDTO } from "./create-breeds.dto";
 
 export class UpdateBreedsDTO extends CreateBreedsDTO {
   @ApiProperty()
-  @IsInt()
+  @Type(() => Number)
   id: number;
 }

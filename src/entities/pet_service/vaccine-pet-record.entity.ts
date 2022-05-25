@@ -1,4 +1,4 @@
-import { IsString, IsDate } from "class-validator";
+import { IsString } from "class-validator";
 import {
   BaseEntity,
   Column,
@@ -16,7 +16,6 @@ export class VaccinePetRecord extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
   @Column({ type: "timestamp without time zone", default: new Date() })
-  @IsDate()
   dateOfInjection: Date;
   @Column({ type: "text", nullable: true })
   @IsString()
