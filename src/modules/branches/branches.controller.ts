@@ -9,11 +9,13 @@ import {
   UploadedFile,
   Delete,
   Param,
+  Get,
+  Query,
 } from "@nestjs/common";
 import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { Branch } from "src/entities/user_management_service/branch.entity";
 import { CreateBranchDTO } from "./dtos/create-branch.dto";
-import { BranchService } from "./branch.service";
+import { BranchesService } from "./branches.service";
 import { UserService } from "../users/user.service";
 import { Account } from "src/entities/authenticate_service/account.entity";
 import { DEFAULT_PASSWORD } from "../../common/index";
@@ -25,14 +27,27 @@ import { uploadService } from "src/external/uploadFile.service";
 import { FileProducerService } from "src/shared/file/file.producer.service";
 import { IdParams } from "src/common";
 
-@ApiTags("branch")
-@Controller("branch")
-export class BranchController {
+@ApiTags("branches")
+@Controller("branches")
+export class BranchesController {
   constructor(
-    private readonly branchService: BranchService,
+    private readonly branchService: BranchesService,
     private readonly userService: UserService,
     private readonly fileProducerService: FileProducerService,
   ) {}
+
+  // @Get("location")
+  // async getListByLatLng(
+  //   @Query("string") lat: string,
+  //   @Query("string") lng: string,
+  // ): Promise<Branch[]> {
+  //   return this.branchService.findBranchByLatAndLng(Number(lat), Number(lng));
+  // }
+
+  @Get()
+  async getList(): Promise<Branch[]> {
+    return this.branchService.index();
+  }
 
   @Post()
   async createBranch(

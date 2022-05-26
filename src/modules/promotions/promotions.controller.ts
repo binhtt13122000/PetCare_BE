@@ -41,6 +41,15 @@ export class PromotionsController {
     }
   }
 
+  @Get("branches/:id")
+  async getByBrach(@Param() params: IdParams): Promise<Promotion[]> {
+    try {
+      return await this.promotionsService.findByBranch(params.id);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   @Post()
   async create(@Body() body: CreatePromotionDTO): Promise<Promotion> {
     try {

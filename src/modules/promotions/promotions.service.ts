@@ -11,4 +11,10 @@ export class PromotionsService extends BaseService<
   constructor(private readonly promotionsRepository: PromotionsRepository) {
     super(promotionsRepository);
   }
+
+  findByBranch(branchId: number): Promise<Promotion[]> {
+    return this.promotionsRepository.find({
+      where: { branchId },
+    });
+  }
 }

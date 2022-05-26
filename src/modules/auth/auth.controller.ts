@@ -24,7 +24,7 @@ import {
   RefreshTokenBodyDTO,
   UserRegisterDTO,
 } from "./auth.dto";
-import { BranchService } from "../branchs/branch.service";
+import { BranchesService } from "../branches/branches.service";
 import { CustomerService } from "../customer/customer.service";
 import { Branch } from "src/entities/user_management_service/branch.entity";
 import { LoginStatusEnum, RoleEnum, RoleIndexEnum } from "src/enum";
@@ -51,7 +51,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private notificationProducerService: NotificationProducerService,
-    private branchService: BranchService,
+    private branchService: BranchesService,
     private customerService: CustomerService,
     private userService: UserService,
   ) {}
