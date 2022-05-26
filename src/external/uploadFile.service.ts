@@ -7,10 +7,10 @@ export class UploadFileService {
     file: Express.Multer.File,
   ): Promise<{ url: string | null; type: string }> {
     let contentType: string = null;
-    if (file.mimetype.startsWith("image")) {
-      contentType = "image/jpeg";
-    } else if (file.mimetype.startsWith("video")) {
+    if (file.mimetype.startsWith("video")) {
       contentType = "video/mp4";
+    } else {
+      contentType = "image/jpeg";
     }
     return new Promise<{ url: string | null; type: string }>(
       (resolve, reject) => {
