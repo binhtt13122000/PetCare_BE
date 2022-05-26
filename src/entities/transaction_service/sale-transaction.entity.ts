@@ -9,7 +9,7 @@ import { IsString, Max, Min } from "class-validator";
 import { Customer } from "../user_management_service/customer.entity";
 import { Pet } from "../pet_service/pet.entity";
 import { Post } from "./post.entity";
-import { Promotion } from "../service/promotion.entity";
+// import { Promotion } from "../service/promotion.entity";
 import { BaseEntity } from "typeorm";
 import { SaleTransactionEnum } from "src/enum";
 import { Type } from "class-transformer";
@@ -45,13 +45,9 @@ export class SaleTransaction extends BaseEntity {
   transactionFee: number;
   @Column({ type: "int", nullable: true })
   @Min(0)
-  provisionalTotal: number;
-  @Column({ type: "int", nullable: true })
-  @Min(0)
-  discount: number;
-  @Column({ type: "int", nullable: true })
-  @Min(0)
   transactionTotal: number;
+  @Column({ type: "int", nullable: true })
+  point: number;
   @Column({ type: "text", nullable: true })
   @IsString()
   description: string;
@@ -92,11 +88,11 @@ export class SaleTransaction extends BaseEntity {
   @ManyToOne(() => Post, (post) => post.saleTransactions, {})
   @JoinColumn({ name: "postId", referencedColumnName: "id" })
   post: Post;
-  @Column({ name: "promotionId", nullable: true })
-  promotionId: number;
-  @ManyToOne(() => Promotion, (promotion) => promotion.saleTransactions, {})
-  @JoinColumn({ name: "promotionId", referencedColumnName: "id" })
-  promotion: Promotion;
+  // @Column({ name: "promotionId", nullable: true })
+  // promotionId: number;
+  // @ManyToOne(() => Promotion, (promotion) => promotion.saleTransactions, {})
+  // @JoinColumn({ name: "promotionId", referencedColumnName: "id" })
+  // promotion: Promotion;
 
   constructor(partial: Partial<SaleTransaction>) {
     super();

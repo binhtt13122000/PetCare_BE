@@ -25,6 +25,7 @@ import { vnpayService } from "src/external/vnpay.service";
 import { format } from "date-fns";
 import { Cache } from "cache-manager";
 import { CustomerService } from "../customer/customer.service";
+import { SaleTransactionPayment } from "./dtos/payment.dto";
 
 @Controller("sale-transactions")
 @ApiTags("sale-transactions")
@@ -69,7 +70,7 @@ export class SaleTransactionsController {
   async deposit(
     @Req() req: Request,
     @Query() query: PaymentQuery,
-    @Body() body: UpdateSaleTransactionDTO,
+    @Body() body: SaleTransactionPayment,
   ): Promise<ResponsePayment> {
     try {
       const saleTransaction = await this.saleTransactionsService.findById(
@@ -124,17 +125,20 @@ export class SaleTransactionsController {
         const saleTransactionDTOJson: string = await this.cacheManager.get(
           "sale_transaction_id_" + id,
         );
-        const updateSaleTransactionDTO: UpdateSaleTransactionDTO = JSON.parse(
+        const updateSaleTransactionDTO: SaleTransactionPayment = JSON.parse(
           saleTransactionDTOJson,
         );
         try {
           const saleTransaction = await this.saleTransactionsService.findById(
             updateSaleTransactionDTO.id,
           );
-          // const customer = await this.customerService.findById(
-          //   updateSaleTransactionDTO.,
-          // );
           if (!saleTransaction) {
+            throw new HttpException("not found", HttpStatus.NOT_FOUND);
+          }
+          const buyer = await this.customerService.findById(
+            saleTransaction.buyerId,
+          );
+          if (!buyer) {
             throw new HttpException("not found", HttpStatus.NOT_FOUND);
           }
           if (saleTransaction.status !== SaleTransactionEnum.CREATED) {
@@ -149,6 +153,10 @@ export class SaleTransactionsController {
               status: SaleTransactionEnum.SUCCESS,
             },
           );
+          await this.customerService.update(buyer.id, {
+            ...buyer,
+            point: buyer.point + updateSaleTransactionDTO.point,
+          });
         } catch (error) {
           throw new HttpException(error, HttpStatus.BAD_REQUEST);
         }

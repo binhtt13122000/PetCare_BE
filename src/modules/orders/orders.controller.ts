@@ -17,7 +17,7 @@ import {
 import { ApiTags } from "@nestjs/swagger";
 import { OrdersService } from "./orders.service";
 
-import { UpdateOrderDTO } from "./dto/update-order.dto";
+import { UpdateOrderDTO, OrderPaymentDTO } from "./dto/update-order.dto";
 import { vnpayService } from "src/external/vnpay.service";
 import { Request } from "express";
 import { PaymentQuery } from "src/common";
@@ -71,7 +71,7 @@ export class OrdersController {
   async deposit(
     @Req() req: Request,
     @Query() query: PaymentQuery,
-    @Body() body: UpdateOrderDTO,
+    @Body() body: OrderPaymentDTO,
   ): Promise<ResponsePayment | Order> {
     try {
       const order = await this.ordersService.findById(body.id);
@@ -126,7 +126,7 @@ export class OrdersController {
         const updateOrderJSON: string = await this.cacheManager.get(
           "order_id_" + id,
         );
-        const updatedOrder: UpdateOrderDTO = JSON.parse(updateOrderJSON);
+        const updatedOrder: OrderPaymentDTO = JSON.parse(updateOrderJSON);
         try {
           const order = await this.ordersService.findById(updatedOrder.id);
           const customer = await this.customerService.findById(
@@ -150,7 +150,8 @@ export class OrdersController {
           });
           await this.customerService.update(customer.id, {
             ...customer,
-            point: customer.point + updatedOrder.point,
+            point:
+              customer.point + updatedOrder.point - updatedOrder.paymentPoint,
           });
         } catch (error) {
           throw new HttpException(error, HttpStatus.BAD_REQUEST);

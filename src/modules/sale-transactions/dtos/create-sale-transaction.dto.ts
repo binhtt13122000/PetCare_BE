@@ -1,10 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Type } from "class-transformer";
-import { Min, IsString } from "class-validator";
 import { SaleTransactionEnum } from "src/enum";
 
 export class CreateSaleTransactionDTO {
-  createdTime: Date = new Date();
+  @ApiProperty()
+  createdTime: Date;
   @ApiProperty()
   meetingTime: Date;
   @ApiProperty()
@@ -12,19 +11,10 @@ export class CreateSaleTransactionDTO {
   @ApiProperty()
   sellerReceive: number;
   @ApiProperty()
-  @Type(() => Number)
-  @Min(0)
   transactionFee: number;
   @ApiProperty()
-  @Type(() => Number)
-  @Min(0)
-  provisionalTotal: number;
-  @ApiProperty()
-  @Type(() => Number)
-  @Min(0)
   transactionTotal: number;
   @ApiProperty()
-  @IsString()
   description: string;
   @ApiProperty({ type: "enum", enum: SaleTransactionEnum })
   status: SaleTransactionEnum;
@@ -36,4 +26,6 @@ export class CreateSaleTransactionDTO {
   petId: number;
   @ApiProperty()
   postId: number;
+  @ApiProperty()
+  point: number;
 }

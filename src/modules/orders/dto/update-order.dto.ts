@@ -10,3 +10,8 @@ export class UpdateOrderDTO extends CreateOrderDTO {
   @ApiProperty()
   review: string;
 }
+
+export class OrderPaymentDTO extends UpdateOrderDTO {
+  @ApiProperty()
+  paymentPoint: number;
+}

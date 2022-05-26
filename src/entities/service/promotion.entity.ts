@@ -8,8 +8,8 @@ import {
 } from "typeorm";
 import { OneToMany } from "typeorm";
 import { Order } from "../order_service/order.entity";
-import { SaleTransaction } from "../transaction_service/sale-transaction.entity";
-import { BreedingTransaction } from "../transaction_service/breeding-transaction.entity";
+// import { SaleTransaction } from "../transaction_service/sale-transaction.entity";
+// import { BreedingTransaction } from "../transaction_service/breeding-transaction.entity";
 import { Branch } from "../user_management_service/branch.entity";
 
 @Entity("promotion")
@@ -45,17 +45,17 @@ export class Promotion extends BaseEntity {
   @OneToMany(() => Order, (order) => order.promotion)
   orders: Order[];
 
-  @OneToMany(
-    () => SaleTransaction,
-    (saleTransaction) => saleTransaction.promotion,
-  )
-  saleTransactions: SaleTransaction[];
+  // @OneToMany(
+  //   () => SaleTransaction,
+  //   (saleTransaction) => saleTransaction.promotion,
+  // )
+  // saleTransactions: SaleTransaction[];
 
-  @OneToMany(
-    () => BreedingTransaction,
-    (breedingTransaction) => breedingTransaction.promotion,
-  )
-  breedingTransactions: BreedingTransaction[];
+  // @OneToMany(
+  //   () => BreedingTransaction,
+  //   (breedingTransaction) => breedingTransaction.promotion,
+  // )
+  // breedingTransactions: BreedingTransaction[];
 
   constructor(partial: Partial<Promotion>) {
     super();

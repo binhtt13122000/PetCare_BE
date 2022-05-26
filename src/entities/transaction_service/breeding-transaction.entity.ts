@@ -10,7 +10,7 @@ import { Customer } from "../user_management_service/customer.entity";
 import { Pet } from "../pet_service/pet.entity";
 import { Post } from "./post.entity";
 import { Branch } from "../user_management_service/branch.entity";
-import { Promotion } from "../service/promotion.entity";
+// import { Promotion } from "../service/promotion.entity";
 import { BreedingTransactionEnum } from "src/enum";
 import { Type } from "class-transformer";
 
@@ -45,15 +45,9 @@ export class BreedingTransaction {
   @Column({ type: "int", nullable: false })
   @Type(() => Number)
   @Min(0)
-  provisionalTotal: number;
-  @Column({ type: "int", nullable: false })
-  @Type(() => Number)
-  @Min(0)
-  discount: number;
-  @Column({ type: "int", nullable: false })
-  @Type(() => Number)
-  @Min(0)
   transactionTotal: number;
+  @Column({ type: "int", nullable: true })
+  point: number;
   @Column({
     type: "timestamp without time zone",
     nullable: false,
@@ -121,9 +115,9 @@ export class BreedingTransaction {
   @JoinColumn({ name: "branchId", referencedColumnName: "id" })
   branch: Branch;
 
-  @Column({ name: "promotionId", nullable: true })
-  promotionId: number;
-  @ManyToOne(() => Promotion, (promotion) => promotion.breedingTransactions, {})
-  @JoinColumn({ name: "promotionId", referencedColumnName: "id" })
-  promotion: Promotion;
+  // @Column({ name: "promotionId", nullable: true })
+  // promotionId: number;
+  // @ManyToOne(() => Promotion, (promotion) => promotion.breedingTransactions, {})
+  // @JoinColumn({ name: "promotionId", referencedColumnName: "id" })
+  // promotion: Promotion;
 }
