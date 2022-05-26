@@ -6,7 +6,7 @@ export class UploadFileService {
   async uploadFile(
     file: Express.Multer.File,
   ): Promise<{ url: string | null; type: string }> {
-    let contentType = null;
+    let contentType: string = null;
     if (file.mimetype.startsWith("image")) {
       contentType = "image/jpeg";
     } else if (file.mimetype.startsWith("video")) {
