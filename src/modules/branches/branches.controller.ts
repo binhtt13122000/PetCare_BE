@@ -26,6 +26,7 @@ import { UpdateBranchDTO } from "./dtos/update-branch.dto";
 import { uploadService } from "src/external/uploadFile.service";
 import { FileProducerService } from "src/shared/file/file.producer.service";
 import { IdParams } from "src/common";
+import { getLatitude, getLongitude, orderByDistance } from "geolib";
 
 @ApiTags("branches")
 @Controller("branches")
@@ -36,13 +37,30 @@ export class BranchesController {
     private readonly fileProducerService: FileProducerService,
   ) {}
 
-  // @Get("location")
-  // async getListByLatLng(
-  //   @Query("string") lat: string,
-  //   @Query("string") lng: string,
-  // ): Promise<Branch[]> {
-  //   return this.branchService.findBranchByLatAndLng(Number(lat), Number(lng));
-  // }
+  @Get("location")
+  async getListByLatLng(
+    @Query("lat") lat: string,
+    @Query("lng") lng: string,
+  ): Promise<Branch[]> {
+    const branches = await this.branchService.index();
+    const orderedLocations = orderByDistance(
+      { latitude: Number(lat), longitude: Number(lng) },
+      [
+        ...branches.map((branch) => {
+          return {
+            latitude: branch.lat,
+            longitude: branch.lng,
+          };
+        }),
+      ],
+    );
+    return orderedLocations.map((x) => {
+      return branches.find(
+        (branch) =>
+          branch.lat === getLatitude(x) && branch.lng === getLongitude(x),
+      );
+    });
+  }
 
   @Get()
   async getList(): Promise<Branch[]> {

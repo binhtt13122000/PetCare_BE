@@ -13,4 +13,32 @@ export class SaleTransactionsService extends BaseService<
   ) {
     super(saleTransactionsRepository);
   }
+
+  getSaleTransactionsByBuyerId(
+    buyerId: number,
+    limit: number,
+    page: number,
+  ): Promise<SaleTransaction[]> {
+    return this.saleTransactionsRepository.find({
+      where: {
+        buyerId: buyerId,
+      },
+      take: limit,
+      skip: (page - 1) * limit,
+    });
+  }
+
+  getSaleTransactionsBySellerId(
+    sellerId: number,
+    limit: number,
+    page: number,
+  ): Promise<SaleTransaction[]> {
+    return this.saleTransactionsRepository.find({
+      where: {
+        sellerId: sellerId,
+      },
+      take: limit,
+      skip: (page - 1) * limit,
+    });
+  }
 }

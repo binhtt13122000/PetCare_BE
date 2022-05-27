@@ -36,6 +36,30 @@ export class SaleTransactionsController {
     private readonly customerService: CustomerService,
   ) {}
 
+  @Get()
+  async getAll(
+    @Query("buyerId") buyerId: string,
+    @Query("sellerId") sellerId: string,
+    @Query("page") page: string,
+    @Query("limit") limit: string,
+  ): Promise<SaleTransaction[]> {
+    if (buyerId) {
+      return await this.saleTransactionsService.getSaleTransactionsByBuyerId(
+        Number(buyerId),
+        limit ? Number(limit) : 10,
+        page ? Number(page) : 1,
+      );
+    }
+    if (sellerId) {
+      return await this.saleTransactionsService.getSaleTransactionsBySellerId(
+        Number(sellerId),
+        limit ? Number(limit) : 10,
+        page ? Number(page) : 1,
+      );
+    }
+    return await this.saleTransactionsService.index();
+  }
+
   @Post()
   async create(
     @Body() body: CreateSaleTransactionDTO,

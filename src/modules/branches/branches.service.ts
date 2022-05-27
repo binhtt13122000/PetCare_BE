@@ -14,19 +14,4 @@ export class BranchesService extends BaseService<Branch, BranchesRepository> {
       where: { phoneNumber },
     });
   }
-
-  findBranchByLatAndLng(lat: number, lng: number): Promise<Branch[]> {
-    return this.branchRepository
-      .createQueryBuilder("branch")
-      .having(
-        "( 3959 * acos( cos( radians(37) ) * cos( radians( :lat ) ) * cos( radians( :lng ) - radians(-122) ) + sin( radians(37) ) * sin( radians( :lat ) ) ) ) < 25",
-      )
-      .andHaving("branch.id")
-      .orderBy(
-        "( 3959 * acos( cos( radians(37) ) * cos( radians( :lat ) ) * cos( radians( :lng ) - radians(-122) ) + sin( radians(37) ) * sin( radians( :lat ) ) ) )",
-      )
-      .setParameter("lat", lat)
-      .setParameter("lng", lng)
-      .getMany();
-  }
 }

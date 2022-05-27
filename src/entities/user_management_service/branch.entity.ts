@@ -23,6 +23,7 @@ import { Ticket } from "../service/ticket.entity";
 import { Promotion } from "../service/promotion.entity";
 
 import { Type } from "class-transformer";
+import { SaleTransaction } from "../transaction_service/sale-transaction.entity";
 @Entity("branch")
 export class Branch extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
@@ -90,6 +91,9 @@ export class Branch extends BaseEntity {
     (breedingTransaction) => breedingTransaction.branch,
   )
   breedingTransactions: BreedingTransaction[];
+
+  @OneToMany(() => SaleTransaction, (saleTransaction) => saleTransaction.branch)
+  saleTransactions: SaleTransaction[];
 
   constructor(partial: Partial<Branch>) {
     super();

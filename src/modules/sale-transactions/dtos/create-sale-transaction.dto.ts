@@ -28,4 +28,6 @@ export class CreateSaleTransactionDTO {
   postId: number;
   @ApiProperty()
   point: number;
+  @ApiProperty()
+  branchId: number;
 }
