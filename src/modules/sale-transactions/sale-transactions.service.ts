@@ -25,6 +25,7 @@ export class SaleTransactionsService extends BaseService<
       },
       take: limit,
       skip: (page - 1) * limit,
+      relations: ["buyer", "seller"],
     });
   }
 
@@ -39,6 +40,7 @@ export class SaleTransactionsService extends BaseService<
       },
       take: limit,
       skip: (page - 1) * limit,
+      relations: ["buyer", "seller"],
     });
   }
 }

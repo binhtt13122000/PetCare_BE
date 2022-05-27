@@ -12,7 +12,7 @@ import {
   CACHE_MANAGER,
   Get,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiQuery, ApiTags } from "@nestjs/swagger";
 import { SaleTransaction } from "src/entities/transaction_service/sale-transaction.entity";
 import { CreateSaleTransactionDTO } from "./dtos/create-sale-transaction.dto";
 import { SaleTransactionsService } from "./sale-transactions.service";
@@ -37,6 +37,16 @@ export class SaleTransactionsController {
   ) {}
 
   @Get()
+  @ApiQuery({
+    name: "buyerId",
+    required: false,
+    type: String,
+  })
+  @ApiQuery({
+    name: "sellerId",
+    required: false,
+    type: String,
+  })
   async getAll(
     @Query("buyerId") buyerId: string,
     @Query("sellerId") sellerId: string,
