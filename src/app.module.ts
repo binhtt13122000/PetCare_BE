@@ -62,7 +62,7 @@ const mongoConnectionString = configService.getMongoConnectionString();
     ChatModule,
     CacheModule.register({
       isGlobal: true,
-      ttl: 300,
+      ttl: 600,
     }),
   ],
   controllers: [AppController],

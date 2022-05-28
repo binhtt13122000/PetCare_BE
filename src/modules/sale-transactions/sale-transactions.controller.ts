@@ -134,7 +134,7 @@ export class SaleTransactionsController {
               "sale_transaction_id_" + body.id,
               JSON.stringify(body),
               {
-                ttl: 300,
+                ttl: 600,
               },
             );
             return { url };

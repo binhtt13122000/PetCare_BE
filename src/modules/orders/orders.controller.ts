@@ -96,7 +96,7 @@ export class OrdersController {
           );
           if (url) {
             this.cacheManager.set("order_id_" + body.id, JSON.stringify(body), {
-              ttl: 300,
+              ttl: 600,
             });
             return { url };
           }

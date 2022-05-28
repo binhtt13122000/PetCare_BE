@@ -10,6 +10,7 @@ import { MessageDTO } from "./message.dto";
 import { RoomStatusEnum } from "src/enum";
 import { Room } from "src/schemas/room.schemas";
 import { NotFoundException } from "@nestjs/common";
+import { MessageEnum } from "src/schemas/message.schema";
 
 @WebSocketGateway({
   cors: {
@@ -35,10 +36,21 @@ export class ChatGateway {
   }
 
   @SubscribeMessage("updateRoom")
-  async handleUpdateRoom(client: Socket, room: Room): Promise<void> {
+  async handleUpdateRoom(
+    client: Socket,
+    room: Room & { message: string },
+  ): Promise<void> {
     const updatedRoom = await this.roomService.updateRoom(room);
+    const createdMessage = await this.messageService.create({
+      content: room.message,
+      createdTime: room.newestMessageTime,
+      isSellerMessage: room.isSellerMessage,
+      room: room._id,
+      type: MessageEnum.NORMAL,
+    });
     client.join(room._id);
     this.server.in(room._id).emit("updatedRoom", updatedRoom);
+    this.server.in(room._id).emit("chatToClient", createdMessage);
   }
 
   @SubscribeMessage("chatToServer")
