@@ -19,13 +19,18 @@ import { SaleTransactionsService } from "./sale-transactions.service";
 import { UpdateSaleTransactionDTO } from "./dtos/update-sale-transaction.dto";
 import { PaymentQuery } from "src/common";
 import { ResponsePayment } from "../orders/dto/response-payment.dto";
-import { PaymentOrderMethodEnum, SaleTransactionEnum } from "src/enum/index";
+import {
+  PaymentOrderMethodEnum,
+  PostEnum,
+  SaleTransactionEnum,
+} from "src/enum/index";
 import { Request } from "express";
 import { vnpayService } from "src/external/vnpay.service";
 import { format } from "date-fns";
 import { Cache } from "cache-manager";
 import { CustomerService } from "../customer/customer.service";
 import { SaleTransactionPayment } from "./dtos/payment.dto";
+import { PostsService } from "../posts/posts.service";
 
 @Controller("sale-transactions")
 @ApiTags("sale-transactions")
@@ -34,6 +39,7 @@ export class SaleTransactionsController {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly saleTransactionsService: SaleTransactionsService,
     private readonly customerService: CustomerService,
+    private readonly postService: PostsService,
   ) {}
 
   @Get()
@@ -75,6 +81,12 @@ export class SaleTransactionsController {
     @Body() body: CreateSaleTransactionDTO,
   ): Promise<SaleTransaction> {
     try {
+      const post = await this.postService.findById(body.postId);
+      if (!post) {
+        throw new NotFoundException("dont have post");
+      }
+      post.status = PostEnum.WAITING_FOR_PAYMENT;
+      await this.postService.update(post.id, post);
       return this.saleTransactionsService.store(new SaleTransaction(body));
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
