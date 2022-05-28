@@ -1,4 +1,5 @@
 import {
+  BaseEntity,
   Column,
   Entity,
   JoinColumn,
@@ -8,7 +9,7 @@ import {
 import { Customer } from "./customer.entity";
 
 @Entity("follow")
-export class Follow {
+export class Follow extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
@@ -25,4 +26,9 @@ export class Follow {
   @ManyToOne(() => Customer, (customer) => customer.followeds, {})
   @JoinColumn({ name: "followedId", referencedColumnName: "id" })
   followed: Customer;
+
+  constructor(partial: Partial<Follow>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

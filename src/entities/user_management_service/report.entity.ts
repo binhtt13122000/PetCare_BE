@@ -7,9 +7,10 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Customer } from "./customer.entity";
+import { BaseEntity } from "typeorm";
 
 @Entity("report")
-export class Report {
+export class Report extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
 
@@ -41,4 +42,9 @@ export class Report {
   @ManyToOne(() => Customer, (customer) => customer.reporteds, {})
   @JoinColumn({ name: "reportedUserId", referencedColumnName: "id" })
   reportedUser: Customer;
+
+  constructor(partial: Partial<Report>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

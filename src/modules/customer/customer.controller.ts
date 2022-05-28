@@ -9,11 +9,12 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { ApiConsumes, ApiTags } from "@nestjs/swagger";
+import { ApiConsumes, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { DEFAULT_PASSWORD, IdParams } from "src/common";
 import { Account } from "src/entities/authenticate_service/account.entity";
 import { Customer } from "src/entities/user_management_service/customer.entity";
@@ -25,6 +26,7 @@ import { CreateCustomerDTO } from "./dto/create-customer.dto";
 import { UpdateCustomerDTO } from "./dto/update-customer.dto";
 import * as bcrypt from "bcrypt";
 import { FileProducerService } from "src/shared/file/file.producer.service";
+import { FollowsService } from "../follows/follows.service";
 
 @Controller("customer")
 @ApiTags("customer")
@@ -33,12 +35,41 @@ export class CustomerController {
     private readonly customerService: CustomerService,
     private userService: UserService,
     private fileProducerService: FileProducerService,
+    private followsService: FollowsService,
   ) {}
 
   @Get(":id")
-  async getOne(@Param() params: IdParams): Promise<Customer> {
+  @ApiQuery({
+    name: "customerId",
+    type: Number,
+    required: false,
+  })
+  async getOne(
+    @Param() params: IdParams,
+    @Query("customerId") customerId: number,
+  ): Promise<unknown> {
     try {
-      return await this.customerService.findById(params.id);
+      const customer = await this.customerService.findById(params.id);
+      if (!customerId) {
+        return customer;
+      }
+      const follower =
+        await this.followsService.findFollowByFollowerAndFollowed(
+          params.id,
+          customerId,
+        );
+      if (follower) {
+        return { ...customer, follow: follower, type: "FOLLOWER" };
+      }
+      const followed =
+        await this.followsService.findFollowByFollowerAndFollowed(
+          customerId,
+          params.id,
+        );
+      if (followed) {
+        return { ...customer, follow: followed, type: "FOLLOWED" };
+      }
+      return customer;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
