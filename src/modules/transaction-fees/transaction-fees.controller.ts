@@ -8,10 +8,12 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiQuery, ApiTags } from "@nestjs/swagger";
 import { IdParams } from "src/common";
 import { TransactionFee } from "src/entities/service/transaction-fee.entity";
+import { ServiceEnum } from "src/enum";
 import { DeleteResult } from "typeorm";
 import { CreateTransactionFeeDTO } from "./dto/create-transaction-fee.dto";
 import { UpdateTransactionFeeDTO } from "./dto/update-transaction-fee.dto";
@@ -25,8 +27,16 @@ export class TransactionFeesController {
   ) {}
 
   @Get()
-  async getAll(): Promise<TransactionFee[]> {
+  @ApiQuery({
+    name: "type",
+    required: false,
+    enum: ServiceEnum,
+  })
+  async getAll(@Query("type") type: ServiceEnum): Promise<TransactionFee[]> {
     try {
+      if (type) {
+        return await this.transactionFeesServices.getTransactionFeeByType(type);
+      }
       return await this.transactionFeesServices.index();
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);

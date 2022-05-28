@@ -8,8 +8,9 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiQuery, ApiTags } from "@nestjs/swagger";
 import { IdParams } from "src/common";
 import { ServiceFee } from "src/entities/service/service-fee.entity";
 import { DeleteResult } from "typeorm";
@@ -23,8 +24,16 @@ export class ServiceFeesController {
   constructor(private readonly serviceFeesService: ServiceFeesService) {}
 
   @Get()
-  async getAll(): Promise<ServiceFee[]> {
+  @ApiQuery({
+    name: "serviceId",
+    required: false,
+    type: Number,
+  })
+  async getAll(@Query("serviceId") serviceId: number): Promise<ServiceFee[]> {
     try {
+      if (serviceId) {
+        return await this.serviceFeesService.getServiceFeesByService(serviceId);
+      }
       return await this.serviceFeesService.index();
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);

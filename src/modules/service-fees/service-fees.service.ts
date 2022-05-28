@@ -11,4 +11,16 @@ export class ServiceFeesService extends BaseService<
   constructor(private readonly serviceFeesRepository: ServiceFeesRepository) {
     super(serviceFeesRepository);
   }
+
+  getServiceFeesByService(serviceId: number): Promise<ServiceFee[]> {
+    return this.serviceFeesRepository.find({
+      relations: ["service"],
+      where: {
+        serviceId: serviceId,
+      },
+      order: {
+        price: "ASC",
+      },
+    });
+  }
 }
