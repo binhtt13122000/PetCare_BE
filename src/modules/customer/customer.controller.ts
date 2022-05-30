@@ -187,6 +187,7 @@ export class CustomerController {
         phoneNumber: body.phoneNumber,
         isActive: true,
         roleId: RoleIndexEnum.CUSTOMER,
+        registerTime: body.registerTime,
       };
 
       await this.userService.store(new Account(account));

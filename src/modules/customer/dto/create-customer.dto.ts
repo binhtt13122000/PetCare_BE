@@ -24,4 +24,7 @@ export class CreateCustomerDTO {
 
   @ApiProperty({ enum: GenderEnum })
   gender: GenderEnum;
+
+  @ApiProperty()
+  registerTime: Date;
 }

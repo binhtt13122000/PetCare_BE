@@ -17,4 +17,6 @@ export class CreateBranchDTO {
   representativeName: string;
   @ApiProperty({ required: false })
   description: string;
+  @ApiProperty()
+  registerTime: Date;
 }

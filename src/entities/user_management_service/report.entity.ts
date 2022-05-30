@@ -25,7 +25,6 @@ export class Report extends BaseEntity {
 
   @Column({
     type: "timestamp without time zone",
-    default: () => "CURRENT_TIMESTAMP",
   })
   createdTime: Date;
 

@@ -66,6 +66,9 @@ export class UserRegisterDTO {
 
   @ApiProperty()
   dateOfBirth: Date;
+
+  @ApiProperty()
+  registerTime: Date;
 }
 
 export class RefreshTokenBodyDTO {

@@ -49,7 +49,16 @@ export class SaleTransactionsService extends BaseService<
       where: {
         id: id,
       },
-      relations: ["seller", "buyer", "pet", "post", "branch"],
+      relations: [
+        "seller",
+        "buyer",
+        "pet",
+        "post",
+        "branch",
+        "post.medias",
+        "pet.breed",
+        "pet.breed.species",
+      ],
     });
   }
 }

@@ -24,4 +24,6 @@ export class CreateOrderDTO {
   paymentMethod: PaymentOrderMethodEnum;
   @ApiProperty({ required: false })
   payment?: number;
+  @ApiProperty()
+  registerTime: Date;
 }

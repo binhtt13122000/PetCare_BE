@@ -63,7 +63,6 @@ export class Order extends BaseEntity {
   @Column({
     type: "timestamp without time zone",
     nullable: true,
-    default: () => "CURRENT_TIMESTAMP",
   })
   registerTime: Date;
 

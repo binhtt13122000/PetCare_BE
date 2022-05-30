@@ -33,6 +33,7 @@ import { ChatModule } from "./modules/chat/chat.module";
 import { OrderDetailsModule } from "./modules/order-details/order-details.module";
 import { FollowsModule } from "./modules/follows/follows.module";
 import { ReportsModule } from "./modules/reports/reports.module";
+import { TicketsModule } from "./modules/tickets/tickets.module";
 
 const mongoConnectionString = configService.getMongoConnectionString();
 @Module({
@@ -64,6 +65,7 @@ const mongoConnectionString = configService.getMongoConnectionString();
     ChatModule,
     FollowsModule,
     ReportsModule,
+    TicketsModule,
     CacheModule.register({
       isGlobal: true,
       ttl: 600,

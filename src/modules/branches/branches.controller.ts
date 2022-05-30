@@ -78,7 +78,7 @@ export class BranchesController {
           phoneNumber: body.phoneNumber,
           isActive: true,
           password: password,
-          registerTime: new Date(),
+          registerTime: body.registerTime,
           currentHashedRefreshToken: null,
           roleId: RoleIndexEnum.BRANCH_MANAGER,
         }),

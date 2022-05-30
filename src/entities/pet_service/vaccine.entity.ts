@@ -12,7 +12,7 @@ import {
 export class Vaccine extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
-  @Column({ type: "text", nullable: false })
+  @Column({ type: "text", nullable: false, unique: true })
   @IsString()
   name: string;
   @Column({ type: "text", nullable: true })

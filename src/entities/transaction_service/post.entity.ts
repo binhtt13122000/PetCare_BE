@@ -30,7 +30,6 @@ export class Post extends BaseEntity {
   @Column({
     type: "timestamp without time zone",
     nullable: false,
-    default: () => "CURRENT_TIMESTAMP",
   })
   createTime: Date;
   @Column({ type: "timestamp without time zone", nullable: true })

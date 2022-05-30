@@ -22,7 +22,6 @@ export class Account extends BaseEntity {
   @Column({
     type: "timestamp without time zone",
     nullable: false,
-    default: () => "CURRENT_TIMESTAMP",
   })
   registerTime: Date;
 

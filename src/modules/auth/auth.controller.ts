@@ -102,6 +102,7 @@ export class AuthController {
           phoneNumber: phoneNumber,
           isActive: true,
           roleId: RoleIndexEnum.CUSTOMER,
+          registerTime: data.registerTime,
         }),
       );
       let avatar = null;

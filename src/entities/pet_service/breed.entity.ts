@@ -15,7 +15,7 @@ import { IsBoolean, IsString } from "class-validator";
 export class Breed extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
-  @Column({ type: "text", nullable: false })
+  @Column({ type: "text", nullable: false, unique: true })
   @IsString()
   name: string;
   @Column({ type: "text", nullable: true })

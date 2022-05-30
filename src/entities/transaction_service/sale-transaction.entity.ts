@@ -22,7 +22,6 @@ export class SaleTransaction extends BaseEntity {
   @Column({
     type: "timestamp without time zone",
     nullable: false,
-    default: () => "CURRENT_TIMESTAMP",
   })
   createdTime: Date;
   @Column({

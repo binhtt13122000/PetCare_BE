@@ -19,7 +19,6 @@ export class Ticket extends BaseEntity {
   @Column({
     type: "timestamp without time zone",
     nullable: false,
-    default: () => "CURRENT_TIMESTAMP",
   })
   createdTime: Date;
   @Column({
@@ -50,4 +49,9 @@ export class Ticket extends BaseEntity {
 
   @Column({ type: "enum", enum: TicketStatusEnum })
   status: TicketStatusEnum;
+
+  constructor(partial: Partial<Ticket>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

@@ -34,7 +34,7 @@ export class Branch extends BaseEntity {
   @Column({ type: "text", nullable: false })
   @IsString()
   representativeName: string;
-  @Column({ type: "text", nullable: true })
+  @Column({ type: "text", nullable: false, unique: true })
   @IsString()
   name: string;
   @Column({ type: "text", nullable: false, unique: true })
