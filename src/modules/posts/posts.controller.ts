@@ -8,8 +8,10 @@ import {
   Post,
   Put,
   Query,
+  Param,
   UploadedFiles,
   UseInterceptors,
+  NotFoundException,
 } from "@nestjs/common";
 import { PostsService } from "./posts.service";
 import { PetsService } from "../pets/pets.service";
@@ -30,6 +32,15 @@ export class PostsController {
     private readonly postsService: PostsService,
     private readonly petsService: PetsService,
   ) {}
+
+  @Get(":id")
+  async getOne(@Param("id") id: number): Promise<PostEntity> {
+    try {
+      return await this.postsService.getOne(id);
+    } catch (error) {
+      throw new NotFoundException(error);
+    }
+  }
 
   @Post()
   @ApiConsumes("multipart/form-data")

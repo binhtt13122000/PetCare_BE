@@ -13,6 +13,13 @@ export class PostsService extends BaseService<Post, PostsRepository> {
     super(postsRepository);
   }
 
+  getOne(id: number): Promise<Post> {
+    return this.postsRepository.findOne({
+      where: { id: id },
+      relations: ["pet", "branch", "customer", "medias"],
+    });
+  }
+
   async fetchPost(
     pageOptionsDto: PostsOptionDto,
   ): Promise<PageDto<PostEntity>> {
