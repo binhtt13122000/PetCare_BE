@@ -43,4 +43,13 @@ export class SaleTransactionsService extends BaseService<
       relations: ["buyer", "seller"],
     });
   }
+
+  getOne(id: number): Promise<SaleTransaction> {
+    return this.saleTransactionsRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: ["seller", "buyer", "pet", "post", "branch"],
+    });
+  }
 }

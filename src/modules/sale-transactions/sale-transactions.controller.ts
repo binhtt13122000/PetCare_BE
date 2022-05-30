@@ -11,6 +11,7 @@ import {
   Inject,
   CACHE_MANAGER,
   Get,
+  Param,
 } from "@nestjs/common";
 import { ApiQuery, ApiTags } from "@nestjs/swagger";
 import { SaleTransaction } from "src/entities/transaction_service/sale-transaction.entity";
@@ -74,6 +75,11 @@ export class SaleTransactionsController {
       );
     }
     return await this.saleTransactionsService.index();
+  }
+
+  @Get(":id")
+  async getOne(@Param("id") id: number): Promise<SaleTransaction> {
+    return await this.saleTransactionsService.getOne(id);
   }
 
   @Post()
