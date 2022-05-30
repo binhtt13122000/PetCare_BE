@@ -166,7 +166,7 @@ export class SaleTransactionsController {
     }
   }
 
-  @Get("vnpay_return")
+  @Get("vnpay/vnpay_return")
   vnPayReturn(@Req() req: Request): void {
     vnpayService.vnpayReturn(
       req,

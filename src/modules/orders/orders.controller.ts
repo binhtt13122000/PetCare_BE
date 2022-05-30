@@ -13,6 +13,7 @@ import {
   HttpCode,
   NotFoundException,
   BadGatewayException,
+  Param,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { OrdersService } from "./orders.service";
@@ -39,6 +40,11 @@ export class OrdersController {
     private readonly ordersService: OrdersService,
     private readonly customerService: CustomerService,
   ) {}
+
+  @Get(":id")
+  async getOne(@Param("id") id: number): Promise<Order> {
+    return this.ordersService.getOne(id);
+  }
 
   @Post()
   async create(@Body() body: CreateOrderDTO): Promise<Order> {
@@ -115,7 +121,7 @@ export class OrdersController {
     }
   }
 
-  @Get("vnpay_return")
+  @Get("vnpay/vnpay_return")
   vnPayReturn(@Req() req: Request): void {
     vnpayService.vnpayReturn(
       req,
