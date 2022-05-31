@@ -10,4 +10,6 @@ export class SaleTransactionPayment {
   paymentMethod: string;
   @ApiProperty()
   point: number;
+  @ApiProperty()
+  message: string;
 }

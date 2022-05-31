@@ -36,6 +36,11 @@ export class SaleTransaction extends BaseEntity {
     nullable: true,
   })
   transactionTime: Date;
+  @Column({
+    type: "timestamp without time zone",
+    nullable: true,
+  })
+  cancelTime: Date;
   @Column({ type: "int", nullable: false })
   @Type(() => Number)
   @Min(0)

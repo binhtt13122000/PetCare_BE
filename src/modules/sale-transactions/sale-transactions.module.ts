@@ -5,12 +5,18 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { SaleTransactionsRepository } from "./sale-transaction.repository";
 import { CustomerModule } from "../customer/customer.module";
 import { PostsModule } from "../posts/posts.module";
+import { RoomsModule } from "../rooms/rooms.module";
+import { ChatModule } from "../chat/chat.module";
+import { MessagesModule } from "../messages/messages.module";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([SaleTransactionsRepository]),
     CustomerModule,
     PostsModule,
+    ChatModule,
+    RoomsModule,
+    MessagesModule,
   ],
   providers: [SaleTransactionsService],
   controllers: [SaleTransactionsController],

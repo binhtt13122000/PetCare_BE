@@ -22,8 +22,12 @@ export class UpdateSaleTransactionDTO {
   review: string;
   @ApiProperty()
   reasonCancel: string;
+  @ApiProperty()
+  cancelTime: Date;
   @ApiProperty({ type: "enum", enum: SaleTransactionEnum })
   status: SaleTransactionEnum;
   @ApiProperty()
   point: number;
+  @ApiProperty()
+  message?: string;
 }

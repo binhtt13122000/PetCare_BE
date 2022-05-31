@@ -23,6 +23,7 @@ import { ResponsePayment } from "../orders/dto/response-payment.dto";
 import {
   PaymentOrderMethodEnum,
   PostEnum,
+  RoomStatusEnum,
   SaleTransactionEnum,
 } from "src/enum/index";
 import { Request } from "express";
@@ -32,6 +33,10 @@ import { Cache } from "cache-manager";
 import { CustomerService } from "../customer/customer.service";
 import { SaleTransactionPayment } from "./dtos/payment.dto";
 import { PostsService } from "../posts/posts.service";
+import { ChatGateway } from "../chat/chat.gateway";
+import { RoomsService } from "../rooms/rooms.service";
+import { MessagesService } from "../messages/messages.service";
+import { MessageEnum } from "src/schemas/message.schema";
 
 @Controller("sale-transactions")
 @ApiTags("sale-transactions")
@@ -41,6 +46,9 @@ export class SaleTransactionsController {
     private readonly saleTransactionsService: SaleTransactionsService,
     private readonly customerService: CustomerService,
     private readonly postService: PostsService,
+    private readonly chatGateway: ChatGateway,
+    private readonly roomService: RoomsService,
+    private readonly messageService: MessagesService,
   ) {}
 
   @Get()
@@ -108,6 +116,28 @@ export class SaleTransactionsController {
         await this.saleTransactionsService.findById(body.id);
       if (!currentSaleTransaction) {
         throw new NotFoundException("Cannot found");
+      }
+      if (body.message) {
+        const room = await this.roomService.findByBuyerAndPost(
+          currentSaleTransaction.buyerId,
+          currentSaleTransaction.postId,
+        );
+        if (!room) {
+          throw new HttpException("not found", HttpStatus.NOT_FOUND);
+        }
+        room.status = RoomStatusEnum.CLOSED;
+        const updatedRoom = await this.roomService.updateRoom(room);
+        const createdMessage = await this.messageService.create({
+          content: body.message,
+          createdTime: currentSaleTransaction.cancelTime,
+          isSellerMessage: true,
+          type: MessageEnum.NORMAL,
+          room: room._id,
+        });
+        this.chatGateway.server.in(room._id).emit("updatedRoom", updatedRoom);
+        this.chatGateway.server
+          .in(room._id)
+          .emit("chatToClient", createdMessage);
       }
       return this.saleTransactionsService.update(body.id, {
         ...currentSaleTransaction,
@@ -209,6 +239,26 @@ export class SaleTransactionsController {
             ...buyer,
             point: buyer.point + updateSaleTransactionDTO.point,
           });
+          const room = await this.roomService.findByBuyerAndPost(
+            saleTransaction.buyerId,
+            saleTransaction.postId,
+          );
+          if (!room) {
+            throw new HttpException("not found", HttpStatus.NOT_FOUND);
+          }
+          room.status = RoomStatusEnum.CLOSED;
+          const updatedRoom = await this.roomService.updateRoom(room);
+          const createdMessage = await this.messageService.create({
+            content: updateSaleTransactionDTO.message,
+            createdTime: updateSaleTransactionDTO.transactionTime,
+            isSellerMessage: true,
+            type: MessageEnum.NORMAL,
+            room: room._id,
+          });
+          this.chatGateway.server.in(room._id).emit("updatedRoom", updatedRoom);
+          this.chatGateway.server
+            .in(room._id)
+            .emit("chatToClient", createdMessage);
         } catch (error) {
           throw new HttpException(error, HttpStatus.BAD_REQUEST);
         }

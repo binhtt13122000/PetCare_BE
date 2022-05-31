@@ -50,6 +50,11 @@ export class BreedingTransaction extends BaseEntity {
     nullable: true,
   })
   pickupFemalePetTime: Date;
+  @Column({
+    type: "timestamp without time zone",
+    nullable: true,
+  })
+  cancelTime: Date;
   @Column({ type: "text", nullable: true })
   evidence: string;
   @Column({ type: "text", nullable: true })
