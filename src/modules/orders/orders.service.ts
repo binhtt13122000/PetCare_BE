@@ -32,6 +32,7 @@ export class OrdersService extends BaseService<Order, OrdersRepository> {
     );
 
     queryBuilder
+      .innerJoinAndSelect("order.branch", "branch")
       .innerJoinAndSelect("order.orderDetails", "orderDetails")
       .innerJoinAndSelect("orderDetails.service", "service")
       .where("order.customerId = :customerId", {
