@@ -126,6 +126,9 @@ export class SaleTransactionsController {
           throw new HttpException("not found", HttpStatus.NOT_FOUND);
         }
         room.status = RoomStatusEnum.CLOSED;
+        room.newestMessage = body.message;
+        room.newestMessageTime = currentSaleTransaction.cancelTime;
+        room.isSellerMessage = true;
         const updatedRoom = await this.roomService.updateRoom(room);
         const createdMessage = await this.messageService.create({
           content: body.message,
@@ -134,9 +137,11 @@ export class SaleTransactionsController {
           type: MessageEnum.NORMAL,
           room: room._id,
         });
-        this.chatGateway.server.in(room._id).emit("updatedRoom", updatedRoom);
         this.chatGateway.server
-          .in(room._id)
+          .in(room._id.valueOf())
+          .emit("updatedRoom", updatedRoom);
+        this.chatGateway.server
+          .in(room._id.valueOf())
           .emit("chatToClient", createdMessage);
       }
       return this.saleTransactionsService.update(body.id, {
@@ -260,9 +265,11 @@ export class SaleTransactionsController {
             type: MessageEnum.NORMAL,
             room: room._id,
           });
-          this.chatGateway.server.in(room._id).emit("updatedRoom", updatedRoom);
           this.chatGateway.server
-            .in(room._id)
+            .in(room._id.valueOf())
+            .emit("updatedRoom", updatedRoom);
+          this.chatGateway.server
+            .in(room._id.valueOf())
             .emit("chatToClient", createdMessage);
         } catch (error) {
           throw new HttpException(error, HttpStatus.BAD_REQUEST);

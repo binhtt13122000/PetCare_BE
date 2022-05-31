@@ -27,12 +27,12 @@ export class ChatGateway {
 
   @SubscribeMessage("joinRoom")
   handleJoinRoom(client: Socket, roomId: string): void {
-    client.join(roomId);
+    client.join(roomId.valueOf());
   }
 
   @SubscribeMessage("leaveRoom")
   handleLeaveRoom(client: Socket, roomId: string): void {
-    client.leave(roomId);
+    client.leave(roomId.valueOf());
   }
 
   @SubscribeMessage("updateRoom")
@@ -48,9 +48,9 @@ export class ChatGateway {
       room: room._id,
       type: MessageEnum.NORMAL,
     });
-    client.join(room._id);
-    this.server.in(room._id).emit("updatedRoom", updatedRoom);
-    this.server.in(room._id).emit("chatToClient", createdMessage);
+    client.join(room._id.valueOf());
+    this.server.in(room._id.valueOf()).emit("updatedRoom", updatedRoom);
+    this.server.in(room._id.valueOf()).emit("chatToClient", createdMessage);
   }
 
   @SubscribeMessage("chatToServer")
@@ -71,8 +71,10 @@ export class ChatGateway {
         ...message,
         room: createdRoom._id,
       });
-      client.join(createdRoom._id);
-      this.server.in(createdRoom._id).emit("chatToClient", createdMessage);
+      client.join(message.room.valueOf());
+      this.server
+        .in(message.room.valueOf())
+        .emit("chatToClient", createdMessage);
     } else {
       const room = await this.roomService.findById(message.room);
       if (!room) {
@@ -89,7 +91,10 @@ export class ChatGateway {
       room.newestMessageTime = message.createdTime;
       room.isSellerMessage = message.isSellerMessage;
       await this.roomService.updateRoom(room);
-      this.server.in(message.room).emit("chatToClient", createdMessage);
+      client.join(message.room.valueOf());
+      this.server
+        .in(message.room.valueOf())
+        .emit("chatToClient", createdMessage);
     }
   }
 }
