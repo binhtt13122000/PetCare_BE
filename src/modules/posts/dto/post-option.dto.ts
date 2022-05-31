@@ -20,7 +20,7 @@ export class PostsOptionDto extends OmitType(PageOptionsDto, ["filtering"]) {
 
   @ApiPropertyOptional({
     enum: ServiceEnum,
-    default: ServiceEnum.PURCHASE,
+    default: ServiceEnum.SALE,
   })
   @IsEnum(ServiceEnum)
   @IsOptional()
