@@ -83,8 +83,14 @@ export class PostsController {
         });
       }),
     );
-    body.medias = [...body.medias, ...medias];
-    return this.postsService.update(body.id, new PostEntity(body));
+    if (body.medias && body.medias.length > 0) {
+      body.medias = [...body.medias, ...medias];
+    } else if (medias && medias.length > 0) {
+      body.medias = [...medias];
+    }
+    const instance = await this.postsService.findById(body.id);
+    Object.assign(instance, body);
+    return instance.save();
   }
 
   @Get("/fetch-post")
