@@ -13,4 +13,34 @@ export class BreedTransactionService extends BaseService<
   ) {
     super(breedTransactionRepository);
   }
+
+  getBreedTransactionsByBuyerId(
+    buyerId: number,
+    limit: number,
+    page: number,
+  ): Promise<BreedingTransaction[]> {
+    return this.breedTransactionRepository.find({
+      where: {
+        buyerId: buyerId,
+      },
+      take: limit,
+      skip: (page - 1) * limit,
+      relations: ["buyer", "seller"],
+    });
+  }
+
+  getBreedTransactionsBySellerId(
+    sellerId: number,
+    limit: number,
+    page: number,
+  ): Promise<BreedingTransaction[]> {
+    return this.breedTransactionRepository.find({
+      where: {
+        sellerId: sellerId,
+      },
+      take: limit,
+      skip: (page - 1) * limit,
+      relations: ["buyer", "seller"],
+    });
+  }
 }
