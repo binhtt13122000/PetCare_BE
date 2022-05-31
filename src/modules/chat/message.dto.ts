@@ -1,3 +1,4 @@
+import { ServiceEnum } from "src/enum";
 import { MessageEnum } from "src/schemas/message.schema";
 
 export class MessageDTO {
@@ -17,5 +18,5 @@ export class MessageDTO {
 
   sellerId?: number;
 
-  roomType?: "SALE" | "BREED";
+  roomType?: ServiceEnum;
 }

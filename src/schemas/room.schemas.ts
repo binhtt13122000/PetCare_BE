@@ -3,7 +3,7 @@ import { Document } from "mongoose";
 import { ApiProperty } from "@nestjs/swagger";
 import { Message } from "./message.schema";
 import mongoose from "mongoose";
-import { RoomStatusEnum } from "src/enum";
+import { RoomStatusEnum, ServiceEnum } from "src/enum";
 
 export type RoomDocument = Room & Document;
 
@@ -66,7 +66,7 @@ export class Room {
 
   @Prop({ required: false })
   @ApiProperty({ required: false })
-  type?: "SALE" | "BREED";
+  type?: ServiceEnum;
 
   @Prop()
   @ApiProperty({ enum: RoomStatusEnum, default: RoomStatusEnum.CREATED })

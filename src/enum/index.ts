@@ -43,7 +43,7 @@ export enum GenderEnum {
 }
 
 export enum ServiceEnum {
-  PURCHASE = "PURCHASE",
+  SALE = "SALE",
   BREED = "BREED",
 }
 
