@@ -227,11 +227,13 @@ export class SaleTransactionsController {
             throw new HttpException("status error", HttpStatus.BAD_REQUEST);
           }
           this.cacheManager.del("sale_transaction_id_" + id);
+          const { message, ...updateSaleTransaction } =
+            updateSaleTransactionDTO;
           await this.saleTransactionsService.update(
             updateSaleTransactionDTO.id,
             {
               ...saleTransaction,
-              ...updateSaleTransactionDTO,
+              ...updateSaleTransaction,
               status: SaleTransactionEnum.SUCCESS,
             },
           );
@@ -249,7 +251,7 @@ export class SaleTransactionsController {
           room.status = RoomStatusEnum.CLOSED;
           const updatedRoom = await this.roomService.updateRoom(room);
           const createdMessage = await this.messageService.create({
-            content: updateSaleTransactionDTO.message,
+            content: message,
             createdTime: updateSaleTransactionDTO.transactionTime,
             isSellerMessage: true,
             type: MessageEnum.NORMAL,
