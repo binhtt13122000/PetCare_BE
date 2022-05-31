@@ -106,7 +106,7 @@ export class SaleTransactionsController {
     try {
       const currentSaleTransaction =
         await this.saleTransactionsService.findById(body.id);
-      if (currentSaleTransaction) {
+      if (!currentSaleTransaction) {
         throw new NotFoundException("Cannot found");
       }
       return this.saleTransactionsService.update(body.id, {

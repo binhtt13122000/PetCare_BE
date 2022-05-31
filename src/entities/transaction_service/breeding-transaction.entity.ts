@@ -5,17 +5,16 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import { Min, Max, IsString } from "class-validator";
 import { Customer } from "../user_management_service/customer.entity";
 import { Pet } from "../pet_service/pet.entity";
 import { Post } from "./post.entity";
 import { Branch } from "../user_management_service/branch.entity";
 // import { Promotion } from "../service/promotion.entity";
 import { BreedingTransactionEnum } from "src/enum";
-import { Type } from "class-transformer";
+import { BaseEntity } from "typeorm";
 
 @Entity("breeding_transaction")
-export class BreedingTransaction {
+export class BreedingTransaction extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
   @Column({
@@ -30,49 +29,38 @@ export class BreedingTransaction {
   meetingTime: Date;
   @Column({
     type: "timestamp without time zone",
-    nullable: false,
+    nullable: true,
   })
   dateOfBreeding: Date;
   @Column({ type: "int", nullable: false })
-  @Type(() => Number)
-  @Min(0)
   sellerReceive: number;
   @Column({ type: "int", nullable: false })
-  @Type(() => Number)
-  @Min(0)
   serviceFee: number;
   @Column({ type: "int", nullable: false })
-  @Type(() => Number)
-  @Min(0)
   transactionTotal: number;
   @Column({ type: "int", nullable: true })
   point: number;
   @Column({
     type: "timestamp without time zone",
-    nullable: false,
+    nullable: true,
   })
   pickupMalePetTime: Date;
   @Column({
     type: "timestamp without time zone",
-    nullable: false,
+    nullable: true,
   })
   pickupFemalePetTime: Date;
   @Column({ type: "text", nullable: true })
   evidence: string;
   @Column({ type: "text", nullable: true })
   description: string;
-  @Column({ type: "text", nullable: false })
+  @Column({ type: "text", nullable: true })
   paymentMethod: string;
-  @Column({ type: "int", nullable: false })
-  @Type(() => Number)
-  @Min(0)
-  @Max(5)
+  @Column({ type: "int", nullable: true })
   star: number;
   @Column({ type: "text", nullable: true })
-  @IsString()
   review: string;
   @Column({ type: "text", nullable: true })
-  @IsString()
   reasonCancel: string;
   @Column({ type: "enum", enum: BreedingTransactionEnum })
   status: BreedingTransactionEnum;
@@ -114,9 +102,8 @@ export class BreedingTransaction {
   @JoinColumn({ name: "branchId", referencedColumnName: "id" })
   branch: Branch;
 
-  // @Column({ name: "promotionId", nullable: true })
-  // promotionId: number;
-  // @ManyToOne(() => Promotion, (promotion) => promotion.breedingTransactions, {})
-  // @JoinColumn({ name: "promotionId", referencedColumnName: "id" })
-  // promotion: Promotion;
+  constructor(partial: Partial<BreedingTransaction>) {
+    super();
+    Object.assign(this, partial);
+  }
 }

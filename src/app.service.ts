@@ -12,6 +12,6 @@ export class AppService {
     const x = await this.entityManager.query(
       `select * from ${table} where ${table}."${field}" = '${value}'`,
     );
-    return x !== undefined && x !== null;
+    return x && x.length > 0;
   }
 }
