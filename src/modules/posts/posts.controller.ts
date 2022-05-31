@@ -85,6 +85,8 @@ export class PostsController {
     );
     if (body.medias && body.medias.length > 0) {
       body.medias = [...body.medias, ...medias];
+    } else if (medias && medias.length > 0) {
+      body.medias = [...medias];
     }
     const instance = await this.postsService.findById(body.id);
     Object.assign(instance, body);
