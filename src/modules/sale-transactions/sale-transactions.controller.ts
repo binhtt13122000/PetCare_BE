@@ -249,6 +249,9 @@ export class SaleTransactionsController {
             throw new HttpException("not found", HttpStatus.NOT_FOUND);
           }
           room.status = RoomStatusEnum.CLOSED;
+          room.newestMessage = message;
+          room.newestMessageTime = updateSaleTransactionDTO.transactionTime;
+          room.isSellerMessage = true;
           const updatedRoom = await this.roomService.updateRoom(room);
           const createdMessage = await this.messageService.create({
             content: message,

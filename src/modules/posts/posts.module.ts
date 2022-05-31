@@ -4,9 +4,16 @@ import { PostsController } from "./posts.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { PostsRepository } from "./posts.repository";
 import { PetsModule } from "../pets/pets.module";
+import { SharedModule } from "src/shared/shared.module";
+import { MediasModule } from "../medias/medias.module";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PostsRepository]), PetsModule],
+  imports: [
+    TypeOrmModule.forFeature([PostsRepository]),
+    PetsModule,
+    SharedModule,
+    MediasModule,
+  ],
   controllers: [PostsController],
   providers: [PostsService],
   exports: [PostsService],

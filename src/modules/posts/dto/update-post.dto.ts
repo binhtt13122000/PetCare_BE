@@ -1,7 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { CreatePostDTO } from "./create-post.dto";
 import { PostEnum, ServiceEnum } from "src/enum";
-import { Media } from "src/entities/transaction_service/media.entity";
 export class UpdatePostDTO extends CreatePostDTO {
   @ApiProperty()
   id: number;
@@ -30,8 +29,8 @@ export class UpdatePostDTO extends CreatePostDTO {
   @ApiProperty({ required: false })
   reasonReject: string;
 
-  @ApiProperty()
-  medias: Media[];
+  @ApiProperty({ required: false, isArray: true })
+  deletedIds: number[];
 
   @ApiProperty()
   isVaccineInject: boolean;

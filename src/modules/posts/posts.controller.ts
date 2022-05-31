@@ -25,12 +25,17 @@ import { PetEnum } from "src/enum";
 import { UpdatePostDTO } from "./dto/update-post.dto";
 import { PageDto } from "src/common/page.dto";
 import { PostsOptionDto } from "./dto/post-option.dto";
+import { MediasService } from "../medias/medias.service";
+import { FileProducerService } from "src/shared/file/file.producer.service";
+import { EntityId } from "typeorm/repository/EntityId";
 @ApiTags("posts")
 @Controller("posts")
 export class PostsController {
   constructor(
     private readonly postsService: PostsService,
     private readonly petsService: PetsService,
+    private readonly mediasService: MediasService,
+    private fileProducerService: FileProducerService,
   ) {}
 
   @Get(":id")
@@ -80,16 +85,25 @@ export class PostsController {
         return new Media({
           url: url,
           type: type === "image/jpeg" ? "image" : "video",
+          postId: Number(body.id),
         });
       }),
     );
-    if (body.medias && body.medias.length > 0) {
-      body.medias = [...body.medias, ...medias];
-    } else if (medias && medias.length > 0) {
-      body.medias = [...medias];
+
+    if (body.deletedIds) {
+      const deletedMedias = await this.mediasService.findByIds(
+        body.deletedIds as [EntityId],
+      );
+      await this.mediasService.deleteItems(body.deletedIds);
+      await this.fileProducerService.deleteFiles(
+        deletedMedias.map((media) => media.url),
+      );
     }
-    const instance = await this.postsService.findById(body.id);
+
+    const instance = await this.postsService.getOneWithMedias(body.id);
     Object.assign(instance, body);
+    instance.id = Number(body.id);
+    instance.medias = [...instance.medias, ...medias];
     return instance.save();
   }
 
