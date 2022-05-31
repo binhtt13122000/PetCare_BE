@@ -15,7 +15,7 @@ import { Branch } from "../user_management_service/branch.entity";
 export class VaccinePetRecord extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
-  @Column({ type: "timestamp without time zone", default: new Date() })
+  @Column({ type: "timestamp without time zone" })
   dateOfInjection: Date;
   @Column({ type: "text", nullable: true })
   @IsString()
