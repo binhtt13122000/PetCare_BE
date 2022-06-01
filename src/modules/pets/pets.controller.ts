@@ -5,16 +5,19 @@ import {
   HttpException,
   HttpStatus,
   Post,
+  Get,
   Put,
   UploadedFile,
   UseInterceptors,
+  Param,
+  Query,
 } from "@nestjs/common";
 import { PetsService } from "./pets.service";
 import { CreatePetDTO } from "./dto/create-pet.dto";
 import { Pet } from "src/entities/pet_service/pet.entity";
 import { uploadService } from "src/external/uploadFile.service";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { ApiConsumes, ApiTags } from "@nestjs/swagger";
+import { ApiConsumes, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { UpdatePetDTO } from "./dto/update-pet.dto";
 import { PetEnum } from "src/enum";
 import { PetOwner } from "src/entities/pet_service/pet-owner.entity";
@@ -27,6 +30,32 @@ export class PetsController {
     private readonly petsService: PetsService,
     private readonly fileProducerService: FileProducerService,
   ) {}
+
+  @Get()
+  async getAll(@Query("customerId") customerId: number): Promise<Pet[]> {
+    return await this.petsService.getPetListByCustomerId(customerId);
+  }
+
+  @Get("fetch-pet")
+  @ApiQuery({
+    name: "species",
+    type: Number,
+    required: false,
+  })
+  async getToCreatePost(
+    @Query("customerId") customerId: number,
+    @Query("speciesId") speciesId: number,
+  ): Promise<Pet[]> {
+    return await this.petsService.getPetListWithoutBreedToCreatePostByCustomerIdAndSpeciesId(
+      customerId,
+      speciesId,
+    );
+  }
+
+  @Get(":id")
+  async getOne(@Param("id") id: number): Promise<Pet> {
+    return await this.petsService.getOne(id);
+  }
 
   @ApiConsumes("multipart/form-data")
   @Post()

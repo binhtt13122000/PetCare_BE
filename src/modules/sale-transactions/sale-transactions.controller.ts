@@ -131,12 +131,12 @@ export class SaleTransactionsController {
         }
         room.status = RoomStatusEnum.CLOSED;
         room.newestMessage = message;
-        room.newestMessageTime = currentSaleTransaction.cancelTime;
+        room.newestMessageTime = rest.cancelTime;
         room.isSellerMessage = false;
         const updatedRoom = await this.roomService.updateRoom(room);
         const createdMessage = await this.messageService.create({
           content: message,
-          createdTime: currentSaleTransaction.cancelTime,
+          createdTime: rest.cancelTime,
           isSellerMessage: false,
           type: MessageEnum.NORMAL,
           room: room._id,

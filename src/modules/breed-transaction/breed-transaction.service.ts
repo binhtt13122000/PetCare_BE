@@ -26,6 +26,9 @@ export class BreedTransactionService extends BaseService<
       take: limit,
       skip: (page - 1) * limit,
       relations: ["ownerPetMale", "ownerPetFemale"],
+      order: {
+        createdTime: "DESC",
+      },
     });
   }
 
@@ -41,6 +44,9 @@ export class BreedTransactionService extends BaseService<
       take: limit,
       skip: (page - 1) * limit,
       relations: ["ownerPetMale", "ownerPetFemale"],
+      order: {
+        createdTime: "DESC",
+      },
     });
   }
 
