@@ -31,6 +31,15 @@ export class BreedsController {
     }
   }
 
+  @Get("/species/:id")
+  async getBreedsBySpeciesId(@Param() params: IdParams): Promise<Breed[]> {
+    try {
+      return await this.breedsService.getBySpeciesId(params.id);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   @Get()
   async getAll(): Promise<Breed[]> {
     try {

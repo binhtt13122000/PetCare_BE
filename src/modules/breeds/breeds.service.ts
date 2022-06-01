@@ -8,4 +8,12 @@ export class BreedsService extends BaseService<Breed, BreedsRepository> {
   constructor(private readonly breedsRepository: BreedsRepository) {
     super(breedsRepository);
   }
+
+  getBySpeciesId(speciesId: number): Promise<Breed[]> {
+    return this.breedsRepository.find({
+      where: {
+        speciesId: speciesId,
+      },
+    });
+  }
 }
