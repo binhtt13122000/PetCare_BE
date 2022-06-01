@@ -9,6 +9,7 @@ import { RoomsModule } from "../rooms/rooms.module";
 import { ChatModule } from "../chat/chat.module";
 import { MessagesModule } from "../messages/messages.module";
 import { PetOwnerModule } from "../pet-owner/pet-owner.module";
+import { PetsModule } from "../pets/pets.module";
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { PetOwnerModule } from "../pet-owner/pet-owner.module";
     RoomsModule,
     MessagesModule,
     PetOwnerModule,
+    PetsModule,
   ],
   providers: [SaleTransactionsService],
   controllers: [SaleTransactionsController],

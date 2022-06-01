@@ -22,10 +22,11 @@ import { PaymentQuery } from "src/common";
 import { ResponsePayment } from "../orders/dto/response-payment.dto";
 import {
   PaymentOrderMethodEnum,
+  PetEnum,
   PostEnum,
   RoomStatusEnum,
   SaleTransactionEnum,
-} from "src/enum/index";
+} from "src/enum";
 import { Request } from "express";
 import { vnpayService } from "src/external/vnpay.service";
 import { format } from "date-fns";
@@ -39,6 +40,7 @@ import { MessagesService } from "../messages/messages.service";
 import { MessageEnum } from "src/schemas/message.schema";
 import { PetOwnerService } from "../pet-owner/pet-owner.service";
 import { PetOwner } from "src/entities/pet_service/pet-owner.entity";
+import { PetsService } from "../pets/pets.service";
 
 @Controller("sale-transactions")
 @ApiTags("sale-transactions")
@@ -52,6 +54,7 @@ export class SaleTransactionsController {
     private readonly roomService: RoomsService,
     private readonly messageService: MessagesService,
     private readonly petOwnerService: PetOwnerService,
+    private readonly petsService: PetsService,
   ) {}
 
   @Get()
@@ -229,11 +232,15 @@ export class SaleTransactionsController {
           const buyer = await this.customerService.findById(
             saleTransaction.buyerId,
           );
+          const pet = await this.petsService.findById(saleTransaction.petId);
           if (!buyer) {
             throw new HttpException("not found", HttpStatus.NOT_FOUND);
           }
           if (saleTransaction.status !== SaleTransactionEnum.CREATED) {
             throw new HttpException("status error", HttpStatus.BAD_REQUEST);
+          }
+          if (!pet) {
+            throw new HttpException("not found pet", HttpStatus.BAD_REQUEST);
           }
           this.cacheManager.del("sale_transaction_id_" + id);
           const { message, ...updateSaleTransaction } =
@@ -246,6 +253,10 @@ export class SaleTransactionsController {
               status: SaleTransactionEnum.SUCCESS,
             },
           );
+          await this.petsService.update(pet.id, {
+            ...pet,
+            status: PetEnum.NORMAL,
+          });
           await this.customerService.update(buyer.id, {
             ...buyer,
             point: buyer.point + updateSaleTransactionDTO.point,
