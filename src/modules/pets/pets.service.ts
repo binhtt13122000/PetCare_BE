@@ -13,7 +13,7 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
     return this.petsRepository
       .createQueryBuilder("pet")
       .where(
-        "pet.status != 'DELETED' and pet_owners.customerId = :customerId",
+        "pet.status != 'DELETED' and pet_owners.customerId = :customerId and pet_owners.isCurrentOwner = true",
         {
           customerId,
         },
@@ -32,10 +32,10 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
     let whereString = "";
     if (speciesId) {
       whereString =
-        "pet.status = 'NORMAL' and pet_owners.customerId = :customerId and breed.speciesId = :speciesId";
+        "pet.status = 'NORMAL' and pet_owners.customerId = :customerId and pet_owners.isCurrentOwner = true and breed.speciesId = :speciesId";
     } else {
       whereString =
-        "pet.status = 'NORMAL' and pet_owners.customerId = :customerId";
+        "pet.status = 'NORMAL' and pet_owners.customerId = :customerId and pet_owners.isCurrentOwner = true";
     }
     return this.petsRepository
       .createQueryBuilder("pet")
