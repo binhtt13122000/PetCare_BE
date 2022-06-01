@@ -14,7 +14,11 @@ export class PromotionsService extends BaseService<
 
   findByBranch(branchId: number): Promise<Promotion[]> {
     return this.promotionsRepository.find({
-      where: { branchId },
+      where: { branchId, status: true },
+      order: {
+        expireTime: "DESC",
+        startTime: "DESC",
+      },
     });
   }
 }
