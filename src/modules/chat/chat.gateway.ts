@@ -71,9 +71,9 @@ export class ChatGateway {
         ...message,
         room: createdRoom._id,
       });
-      client.join(message.room.valueOf());
+      client.join(createdRoom._id.valueOf());
       this.server
-        .in(message.room.valueOf())
+        .in(createdRoom._id.valueOf())
         .emit("chatToClient", createdMessage);
     } else {
       const room = await this.roomService.findById(message.room);
