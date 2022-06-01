@@ -27,6 +27,7 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
 
   getPetListWithoutBreedToCreatePostByCustomerIdAndSpeciesId(
     customerId: number,
+    type: "BREED" | "SALE",
     speciesId?: number,
   ): Promise<Pet[]> {
     let whereString = "";
@@ -36,6 +37,9 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
     } else {
       whereString =
         "pet.status = 'NORMAL' and pet_owners.customerId = :customerId and pet_owners.isCurrentOwner = true";
+    }
+    if (type === "BREED") {
+      whereString += " and pet.isSeed = true";
     }
     return this.petsRepository
       .createQueryBuilder("pet")

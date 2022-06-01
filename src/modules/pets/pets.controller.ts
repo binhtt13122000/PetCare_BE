@@ -42,12 +42,18 @@ export class PetsController {
     type: Number,
     required: false,
   })
+  @ApiQuery({
+    name: "type",
+    enum: ["BREED", "SALE"],
+  })
   async getToCreatePost(
     @Query("customerId") customerId: number,
     @Query("speciesId") speciesId: number,
+    @Query("type") type: "BREED" | "SALE",
   ): Promise<Pet[]> {
     return await this.petsService.getPetListWithoutBreedToCreatePostByCustomerIdAndSpeciesId(
       customerId,
+      type,
       speciesId,
     );
   }
