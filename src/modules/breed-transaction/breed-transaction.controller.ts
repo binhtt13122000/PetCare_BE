@@ -25,6 +25,7 @@ import { CreateBreedTransactionDTO } from "./dtos/create-breed-transaction.dto";
 import {
   BreedingTransactionEnum,
   PaymentOrderMethodEnum,
+  PostEnum,
   RoomStatusEnum,
 } from "src/enum/index";
 import { vnpayService } from "src/external/vnpay.service";
@@ -37,6 +38,7 @@ import { RoomsService } from "../rooms/rooms.service";
 import { MessagesService } from "../messages/messages.service";
 import { MessageEnum } from "src/schemas/message.schema";
 import { UpdateBreedTransactionDTO } from "./dtos/update-breed-transaction.dto";
+import { PetsService } from "../pets/pets.service";
 
 @Controller("breed-transactions")
 @ApiTags("breed-transactions")
@@ -49,6 +51,7 @@ export class BreedTransactionController {
     private readonly chatGateway: ChatGateway,
     private readonly roomService: RoomsService,
     private readonly messageService: MessagesService,
+    private readonly petsService: PetsService,
   ) {}
 
   @Get()
@@ -90,6 +93,12 @@ export class BreedTransactionController {
     @Body() body: CreateBreedTransactionDTO,
   ): Promise<BreedingTransaction> {
     try {
+      const post = await this.postService.findById(body.postId);
+      if (!post) {
+        throw new NotFoundException("dont have post");
+      }
+      post.status = PostEnum.WAITING_FOR_PAYMENT;
+      await this.postService.update(post.id, post);
       return await this.breedTransactionService.store(
         new BreedingTransaction({ ...body }),
       );
@@ -110,6 +119,16 @@ export class BreedTransactionController {
       }
       const { message, ...rest } = body;
       if (message) {
+        const post = await this.postService.findById(
+          currentBreedTransaction.postId,
+        );
+        if (!post) {
+          throw new HttpException("not found post", HttpStatus.BAD_REQUEST);
+        }
+        await this.postService.update(post.id, {
+          ...post,
+          status: PostEnum.PUBLISHED,
+        });
         const room = await this.roomService.findByBuyerAndPost(
           currentBreedTransaction.ownerPetFemaleId,
           currentBreedTransaction.postId,

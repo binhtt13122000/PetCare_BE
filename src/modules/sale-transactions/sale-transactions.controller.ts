@@ -125,6 +125,16 @@ export class SaleTransactionsController {
       }
       const { message, ...rest } = body;
       if (message) {
+        const post = await this.postService.findById(
+          currentSaleTransaction.postId,
+        );
+        if (!post) {
+          throw new HttpException("not found post", HttpStatus.BAD_REQUEST);
+        }
+        await this.postService.update(post.id, {
+          ...post,
+          status: PostEnum.PUBLISHED,
+        });
         const room = await this.roomService.findByBuyerAndPost(
           currentSaleTransaction.buyerId,
           currentSaleTransaction.postId,
@@ -233,6 +243,7 @@ export class SaleTransactionsController {
             saleTransaction.buyerId,
           );
           const pet = await this.petsService.findById(saleTransaction.petId);
+          const post = await this.postService.findById(saleTransaction.postId);
           if (!buyer) {
             throw new HttpException("not found", HttpStatus.NOT_FOUND);
           }
@@ -241,6 +252,9 @@ export class SaleTransactionsController {
           }
           if (!pet) {
             throw new HttpException("not found pet", HttpStatus.BAD_REQUEST);
+          }
+          if (!post) {
+            throw new HttpException("not found post", HttpStatus.BAD_REQUEST);
           }
           this.cacheManager.del("sale_transaction_id_" + id);
           const { message, ...updateSaleTransaction } =
@@ -256,6 +270,10 @@ export class SaleTransactionsController {
           await this.petsService.update(pet.id, {
             ...pet,
             status: PetEnum.NORMAL,
+          });
+          await this.postService.update(post.id, {
+            ...post,
+            status: PostEnum.CLOSED,
           });
           await this.customerService.update(buyer.id, {
             ...buyer,
