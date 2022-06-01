@@ -14,7 +14,7 @@ export class FollowsService extends BaseService<Follow, FollowsRepository> {
       where: {
         followedId: customerId,
       },
-      relations: ["follower"],
+      relations: ["follower", "follower.posts"],
     });
   }
 
@@ -23,7 +23,7 @@ export class FollowsService extends BaseService<Follow, FollowsRepository> {
       where: {
         followerId: customerId,
       },
-      relations: ["followed"],
+      relations: ["followed", "followed.post"],
     });
   }
 

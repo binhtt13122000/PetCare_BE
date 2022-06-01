@@ -14,4 +14,13 @@ export class BranchesService extends BaseService<Branch, BranchesRepository> {
       where: { phoneNumber },
     });
   }
+
+  getOne(id: number): Promise<Branch> {
+    return this.branchRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: ["posts", "orders"],
+    });
+  }
 }

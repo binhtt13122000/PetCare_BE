@@ -14,4 +14,13 @@ export class CustomerService extends BaseService<Customer, CustomerRepository> {
       where: { phoneNumber },
     });
   }
+
+  findOne(id: number): Promise<Customer> {
+    return this.customerRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: ["posts"],
+    });
+  }
 }

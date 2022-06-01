@@ -28,8 +28,8 @@ import * as bcrypt from "bcrypt";
 import { FileProducerService } from "src/shared/file/file.producer.service";
 import { FollowsService } from "../follows/follows.service";
 
-@Controller("customer")
-@ApiTags("customer")
+@Controller("customers")
+@ApiTags("customers")
 export class CustomerController {
   constructor(
     private readonly customerService: CustomerService,
@@ -49,7 +49,7 @@ export class CustomerController {
     @Query("customerId") customerId: number,
   ): Promise<unknown> {
     try {
-      const customer = await this.customerService.findById(params.id);
+      const customer = await this.customerService.findOne(params.id);
       if (!customerId) {
         return customer;
       }

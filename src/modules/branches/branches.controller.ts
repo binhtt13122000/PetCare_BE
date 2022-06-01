@@ -67,6 +67,11 @@ export class BranchesController {
     return this.branchService.index();
   }
 
+  @Get(":id")
+  async getOne(@Param("id") id: number): Promise<Branch> {
+    return this.branchService.getOne(id);
+  }
+
   @Post()
   async createBranch(
     @Body() body: CreateBranchDTO,
