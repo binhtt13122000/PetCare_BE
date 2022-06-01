@@ -37,6 +37,8 @@ import { ChatGateway } from "../chat/chat.gateway";
 import { RoomsService } from "../rooms/rooms.service";
 import { MessagesService } from "../messages/messages.service";
 import { MessageEnum } from "src/schemas/message.schema";
+import { PetOwnerService } from "../pet-owner/pet-owner.service";
+import { PetOwner } from "src/entities/pet_service/pet-owner.entity";
 
 @Controller("sale-transactions")
 @ApiTags("sale-transactions")
@@ -49,6 +51,7 @@ export class SaleTransactionsController {
     private readonly chatGateway: ChatGateway,
     private readonly roomService: RoomsService,
     private readonly messageService: MessagesService,
+    private readonly petOwnerService: PetOwnerService,
   ) {}
 
   @Get()
@@ -117,7 +120,8 @@ export class SaleTransactionsController {
       if (!currentSaleTransaction) {
         throw new NotFoundException("Cannot found");
       }
-      if (body.message) {
+      const { message, ...rest } = body;
+      if (message) {
         const room = await this.roomService.findByBuyerAndPost(
           currentSaleTransaction.buyerId,
           currentSaleTransaction.postId,
@@ -126,14 +130,14 @@ export class SaleTransactionsController {
           throw new HttpException("not found", HttpStatus.NOT_FOUND);
         }
         room.status = RoomStatusEnum.CLOSED;
-        room.newestMessage = body.message;
+        room.newestMessage = message;
         room.newestMessageTime = currentSaleTransaction.cancelTime;
-        room.isSellerMessage = true;
+        room.isSellerMessage = false;
         const updatedRoom = await this.roomService.updateRoom(room);
         const createdMessage = await this.messageService.create({
-          content: body.message,
+          content: message,
           createdTime: currentSaleTransaction.cancelTime,
-          isSellerMessage: true,
+          isSellerMessage: false,
           type: MessageEnum.NORMAL,
           room: room._id,
         });
@@ -146,7 +150,7 @@ export class SaleTransactionsController {
       }
       return this.saleTransactionsService.update(body.id, {
         ...currentSaleTransaction,
-        ...body,
+        ...rest,
       });
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
@@ -265,6 +269,14 @@ export class SaleTransactionsController {
             type: MessageEnum.NORMAL,
             room: room._id,
           });
+          this.petOwnerService.store(
+            new PetOwner({
+              customerId: saleTransaction.buyerId,
+              isCurrentOwner: true,
+              petId: saleTransaction.petId,
+              date: updateSaleTransactionDTO.transactionTime,
+            }),
+          );
           this.chatGateway.server
             .in(room._id.valueOf())
             .emit("updatedRoom", updatedRoom);

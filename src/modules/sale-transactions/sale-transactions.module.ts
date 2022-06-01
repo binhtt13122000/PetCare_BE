@@ -8,6 +8,7 @@ import { PostsModule } from "../posts/posts.module";
 import { RoomsModule } from "../rooms/rooms.module";
 import { ChatModule } from "../chat/chat.module";
 import { MessagesModule } from "../messages/messages.module";
+import { PetOwnerModule } from "../pet-owner/pet-owner.module";
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { MessagesModule } from "../messages/messages.module";
     ChatModule,
     RoomsModule,
     MessagesModule,
+    PetOwnerModule,
   ],
   providers: [SaleTransactionsService],
   controllers: [SaleTransactionsController],

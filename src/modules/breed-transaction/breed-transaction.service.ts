@@ -25,7 +25,7 @@ export class BreedTransactionService extends BaseService<
       },
       take: limit,
       skip: (page - 1) * limit,
-      relations: ["buyer", "seller"],
+      relations: ["ownerPetMale", "ownerPetFemale"],
     });
   }
 
@@ -40,7 +40,23 @@ export class BreedTransactionService extends BaseService<
       },
       take: limit,
       skip: (page - 1) * limit,
-      relations: ["buyer", "seller"],
+      relations: ["ownerPetMale", "ownerPetFemale"],
+    });
+  }
+
+  getOne(id: number): Promise<BreedingTransaction> {
+    return this.breedTransactionRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: [
+        "ownerPetMale",
+        "ownerPetFemale",
+        "petMale",
+        "petFemale",
+        "post",
+        "branch",
+      ],
     });
   }
 }

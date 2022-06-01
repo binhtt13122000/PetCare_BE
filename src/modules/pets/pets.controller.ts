@@ -38,7 +38,7 @@ export class PetsController {
     try {
       const { ownerId, ...data } = body;
       const { url: avatar } = await uploadService.uploadFile(file);
-      const petOwner: PetOwner = {
+      const petOwner: Partial<PetOwner> = {
         id: undefined,
         customerId: ownerId,
         isCurrentOwner: true,
@@ -50,7 +50,7 @@ export class PetsController {
       const pet: Partial<Pet> = {
         ...data,
         avatar,
-        petOwners: [petOwner],
+        petOwners: [new PetOwner(petOwner)],
       };
       return await this.petsService.store(new Pet(pet));
     } catch (error) {
