@@ -269,6 +269,7 @@ export class SaleTransactionsController {
             type: MessageEnum.NORMAL,
             room: room._id,
           });
+          this.petOwnerService.updateAllByPetId(saleTransaction.petId);
           this.petOwnerService.store(
             new PetOwner({
               customerId: saleTransaction.buyerId,

@@ -38,7 +38,7 @@ export class PetsController {
 
   @Get("fetch-pet")
   @ApiQuery({
-    name: "species",
+    name: "speciesId",
     type: Number,
     required: false,
   })
