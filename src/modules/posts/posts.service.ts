@@ -109,6 +109,12 @@ export class PostsService extends BaseService<Post, PostsRepository> {
 
     // Query Builder inner join and select properties in table post, pet, breed and species
 
+    queryBuilder
+      .innerJoinAndSelect("post.pet", "pet")
+      .innerJoinAndSelect("post.medias", "medias")
+      .innerJoinAndSelect("pet.breed", "breed")
+      .innerJoinAndSelect("breed.species", "species");
+
     if (
       (pageOptionsDto.notCustomerId && pageOptionsDto.status) ||
       pageOptionsDto.notCustomerId
@@ -130,12 +136,14 @@ export class PostsService extends BaseService<Post, PostsRepository> {
         status: pageOptionsDto.status,
       });
     }
+
     // Sort createTime, provisionalTotal
     if (checkOrderName == "createTime") {
       queryBuilder.orderBy("post.createTime", pageOptionsDto.orderType);
     } else {
       queryBuilder.orderBy("post.provisionalTotal", pageOptionsDto.orderType);
     }
+
     // queryBuilder
     //   .innerJoinAndSelect("post.pet", "pet")
     //   .innerJoinAndSelect("post.medias", "medias")
