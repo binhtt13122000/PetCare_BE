@@ -21,12 +21,17 @@ import { Account } from "src/entities/authenticate_service/account.entity";
 import { DEFAULT_PASSWORD } from "../../common/index";
 import { RoleIndexEnum } from "src/enum";
 import * as bcrypt from "bcrypt";
+import { getStartAndEndDateInCurrentMonth } from "src/common/utils";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { UpdateBranchDTO } from "./dtos/update-branch.dto";
 import { uploadService } from "src/external/uploadFile.service";
 import { FileProducerService } from "src/shared/file/file.producer.service";
 import { IdParams } from "src/common";
 import { getLatitude, getLongitude, orderByDistance } from "geolib";
+import { StatisticBranchDTO } from "./dtos/statistics-branch.dto";
+import { OrdersService } from "../orders/orders.service";
+import { SaleTransactionsService } from "../sale-transactions/sale-transactions.service";
+import { BreedTransactionService } from "../breed-transaction/breed-transaction.service";
 
 @ApiTags("branches")
 @Controller("branches")
@@ -34,6 +39,9 @@ export class BranchesController {
   constructor(
     private readonly branchService: BranchesService,
     private readonly userService: UserService,
+    private readonly orderService: OrdersService,
+    private readonly saleTransactionService: SaleTransactionsService,
+    private readonly breedTransactionService: BreedTransactionService,
     private readonly fileProducerService: FileProducerService,
   ) {}
 
@@ -60,6 +68,70 @@ export class BranchesController {
           branch.lat === getLatitude(x) && branch.lng === getLongitude(x),
       );
     });
+  }
+
+  @Get("/statistics/:id")
+  async getStatisticBranches(
+    @Param("id") id: number,
+  ): Promise<StatisticBranchDTO> {
+    try {
+      const currentMonth = getStartAndEndDateInCurrentMonth();
+
+      const ordersBranchInMonth =
+        await this.orderService.getOrdersBranchInMonth(
+          id,
+          currentMonth.firstDate,
+          currentMonth.lastDate,
+        );
+      const saleTransactionBranchInMonth =
+        await this.saleTransactionService.getSaleTransactionBranchInMonth(
+          id,
+          currentMonth.firstDate,
+          currentMonth.lastDate,
+        );
+      const breedTransactionBranchInMonth =
+        await this.breedTransactionService.getBreedTransactionBranchInMonth(
+          id,
+          currentMonth.firstDate,
+          currentMonth.lastDate,
+        );
+
+      const revenueOrdersBranchInMonth = ordersBranchInMonth[0].reduce(
+        (total, item) => total + item.orderTotal,
+        0,
+      );
+      const revenueSaleTransactionsInMonth =
+        saleTransactionBranchInMonth[0].reduce(
+          (total, item) => total + item.transactionFee,
+          0,
+        );
+      const revenueBreedTransactionInMonth =
+        breedTransactionBranchInMonth[0].reduce(
+          (total, item) => total + item.serviceFee,
+          0,
+        );
+
+      const revenueBranchInMonth =
+        revenueBreedTransactionInMonth +
+        revenueOrdersBranchInMonth +
+        revenueSaleTransactionsInMonth;
+      const rankServices = await this.orderService.getRankServiceInMonth(
+        id,
+        currentMonth.firstDate,
+        currentMonth.lastDate,
+      );
+      return {
+        numberOrdersInMonth: ordersBranchInMonth[1],
+        numberOfBreedingPets: breedTransactionBranchInMonth[1],
+        numberOfSoldPets: saleTransactionBranchInMonth[1],
+        revenueOfTheMonth: revenueBranchInMonth,
+        revenueOfBreedingPetsInMonth: revenueBreedTransactionInMonth,
+        revenueOfSoldPetsInMonth: revenueSaleTransactionsInMonth,
+        rankServices,
+      };
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
   }
 
   @Get()

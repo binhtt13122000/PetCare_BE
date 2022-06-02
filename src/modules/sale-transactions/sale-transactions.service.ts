@@ -1,6 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { BaseService } from "src/base/base.service";
 import { SaleTransaction } from "src/entities/transaction_service/sale-transaction.entity";
+import { SaleTransactionEnum } from "src/enum";
+import { Between } from "typeorm";
 import { SaleTransactionsRepository } from "./sale-transaction.repository";
 
 @Injectable()
@@ -65,6 +67,20 @@ export class SaleTransactionsService extends BaseService<
         "pet.breed",
         "pet.breed.species",
       ],
+    });
+  }
+
+  getSaleTransactionBranchInMonth(
+    id: number,
+    firstDate: Date,
+    lastDate: Date,
+  ): Promise<[SaleTransaction[], number]> {
+    return this.saleTransactionsRepository.findAndCount({
+      where: {
+        branchId: id,
+        status: SaleTransactionEnum.SUCCESS,
+        transactionTime: Between(firstDate, lastDate),
+      },
     });
   }
 }
