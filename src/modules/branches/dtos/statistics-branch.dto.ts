@@ -1,5 +1,3 @@
-import { Order } from "src/entities/order_service/order.entity";
-
 export class ServiceRankDTO {
   serviceId: number;
   count: number;
