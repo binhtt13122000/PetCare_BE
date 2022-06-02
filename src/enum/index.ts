@@ -96,8 +96,8 @@ export enum OrderType {
 }
 
 export enum PostOrderName {
-  BREEDNAME = "name",
   PROVISIONALTOTAL = "provisionalTotal",
+  CREATETIME = "createTime",
 }
 export enum RoomStatusEnum {
   CREATED = "CREATED",

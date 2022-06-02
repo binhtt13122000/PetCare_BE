@@ -38,15 +38,6 @@ export class PostsController {
     private fileProducerService: FileProducerService,
   ) {}
 
-  @Get(":id")
-  async getOne(@Param("id") id: number): Promise<PostEntity> {
-    try {
-      return await this.postsService.getOne(id);
-    } catch (error) {
-      throw new NotFoundException(error);
-    }
-  }
-
   @Post()
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(FilesInterceptor("files"))
@@ -117,6 +108,15 @@ export class PostsController {
       return await this.postsService.fetchPost(pageOptionsDto);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Get(":id")
+  async getOne(@Param("id") id: number): Promise<PostEntity> {
+    try {
+      return await this.postsService.getOne(id);
+    } catch (error) {
+      throw new NotFoundException(error);
     }
   }
 }
