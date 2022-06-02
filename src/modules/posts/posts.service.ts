@@ -109,33 +109,47 @@ export class PostsService extends BaseService<Post, PostsRepository> {
 
     // Query Builder inner join and select properties in table post, pet, breed and species
 
-    if (
-      (pageOptionsDto.notCustomerId && pageOptionsDto.status) ||
-      pageOptionsDto.notCustomerId
-    ) {
-      queryBuilder.where("post.customerId != :id and post.status = :status", {
-        id: pageOptionsDto.notCustomerId,
-        status: pageOptionsDto.status,
-      });
-    } else if (
-      (pageOptionsDto.customerId && pageOptionsDto.status) ||
-      pageOptionsDto.customerId
-    ) {
-      queryBuilder.where("post.customerId = :id and post.status = :status", {
-        id: pageOptionsDto.customerId,
-        status: pageOptionsDto.status,
-      });
+    queryBuilder
+      .innerJoinAndSelect("post.pet", "pet")
+      .innerJoinAndSelect("post.medias", "medias")
+      .innerJoinAndSelect("pet.breed", "breed")
+      .innerJoinAndSelect("breed.species", "species");
+
+    if (pageOptionsDto.notCustomerId) {
+      if (pageOptionsDto.status) {
+        queryBuilder.where("post.customerId != :id and post.status = :status", {
+          id: pageOptionsDto.notCustomerId,
+          status: pageOptionsDto.status,
+        });
+      } else {
+        queryBuilder.where("post.customerId != :id", {
+          id: pageOptionsDto.notCustomerId,
+        });
+      }
+    } else if (pageOptionsDto.customerId) {
+      if (pageOptionsDto.status) {
+        queryBuilder.where("post.customerId = :id and post.status = :status", {
+          id: pageOptionsDto.customerId,
+          status: pageOptionsDto.status,
+        });
+      } else {
+        queryBuilder.where("post.customerId = :id ", {
+          id: pageOptionsDto.customerId,
+        });
+      }
     } else if (pageOptionsDto.status) {
       queryBuilder.where(queryStatus, {
         status: pageOptionsDto.status,
       });
     }
+
     // Sort createTime, provisionalTotal
     if (checkOrderName == "createTime") {
       queryBuilder.orderBy("post.createTime", pageOptionsDto.orderType);
     } else {
       queryBuilder.orderBy("post.provisionalTotal", pageOptionsDto.orderType);
     }
+
     // queryBuilder
     //   .innerJoinAndSelect("post.pet", "pet")
     //   .innerJoinAndSelect("post.medias", "medias")
