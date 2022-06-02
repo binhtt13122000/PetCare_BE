@@ -9,8 +9,9 @@ import {
   Patch,
   Post,
   Put,
+  Query,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiQuery, ApiTags } from "@nestjs/swagger";
 import { IdParams } from "src/common";
 import { Species } from "src/entities/pet_service/species.entity";
 import { CreateSpeciesDTO } from "./dto/create-species.dto";
@@ -32,8 +33,16 @@ export class SpeciesController {
   }
 
   @Get()
-  async getAll(): Promise<Species[]> {
+  @ApiQuery({
+    name: "isActive",
+    required: false,
+    type: Boolean,
+  })
+  async getAll(@Query("isActive") isActive: boolean): Promise<Species[]> {
     try {
+      if (isActive) {
+        return await this.speciesService.getSpeciesByStatus(isActive);
+      }
       return await this.speciesService.index();
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);

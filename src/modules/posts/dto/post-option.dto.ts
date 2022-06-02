@@ -7,11 +7,11 @@ import { GenderEnum, PostEnum, PostOrderName, ServiceEnum } from "src/enum";
 export class PostsOptionDto extends OmitType(PageOptionsDto, ["filtering"]) {
   @ApiPropertyOptional({
     enum: PostOrderName,
-    default: PostOrderName.BREEDNAME,
+    default: PostOrderName.CREATETIME,
   })
   @IsEnum(PostOrderName)
   @IsOptional()
-  orderName?: PostOrderName = PostOrderName.BREEDNAME;
+  orderName?: PostOrderName;
 
   @ApiPropertyOptional({ enum: PostEnum, default: PostEnum.PUBLISHED })
   @IsEnum(PostEnum)
@@ -20,7 +20,7 @@ export class PostsOptionDto extends OmitType(PageOptionsDto, ["filtering"]) {
 
   @ApiPropertyOptional({
     enum: ServiceEnum,
-    default: ServiceEnum.SALE,
+    default: null,
   })
   @IsEnum(ServiceEnum)
   @IsOptional()
@@ -28,19 +28,19 @@ export class PostsOptionDto extends OmitType(PageOptionsDto, ["filtering"]) {
 
   @ApiPropertyOptional({
     enum: GenderEnum,
-    default: GenderEnum.MALE,
+    // default: GenderEnum.MALE,
   })
   @IsEnum(GenderEnum)
   @IsOptional()
   gender?: GenderEnum;
 
-  @ApiProperty({ required: false, default: true })
+  @ApiProperty({ required: false, default: null })
   isSeed?: boolean;
 
   @ApiPropertyOptional({
     minimum: 0,
     maximum: 99999999,
-    default: 1,
+    // default: 1000000,
   })
   @Type(() => Number)
   @Min(0)
@@ -54,14 +54,22 @@ export class PostsOptionDto extends OmitType(PageOptionsDto, ["filtering"]) {
   @ApiPropertyOptional({
     minimum: 0,
     maximum: 20,
-    default: 1,
+    // default: 1,
   })
   ageRangeFrom?: number;
 
   @ApiPropertyOptional({
     minimum: 0,
     maximum: 20,
-    default: 1,
+    // default: 10,
   })
   ageRangeTo?: number;
+
+  @ApiProperty({ required: false })
+  @Type(() => Number)
+  customerId: number;
+
+  @ApiProperty({ required: false })
+  @Type(() => Number)
+  notCustomerId?: number;
 }
