@@ -14,14 +14,14 @@ export class BreedTransactionService extends BaseService<
     super(breedTransactionRepository);
   }
 
-  getBreedTransactionsByBuyerId(
-    buyerId: number,
+  getBreedTransactionsByOwnerPetFemaleId(
+    ownerPetFemaleId: number,
     limit: number,
     page: number,
   ): Promise<BreedingTransaction[]> {
     return this.breedTransactionRepository.find({
       where: {
-        buyerId: buyerId,
+        ownerPetFemaleId: ownerPetFemaleId,
       },
       take: limit,
       skip: (page - 1) * limit,
@@ -32,14 +32,14 @@ export class BreedTransactionService extends BaseService<
     });
   }
 
-  getBreedTransactionsBySellerId(
-    sellerId: number,
+  getBreedTransactionsByOwnerPetMaleIdId(
+    ownerPetMaleId: number,
     limit: number,
     page: number,
   ): Promise<BreedingTransaction[]> {
     return this.breedTransactionRepository.find({
       where: {
-        sellerId: sellerId,
+        ownerPetMaleId: ownerPetMaleId,
       },
       take: limit,
       skip: (page - 1) * limit,

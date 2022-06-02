@@ -2,7 +2,8 @@ FROM node:17.5.0-alpine3.15 as build
 WORKDIR /tmp
 COPY package*.json ./
 COPY tsconfig*.json ./
-RUN yarn install
+COPY yarn.lock ./
+RUN yarn
 COPY src ./src
 RUN yarn build
 # RUN npx typeorm migration:run
