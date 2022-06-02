@@ -56,33 +56,33 @@ export class BreedTransactionController {
 
   @Get()
   @ApiQuery({
-    name: "buyerId",
+    name: "petOwnerFemaleId",
     required: false,
-    type: String,
+    type: Number,
   })
   @ApiQuery({
-    name: "sellerId",
+    name: "petOwnerMaleId",
     required: false,
-    type: String,
+    type: Number,
   })
   async getAll(
-    @Query("buyerId") buyerId: string,
-    @Query("sellerId") sellerId: string,
-    @Query("page") page: string,
-    @Query("limit") limit: string,
+    @Query("petOwnerFemaleId") petOwnerFemaleId: number,
+    @Query("petOwnerMaleId") petOwnerMaleId: number,
+    @Query("page") page: number,
+    @Query("limit") limit: number,
   ): Promise<BreedingTransaction[]> {
-    if (buyerId) {
-      return await this.breedTransactionService.getBreedTransactionsByBuyerId(
-        Number(buyerId),
-        limit ? Number(limit) : 10,
-        page ? Number(page) : 1,
+    if (petOwnerFemaleId) {
+      return await this.breedTransactionService.getBreedTransactionsByOwnerPetFemaleId(
+        petOwnerFemaleId,
+        limit ? limit : 10,
+        page ? page : 1,
       );
     }
-    if (sellerId) {
-      return await this.breedTransactionService.getBreedTransactionsBySellerId(
-        Number(sellerId),
-        limit ? Number(limit) : 10,
-        page ? Number(page) : 1,
+    if (petOwnerMaleId) {
+      return await this.breedTransactionService.getBreedTransactionsByOwnerPetMaleIdId(
+        petOwnerMaleId,
+        limit ? limit : 10,
+        page ? page : 1,
       );
     }
     return await this.breedTransactionService.index();
