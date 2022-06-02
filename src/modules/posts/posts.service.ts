@@ -116,15 +116,28 @@ export class PostsService extends BaseService<Post, PostsRepository> {
       .innerJoinAndSelect("breed.species", "species");
 
     if (pageOptionsDto.notCustomerId) {
-      queryBuilder.where("post.customerId != :id ", {
-        id: pageOptionsDto.notCustomerId,
-      });
+      if (pageOptionsDto.status) {
+        queryBuilder.where("post.customerId != :id and post.status = :status", {
+          id: pageOptionsDto.notCustomerId,
+          status: pageOptionsDto.status,
+        });
+      } else {
+        queryBuilder.where("post.customerId != :id", {
+          id: pageOptionsDto.notCustomerId,
+        });
+      }
     } else if (pageOptionsDto.customerId) {
-      queryBuilder.where("post.customerId = :id ", {
-        id: pageOptionsDto.customerId,
-      });
-    }
-    if (pageOptionsDto.status) {
+      if (pageOptionsDto.status) {
+        queryBuilder.where("post.customerId = :id and post.status = :status", {
+          id: pageOptionsDto.customerId,
+          status: pageOptionsDto.status,
+        });
+      } else {
+        queryBuilder.where("post.customerId = :id ", {
+          id: pageOptionsDto.customerId,
+        });
+      }
+    } else if (pageOptionsDto.status) {
       queryBuilder.where(queryStatus, {
         status: pageOptionsDto.status,
       });
