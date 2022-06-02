@@ -31,7 +31,6 @@ import { ServiceFeesModule } from "./modules/service-fees/service-fees.module";
 import { MessagesModule } from "./modules/messages/messages.module";
 import { ChatModule } from "./modules/chat/chat.module";
 import { OrderDetailsModule } from "./modules/order-details/order-details.module";
-import { FollowsModule } from "./modules/follows/follows.module";
 import { ReportsModule } from "./modules/reports/reports.module";
 import { TicketsModule } from "./modules/tickets/tickets.module";
 import { BreedTransactionModule } from "./modules/breed-transaction/breed-transaction.module";
@@ -65,7 +64,6 @@ const mongoConnectionString = configService.getMongoConnectionString();
     ServiceFeesModule,
     MessagesModule,
     ChatModule,
-    FollowsModule,
     ReportsModule,
     TicketsModule,
     BreedTransactionModule,

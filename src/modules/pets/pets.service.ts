@@ -39,7 +39,7 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
         "pet.status = 'NORMAL' and pet_owners.customerId = :customerId and pet_owners.isCurrentOwner = true";
     }
     if (type === "BREED") {
-      whereString += " and pet.isSeed = true";
+      whereString += " and pet.isSeed = true and pet.gender = 'MALE'";
     }
     return this.petsRepository
       .createQueryBuilder("pet")

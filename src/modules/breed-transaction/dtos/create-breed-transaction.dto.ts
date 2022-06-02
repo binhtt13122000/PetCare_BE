@@ -30,4 +30,6 @@ export class CreateBreedTransactionDTO {
   postId: number;
   @ApiProperty()
   branchId: number;
+  @ApiProperty()
+  transactionFee: number;
 }
