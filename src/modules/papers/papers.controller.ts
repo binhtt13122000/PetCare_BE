@@ -9,6 +9,7 @@ import {
   HttpStatus,
   Delete,
   Param,
+  Get,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { uploadService } from "src/external/uploadFile.service";
@@ -22,8 +23,9 @@ import { PetsService } from "../pets/pets.service";
 import { FileProducerService } from "src/shared/file/file.producer.service";
 import { PetEnum } from "src/enum";
 import { IdParams } from "src/common";
+import { Query } from "@nestjs/common";
 
-@ApiTags("paper")
+@ApiTags("papers")
 @Controller("papers")
 export class PapersController {
   constructor(
@@ -31,6 +33,11 @@ export class PapersController {
     private petsService: PetsService,
     private fileProducerService: FileProducerService,
   ) {}
+
+  @Get()
+  async getByPetId(@Query("petId") petId: number): Promise<Paper[]> {
+    return await this.papersService.getByPetId(petId);
+  }
 
   @Post()
   @ApiConsumes("multipart/form-data")

@@ -8,4 +8,12 @@ export class PapersService extends BaseService<Paper, PapersRepository> {
   constructor(private readonly papersRepository: PapersRepository) {
     super(papersRepository);
   }
+
+  getByPetId(id: number): Promise<Paper[]> {
+    return this.papersRepository.find({
+      where: {
+        petId: id,
+      },
+    });
+  }
 }
