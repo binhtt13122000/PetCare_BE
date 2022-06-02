@@ -15,7 +15,6 @@ import {
   BaseEntity,
 } from "typeorm";
 import { PetOwner } from "../pet_service/pet-owner.entity";
-import { Follow } from "./follow.entity";
 import { Report } from "./report.entity";
 import { Order } from "../order_service/order.entity";
 import { Post } from "../transaction_service/post.entity";
@@ -60,10 +59,6 @@ export class Customer extends BaseEntity {
   @Column({ type: "int", nullable: true, default: 0 })
   @Min(0)
   @Type(() => Number)
-  numberFollowers: number;
-  @Column({ type: "int", nullable: true, default: 0 })
-  @Min(0)
-  @Type(() => Number)
   numberReviewers: number;
   @Column({ type: "text", nullable: true })
   @IsString()
@@ -77,13 +72,6 @@ export class Customer extends BaseEntity {
   @Column({ type: "bool", default: true })
   @IsBoolean()
   isActive: boolean;
-
-  // Reference
-  @OneToMany(() => Follow, (follow) => follow.follower)
-  followers: Follow[];
-
-  @OneToMany(() => Follow, (follow) => follow.followed)
-  followeds: Follow[];
 
   @OneToMany(() => Report, (report) => report.reporter)
   reporters: Report[];
