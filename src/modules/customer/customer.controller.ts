@@ -9,7 +9,6 @@ import {
   Patch,
   Post,
   Put,
-  Query,
   UploadedFile,
   UseInterceptors,
 } from "@nestjs/common";
@@ -26,7 +25,6 @@ import { CreateCustomerDTO } from "./dto/create-customer.dto";
 import { UpdateCustomerDTO } from "./dto/update-customer.dto";
 import * as bcrypt from "bcrypt";
 import { FileProducerService } from "src/shared/file/file.producer.service";
-import { FollowsService } from "../follows/follows.service";
 
 @Controller("customers")
 @ApiTags("customers")
@@ -35,41 +33,12 @@ export class CustomerController {
     private readonly customerService: CustomerService,
     private userService: UserService,
     private fileProducerService: FileProducerService,
-    private followsService: FollowsService,
   ) {}
 
   @Get(":id")
-  @ApiQuery({
-    name: "customerId",
-    type: Number,
-    required: false,
-  })
-  async getOne(
-    @Param() params: IdParams,
-    @Query("customerId") customerId: number,
-  ): Promise<unknown> {
+  async getOne(@Param() params: IdParams): Promise<Customer> {
     try {
-      const customer = await this.customerService.findOne(params.id);
-      if (!customerId) {
-        return customer;
-      }
-      const follower =
-        await this.followsService.findFollowByFollowerAndFollowed(
-          params.id,
-          customerId,
-        );
-      if (follower) {
-        return { ...customer, follow: follower, type: "FOLLOWER" };
-      }
-      const followed =
-        await this.followsService.findFollowByFollowerAndFollowed(
-          customerId,
-          params.id,
-        );
-      if (followed) {
-        return { ...customer, follow: followed, type: "FOLLOWED" };
-      }
-      return customer;
+      return await this.customerService.findOne(params.id);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
