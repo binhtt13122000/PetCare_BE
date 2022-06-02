@@ -22,6 +22,7 @@ export class OrdersService extends BaseService<Order, OrdersRepository> {
         "orderDetails",
         "orderDetails.service",
         "promotion",
+        "customer",
       ],
     });
   }

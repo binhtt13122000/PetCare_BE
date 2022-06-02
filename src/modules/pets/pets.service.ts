@@ -72,6 +72,7 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
         "papers",
         "petOwners",
         "petOwners.customer",
+        "vaccinePetRecords",
       ],
     });
   }

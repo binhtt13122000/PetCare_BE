@@ -165,8 +165,19 @@ export class BreedTransactionController {
   }
 
   @Get(":id")
-  async getOne(@Param("id") id: number): Promise<BreedingTransaction> {
+  @ApiQuery({
+    type: String,
+    name: "mode",
+    required: false,
+  })
+  async getOne(
+    @Param("id") id: number,
+    @Query("mode") mode: string,
+  ): Promise<BreedingTransaction> {
     try {
+      if (mode === "SHORT") {
+        return await this.breedTransactionService.findById(id);
+      }
       return await this.breedTransactionService.getOne(id);
     } catch (error) {
       throw new NotFoundException(error);
