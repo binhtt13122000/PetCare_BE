@@ -50,7 +50,7 @@ export class PostsService extends BaseService<Post, PostsRepository> {
     // const checkAgeRangeTo = pageOptionsDto.ageRangeTo;
     // const checkBreedName = pageOptionsDto.breedName;
     // const checkGender = pageOptionsDto.gender;
-    // const checkType = pageOptionsDto.type;
+    const checkType = pageOptionsDto.type;
     // const checkIsSeed = pageOptionsDto.isSeed;
     // const checkPrice = pageOptionsDto.price;
     // const checkStatus = pageOptionsDto.status;
@@ -86,7 +86,7 @@ export class PostsService extends BaseService<Post, PostsRepository> {
     // const queryIsSeed = "pet.isSeed = :isSeed";
     // const queryPrice = "post.provisionalTotal < :provisionalTotal";
     const queryStatus = "post.status = :status";
-    // const queryType = "post.type = :type";
+    const queryType = "post.type = :type";
     // const queryAgeRangeFromTo =
     //   "pet.dob <= :ageRangeFrom and pet.dob >= :ageRangeTo";
     // const queryAgeRangeFrom = "pet.dob <= :ageRangeFrom";
@@ -140,6 +140,10 @@ export class PostsService extends BaseService<Post, PostsRepository> {
     } else if (pageOptionsDto.status) {
       queryBuilder.where(queryStatus, {
         status: pageOptionsDto.status,
+      });
+    } else if (pageOptionsDto.type) {
+      queryBuilder.where(queryType, {
+        type: pageOptionsDto.type,
       });
     }
 
