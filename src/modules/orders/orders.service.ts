@@ -4,7 +4,7 @@ import { PageMetaDto } from "src/common/page-meta.dto";
 import { PageDto } from "src/common/page.dto";
 import { Order } from "src/entities/order_service/order.entity";
 import { OrderEnum } from "src/enum";
-import { Between } from "typeorm";
+import { Between, IsNull } from "typeorm";
 import { ServiceRankDTO } from "../branches/dtos/statistics-branch.dto";
 import { OrderOptionDto } from "./dto/order-option.dto";
 import { OrdersRepository } from "./orders.repository";
@@ -50,35 +50,47 @@ export class OrdersService extends BaseService<Order, OrdersRepository> {
   }
 
   getOrdersBranchInMonth(
-    id: number,
+    branchId: number,
     firstDate: Date,
     lastDate: Date,
   ): Promise<[Order[], number]> {
     return this.ordersRepository.findAndCount({
-      where: {
-        branchId: id,
-        status: OrderEnum.SUCCESS,
-        paymentTime: Between(firstDate, lastDate),
-      },
-      relations: ["orderDetails"],
+      where: branchId
+        ? {
+            branchId: branchId,
+            paymentTime: Between(firstDate, lastDate),
+            status: OrderEnum.SUCCESS,
+          }
+        : {
+            paymentTime: Between(firstDate, lastDate),
+            status: OrderEnum.SUCCESS,
+          },
     });
   }
 
   getRankServiceInMonth(
-    id: number,
+    branchId: number,
     firstDate: Date,
     lastDate: Date,
   ): Promise<ServiceRankDTO[]> {
     return this.ordersRepository
       .createQueryBuilder("orders")
       .where(
-        "orders.branchId = :branchId and orders.status = :status and orders.paymentTime >= :firstDate and orders.paymentTime <= :lastDate",
-        {
-          branchId: id,
-          status: OrderEnum.SUCCESS,
-          firstDate: firstDate,
-          lastDate: lastDate,
-        },
+        branchId
+          ? "orders.branchId = :branchId and orders.status = :status and orders.paymentTime >= :firstDate and orders.paymentTime <= :lastDate"
+          : "orders.status = :status and orders.paymentTime >= :firstDate and orders.paymentTime <= :lastDate",
+        branchId
+          ? {
+              branchId: branchId,
+              status: OrderEnum.SUCCESS,
+              firstDate: firstDate,
+              lastDate: lastDate,
+            }
+          : {
+              status: OrderEnum.SUCCESS,
+              firstDate: firstDate,
+              lastDate: lastDate,
+            },
       )
       .leftJoinAndSelect("orders.orderDetails", "orderDetail")
       .leftJoinAndSelect("orderDetail.service", "service")

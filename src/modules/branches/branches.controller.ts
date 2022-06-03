@@ -28,7 +28,10 @@ import { uploadService } from "src/external/uploadFile.service";
 import { FileProducerService } from "src/shared/file/file.producer.service";
 import { IdParams } from "src/common";
 import { getLatitude, getLongitude, orderByDistance } from "geolib";
-import { StatisticBranchDTO } from "./dtos/statistics-branch.dto";
+import {
+  StatisticBranchDTO,
+  StatisticBranchQuery,
+} from "./dtos/statistics-branch.dto";
 import { OrdersService } from "../orders/orders.service";
 import { SaleTransactionsService } from "../sale-transactions/sale-transactions.service";
 import { BreedTransactionService } from "../breed-transaction/breed-transaction.service";
@@ -70,28 +73,34 @@ export class BranchesController {
     });
   }
 
-  @Get("/statistics/:id")
+  @Get("/statistics")
   async getStatisticBranches(
-    @Param("id") id: number,
+    @Query() query: StatisticBranchQuery,
   ): Promise<StatisticBranchDTO> {
     try {
-      const currentMonth = getStartAndEndDateInCurrentMonth();
-
+      let currentMonth = getStartAndEndDateInCurrentMonth();
+      if (query.startDate && query.endDate) {
+        currentMonth = {
+          firstDate: query.startDate,
+          lastDate: query.endDate,
+        };
+      }
+      const branchId = query.branchId;
       const ordersBranchInMonth =
         await this.orderService.getOrdersBranchInMonth(
-          id,
+          branchId,
           currentMonth.firstDate,
           currentMonth.lastDate,
         );
       const saleTransactionBranchInMonth =
         await this.saleTransactionService.getSaleTransactionBranchInMonth(
-          id,
+          branchId,
           currentMonth.firstDate,
           currentMonth.lastDate,
         );
       const breedTransactionBranchInMonth =
         await this.breedTransactionService.getBreedTransactionBranchInMonth(
-          id,
+          branchId,
           currentMonth.firstDate,
           currentMonth.lastDate,
         );
@@ -116,7 +125,7 @@ export class BranchesController {
         revenueOrdersBranchInMonth +
         revenueSaleTransactionsInMonth;
       const rankServices = await this.orderService.getRankServiceInMonth(
-        id,
+        branchId,
         currentMonth.firstDate,
         currentMonth.lastDate,
       );
