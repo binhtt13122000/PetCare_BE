@@ -20,8 +20,6 @@ export class BaseService<T extends BaseEntity, R extends Repository<T>>
     return this.repository.findByIds(id);
   }
 
-  getSer;
-
   store<K extends DeepPartial<T>>(data: K): Promise<T & K> {
     return this.repository.save(data);
   }

@@ -13,4 +13,12 @@ export class VaccinePetRecordsService extends BaseService<
   ) {
     super(vaccinePetRecordsRepository);
   }
+
+  getVaccinePetRecordsByPetId(petId: number): Promise<VaccinePetRecord[]> {
+    return this.vaccinePetRecordsRepository.find({
+      where: {
+        petId: petId,
+      },
+    });
+  }
 }

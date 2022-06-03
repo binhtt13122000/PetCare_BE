@@ -8,12 +8,14 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { IdParams } from "src/common";
 import { VaccinePetRecord } from "src/entities/pet_service/vaccine-pet-record.entity";
 import { DeleteResult } from "typeorm";
 import { CreateVaccinePetRecordDTO } from "./dto/create-vaccine-pet-record.dto";
+import GetVaccinePerRecordQuery from "./dto/get-vaccine-pet-record.dto";
 import { UpdateVaccinePetRecordDTO } from "./dto/update-vaccine-pet-record.dto";
 import { VaccinePetRecordsService } from "./vaccine-pet-records.service";
 
@@ -25,9 +27,14 @@ export class VaccinePetRecordsController {
   ) {}
 
   @Get()
-  async getAll(): Promise<VaccinePetRecord[]> {
+  async getAll(
+    @Query()
+    query: GetVaccinePerRecordQuery,
+  ): Promise<VaccinePetRecord[]> {
     try {
-      return await this.vaccinePetRecordsService.index();
+      return await this.vaccinePetRecordsService.getVaccinePetRecordsByPetId(
+        query.petId,
+      );
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
