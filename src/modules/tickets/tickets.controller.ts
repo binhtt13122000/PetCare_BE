@@ -3,13 +3,17 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
+  Patch,
   Post,
   Put,
   Query,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { Ticket } from "src/entities/service/ticket.entity";
+import ChangeStatusTicketDTO from "./dtos/change-status-ticket.dto";
 import { CreateTicketDTO } from "./dtos/create-ticket.dto";
 import { TicketsService } from "./tickets.service";
 
@@ -36,7 +40,7 @@ export class TicketsController {
     try {
       return this.ticketsService.store(body);
     } catch (error) {
-      throw new BadRequestException(error);
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -45,7 +49,26 @@ export class TicketsController {
     try {
       return this.ticketsService.store(body);
     } catch (error) {
-      throw new BadRequestException(error);
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Patch()
+  async changeStatusTicket(
+    @Body() body: ChangeStatusTicketDTO,
+  ): Promise<Ticket> {
+    try {
+      if (!body.id) {
+        throw new BadRequestException();
+      }
+      const ticket = await this.ticketsService.findById(body.id);
+      if (!ticket) {
+        throw new HttpException("NOT FOUND", HttpStatus.NOT_FOUND);
+      }
+      ticket.status = body.status;
+      return ticket.save();
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
 }

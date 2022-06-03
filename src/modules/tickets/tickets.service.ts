@@ -14,10 +14,26 @@ export class TicketsService extends BaseService<Ticket, TicketsRepository> {
       where: {
         branchId: branchId,
       },
+      relations: ["customer"],
     });
   }
 
   getOne(id: number): Promise<Ticket> {
+    return this.ticketsRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: [
+        "serviceTickets",
+        "serviceTickets.service",
+        "serviceTickets.service.serviceFees",
+        "customer",
+        "branch",
+      ],
+    });
+  }
+
+  findById(id: number): Promise<Ticket> {
     return this.ticketsRepository.findOne({
       where: {
         id: id,

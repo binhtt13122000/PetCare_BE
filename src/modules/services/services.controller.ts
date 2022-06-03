@@ -18,6 +18,8 @@ import { UpdateServiceDTO } from "./dto/update-service.dto";
 import { IdParams } from "src/common";
 import { ServiceFeesService } from "../service-fees/service-fees.service";
 import { ServiceFee } from "../../entities/service/service-fee.entity";
+import { Ticket } from "src/entities/service/ticket.entity";
+import { TicketsService } from "../tickets/tickets.service";
 
 @Controller("services")
 @ApiTags("services")
@@ -25,7 +27,17 @@ export class ServicesController {
   constructor(
     private readonly shopService: ShopService,
     private readonly serviceFeesService: ServiceFeesService,
+    private readonly ticketService: TicketsService,
   ) {}
+
+  @Get("/tickets/:id")
+  async changeStatusTicket(@Param() params: IdParams): Promise<Ticket> {
+    try {
+      return await this.ticketService.findById(params.id);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
 
   @Get(":id")
   async getOne(@Param() params: IdParams): Promise<Service> {
