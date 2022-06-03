@@ -23,4 +23,9 @@ export class CreateVaccinePetRecordDTO {
   @Type(() => Number)
   @IsNumber()
   petId: number;
+
+  @ApiProperty()
+  @Type(() => Number)
+  @IsNumber()
+  branchId: number;
 }
