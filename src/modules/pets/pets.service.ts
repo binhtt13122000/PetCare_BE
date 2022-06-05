@@ -61,19 +61,33 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
       .getMany();
   }
 
-  getOne(id: number): Promise<Pet> {
-    return this.petsRepository.findOne({
-      where: {
-        id: id,
-      },
-      relations: [
-        "breed",
-        "breed.species",
-        "papers",
-        "petOwners",
-        "petOwners.customer",
-        "vaccinePetRecords",
-      ],
-    });
+  getOne(id: number, currentOwner: boolean): Promise<Pet> {
+    return this.petsRepository
+      .findOne({
+        where: {
+          id: id,
+        },
+        relations: [
+          "breed",
+          "breed.species",
+          "papers",
+          "petOwners",
+          "petOwners.customer",
+          "vaccinePetRecords",
+        ],
+      })
+      .then((pet) => {
+        if (currentOwner) {
+          const convertCurrentOwnerBool =
+            String(currentOwner).toLowerCase() == "true";
+          const petOwners = pet.petOwners.filter(
+            (item) => item.isCurrentOwner === convertCurrentOwnerBool,
+          );
+          pet.petOwners = petOwners;
+          return pet;
+        } else {
+          return pet;
+        }
+      });
   }
 }
