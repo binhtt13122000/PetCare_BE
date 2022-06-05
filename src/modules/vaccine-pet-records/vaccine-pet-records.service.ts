@@ -19,6 +19,7 @@ export class VaccinePetRecordsService extends BaseService<
       where: {
         petId: petId,
       },
+      relations: ["vaccine"],
     });
   }
 }
