@@ -74,6 +74,7 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
           "petOwners",
           "petOwners.customer",
           "vaccinePetRecords",
+          "vaccinePetRecords.vaccine",
         ],
       })
       .then((pet) => {
