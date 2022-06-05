@@ -105,20 +105,34 @@ export class BranchesController {
           currentMonth.lastDate,
         );
 
-      const revenueOrdersBranchInMonth = ordersBranchInMonth[0].reduce(
-        (total, item) => total + item.orderTotal,
+      const revenueOrdersBranchInMonth = ordersBranchInMonth.reduce(
+        (total, item) => total + Number(item.orderTotal || 0),
         0,
       );
+      const numberOrdersInMonth = ordersBranchInMonth.reduce(
+        (total, item) => total + Number(item.numberOrdersInMonth || 0),
+        0,
+      );
+
       const revenueSaleTransactionsInMonth =
-        saleTransactionBranchInMonth[0].reduce(
-          (total, item) => total + item.transactionFee,
+        saleTransactionBranchInMonth.reduce(
+          (total, item) => total + Number(item.transactionFee || 0),
           0,
         );
+      const numberOfSoldPets = saleTransactionBranchInMonth.reduce(
+        (total, item) => total + Number(item.numberOfSoldPets || 0),
+        0,
+      );
+
       const revenueBreedTransactionInMonth =
-        breedTransactionBranchInMonth[0].reduce(
-          (total, item) => total + item.serviceFee,
+        breedTransactionBranchInMonth.reduce(
+          (total, item) => total + Number(item.serviceFee || 0),
           0,
         );
+      const numberOfBreedingPets = breedTransactionBranchInMonth.reduce(
+        (total, item) => total + Number(item.numberOfBreedingPets || 0),
+        0,
+      );
 
       const revenueBranchInMonth =
         revenueBreedTransactionInMonth +
@@ -129,14 +143,18 @@ export class BranchesController {
         currentMonth.firstDate,
         currentMonth.lastDate,
       );
+
       return {
-        numberOrdersInMonth: ordersBranchInMonth[1],
-        numberOfBreedingPets: breedTransactionBranchInMonth[1],
-        numberOfSoldPets: saleTransactionBranchInMonth[1],
+        numberOrdersInMonth: numberOrdersInMonth,
+        numberOfBreedingPets: numberOfBreedingPets,
+        numberOfSoldPets: numberOfSoldPets,
         revenueOfTheMonth: revenueBranchInMonth,
         revenueOfBreedingPetsInMonth: revenueBreedTransactionInMonth,
         revenueOfSoldPetsInMonth: revenueSaleTransactionsInMonth,
         rankServices,
+        orders: ordersBranchInMonth,
+        saleTransactions: saleTransactionBranchInMonth,
+        breedingTransactions: breedTransactionBranchInMonth,
       };
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);

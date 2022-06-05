@@ -4,6 +4,7 @@ import { BreedingTransaction } from "src/entities/transaction_service/breeding-t
 import { BreedingTransactionEnum } from "src/enum";
 import { Between, IsNull } from "typeorm";
 import { BreedTransactionRepository } from "./breed-transaction.repository";
+import { StatisticBreedTransactionDTO } from "./dtos/statistic-breed-transaction.dto";
 
 @Injectable()
 export class BreedTransactionService extends BaseService<
@@ -95,20 +96,33 @@ export class BreedTransactionService extends BaseService<
     branchId: number,
     firstDate: Date,
     lastDate: Date,
-  ): Promise<[BreedingTransaction[], number]> {
-    return this.breedTransactionRepository.findAndCount({
-      where: [
-        {
-          branchId: branchId,
-          transactionTime: Between(firstDate, lastDate),
-          status: BreedingTransactionEnum.SUCCESS,
-        },
-        {
-          branchId: IsNull(),
-          transactionTime: Between(firstDate, lastDate),
-          status: BreedingTransactionEnum.SUCCESS,
-        },
-      ],
-    });
+  ): Promise<StatisticBreedTransactionDTO[]> {
+    return this.breedTransactionRepository
+      .createQueryBuilder("breed-transactions")
+      .where(
+        branchId
+          ? "breed-transactions.branchId = :branchId and breed-transactions.status = :status and breed-transactions.transactionTime >= :firstDate and breed-transactions.transactionTime <= :lastDate"
+          : "breed-transactions.status = :status and breed-transactions.transactionTime >= :firstDate and breed-transactions.transactionTime <= :lastDate",
+        branchId
+          ? {
+              branchId: branchId,
+              status: BreedingTransactionEnum.SUCCESS,
+              firstDate: firstDate,
+              lastDate: lastDate,
+            }
+          : {
+              status: BreedingTransactionEnum.SUCCESS,
+              firstDate: firstDate,
+              lastDate: lastDate,
+            },
+      )
+      .leftJoinAndSelect("breed-transactions.branch", "branch")
+      .groupBy("breed-transactions.branchId")
+      .addGroupBy("branch.name")
+      .addGroupBy("branch.representativeName")
+      .select(
+        'SUM(breed-transactions.serviceFee) as "serviceFee", COUNT(breed-transactions.id) as "numberOfBreedingPets", breed-transactions.branchId, branch.name, branch.representativeName',
+      )
+      .execute();
   }
 }

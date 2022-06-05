@@ -5,8 +5,12 @@ import { PageDto } from "src/common/page.dto";
 import { Order } from "src/entities/order_service/order.entity";
 import { OrderEnum } from "src/enum";
 import { Between, IsNull } from "typeorm";
-import { ServiceRankDTO } from "../branches/dtos/statistics-branch.dto";
+import {
+  ServiceRankDTO,
+  StatisticBranchDTO,
+} from "../branches/dtos/statistics-branch.dto";
 import { OrderOptionDto } from "./dto/order-option.dto";
+import { StatisticOrderDTO } from "./dto/statistic-order.dto";
 import { OrdersRepository } from "./orders.repository";
 
 @Injectable()
@@ -53,19 +57,34 @@ export class OrdersService extends BaseService<Order, OrdersRepository> {
     branchId: number,
     firstDate: Date,
     lastDate: Date,
-  ): Promise<[Order[], number]> {
-    return this.ordersRepository.findAndCount({
-      where: branchId
-        ? {
-            branchId: branchId,
-            paymentTime: Between(firstDate, lastDate),
-            status: OrderEnum.SUCCESS,
-          }
-        : {
-            paymentTime: Between(firstDate, lastDate),
-            status: OrderEnum.SUCCESS,
-          },
-    });
+  ): Promise<StatisticOrderDTO[]> {
+    return this.ordersRepository
+      .createQueryBuilder("orders")
+      .where(
+        branchId
+          ? "orders.branchId = :branchId and orders.status = :status and orders.paymentTime >= :firstDate and orders.paymentTime <= :lastDate"
+          : "orders.status = :status and orders.paymentTime >= :firstDate and orders.paymentTime <= :lastDate",
+        branchId
+          ? {
+              branchId: branchId,
+              status: OrderEnum.SUCCESS,
+              firstDate: firstDate,
+              lastDate: lastDate,
+            }
+          : {
+              status: OrderEnum.SUCCESS,
+              firstDate: firstDate,
+              lastDate: lastDate,
+            },
+      )
+      .leftJoinAndSelect("orders.branch", "branch")
+      .groupBy("orders.branchId")
+      .addGroupBy("branch.name")
+      .addGroupBy("branch.representativeName")
+      .select(
+        'orders.branchId, SUM(orders.orderTotal) as "orderTotal", COUNT(orders.id) as "numberOrdersInMonth", branch.name, branch.representativeName',
+      )
+      .execute();
   }
 
   getRankServiceInMonth(

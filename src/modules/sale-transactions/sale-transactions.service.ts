@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { BaseService } from "src/base/base.service";
 import { SaleTransaction } from "src/entities/transaction_service/sale-transaction.entity";
 import { SaleTransactionEnum } from "src/enum";
-import { Between, IsNull } from "typeorm";
+import { StatisticSaleTransactionDTO } from "./dtos/statistic-sale-transaction.dto";
 import { SaleTransactionsRepository } from "./sale-transaction.repository";
 
 @Injectable()
@@ -74,18 +74,33 @@ export class SaleTransactionsService extends BaseService<
     branchId: number,
     firstDate: Date,
     lastDate: Date,
-  ): Promise<[SaleTransaction[], number]> {
-    return this.saleTransactionsRepository.findAndCount({
-      where: branchId
-        ? {
-            branchId: branchId,
-            transactionTime: Between(firstDate, lastDate),
-            status: SaleTransactionEnum.SUCCESS,
-          }
-        : {
-            transactionTime: Between(firstDate, lastDate),
-            status: SaleTransactionEnum.SUCCESS,
-          },
-    });
+  ): Promise<StatisticSaleTransactionDTO[]> {
+    return this.saleTransactionsRepository
+      .createQueryBuilder("sale-transactions")
+      .where(
+        branchId
+          ? "sale-transactions.branchId = :branchId and sale-transactions.status = :status and sale-transactions.transactionTime >= :firstDate and sale-transactions.transactionTime <= :lastDate"
+          : "sale-transactions.status = :status and sale-transactions.transactionTime >= :firstDate and sale-transactions.transactionTime <= :lastDate",
+        branchId
+          ? {
+              branchId: branchId,
+              status: SaleTransactionEnum.SUCCESS,
+              firstDate: firstDate,
+              lastDate: lastDate,
+            }
+          : {
+              status: SaleTransactionEnum.SUCCESS,
+              firstDate: firstDate,
+              lastDate: lastDate,
+            },
+      )
+      .leftJoinAndSelect("sale-transactions.branch", "branch")
+      .groupBy("sale-transactions.branchId")
+      .addGroupBy("branch.name")
+      .addGroupBy("branch.representativeName")
+      .select(
+        'SUM(sale-transactions.transactionFee) as "transactionFee", COUNT(sale-transactions.id) as "numberOfSoldPets", sale-transactions.branchId, branch.name, branch.representativeName',
+      )
+      .execute();
   }
 }
