@@ -55,7 +55,7 @@ export class PostsService extends BaseService<Post, PostsRepository> {
     // const checkPrice = pageOptionsDto.price;
     // const checkStatus = pageOptionsDto.status;
     const checkOrderName = pageOptionsDto.orderName;
-    // const AND = " and ";
+    const AND = " and ";
     // const checkOption =
     //   checkGender && checkIsSeed && checkStatus && checkOrderName && checkType;
 
@@ -117,9 +117,14 @@ export class PostsService extends BaseService<Post, PostsRepository> {
 
     if (pageOptionsDto.notCustomerId) {
       if (pageOptionsDto.status) {
-        queryBuilder.where("post.customerId != :id and post.status = :status", {
+        queryBuilder.where("post.customerId != :id" + AND + queryStatus, {
           id: pageOptionsDto.notCustomerId,
           status: pageOptionsDto.status,
+        });
+      } else if (pageOptionsDto.type) {
+        queryBuilder.where("post.customerId != :id" + AND + queryType, {
+          id: pageOptionsDto.notCustomerId,
+          type: pageOptionsDto.type,
         });
       } else {
         queryBuilder.where("post.customerId != :id", {
@@ -128,9 +133,14 @@ export class PostsService extends BaseService<Post, PostsRepository> {
       }
     } else if (pageOptionsDto.customerId) {
       if (pageOptionsDto.status) {
-        queryBuilder.where("post.customerId = :id and post.status = :status", {
+        queryBuilder.where("post.customerId = :id" + AND + queryStatus, {
           id: pageOptionsDto.customerId,
           status: pageOptionsDto.status,
+        });
+      } else if (pageOptionsDto.type) {
+        queryBuilder.where("post.customerId = :id" + AND + queryType, {
+          id: pageOptionsDto.customerId,
+          type: pageOptionsDto.type,
         });
       } else {
         queryBuilder.where("post.customerId = :id ", {

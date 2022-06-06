@@ -59,8 +59,16 @@ export class PetsController {
   }
 
   @Get(":id")
-  async getOne(@Param("id") id: number): Promise<Pet> {
-    return await this.petsService.getOne(id);
+  @ApiQuery({
+    name: "currentOwner",
+    type: Boolean,
+    required: false,
+  })
+  async getOne(
+    @Param("id") id: number,
+    @Query("currentOwner") currentOwner: boolean,
+  ): Promise<Pet> {
+    return await this.petsService.getOne(id, currentOwner);
   }
 
   @ApiConsumes("multipart/form-data")

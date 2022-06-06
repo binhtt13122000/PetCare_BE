@@ -2,7 +2,6 @@ import { Injectable } from "@nestjs/common";
 import { BaseService } from "src/base/base.service";
 import { BreedingTransaction } from "src/entities/transaction_service/breeding-transaction.entity";
 import { BreedingTransactionEnum } from "src/enum";
-import { Between, IsNull } from "typeorm";
 import { BreedTransactionRepository } from "./breed-transaction.repository";
 import { StatisticBreedTransactionDTO } from "./dtos/statistic-breed-transaction.dto";
 

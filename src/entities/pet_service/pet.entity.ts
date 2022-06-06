@@ -64,10 +64,7 @@ export class Pet extends BaseEntity {
   @OneToMany(() => Paper, (paper) => paper.pet)
   papers: Paper[];
 
-  @OneToMany(
-    () => VaccinePetRecord,
-    (vaccinePetRecord) => vaccinePetRecord.vaccine,
-  )
+  @OneToMany(() => VaccinePetRecord, (vaccinePetRecord) => vaccinePetRecord.pet)
   vaccinePetRecords: VaccinePetRecord[];
 
   @OneToMany(() => HealthRecord, (healthRecord) => healthRecord.pet)

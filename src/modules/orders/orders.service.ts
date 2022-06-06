@@ -4,11 +4,7 @@ import { PageMetaDto } from "src/common/page-meta.dto";
 import { PageDto } from "src/common/page.dto";
 import { Order } from "src/entities/order_service/order.entity";
 import { OrderEnum } from "src/enum";
-import { Between, IsNull } from "typeorm";
-import {
-  ServiceRankDTO,
-  StatisticBranchDTO,
-} from "../branches/dtos/statistics-branch.dto";
+import { ServiceRankDTO } from "../branches/dtos/statistics-branch.dto";
 import { OrderOptionDto } from "./dto/order-option.dto";
 import { StatisticOrderDTO } from "./dto/statistic-order.dto";
 import { OrdersRepository } from "./orders.repository";
