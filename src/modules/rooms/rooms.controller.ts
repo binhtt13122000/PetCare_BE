@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import mongoose from "mongoose";
@@ -24,8 +25,11 @@ export class RoomsController {
   }
 
   @Get("user/:id")
-  async findByUserId(@Param() params: IdParams): Promise<Room[]> {
-    return this.roomsService.getUserRooms(params.id);
+  async findByUserId(
+    @Param() params: IdParams,
+    @Query("type") type?: "open" | "close",
+  ): Promise<Room[]> {
+    return this.roomsService.getUserRooms(params.id, type);
   }
 
   @Get(":id")

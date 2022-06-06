@@ -2,6 +2,7 @@ import { Model } from "mongoose";
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Room, RoomDocument } from "src/schemas/room.schemas";
+import { RoomStatusEnum } from "src/enum";
 
 @Injectable()
 export class RoomsService {
@@ -46,21 +47,88 @@ export class RoomsService {
       .exec();
   }
 
-  async getUserRooms(userId: number): Promise<Room[]> {
-    return this.roomModel
-      .find({
-        $or: [
-          {
-            ownerId: userId,
-          },
-          {
-            sellerId: userId,
-          },
-        ],
-      })
-      .sort({
-        newestMessageTime: "desc",
-      })
-      .exec();
+  async getUserRooms(userId: number, type?: "open" | "close"): Promise<Room[]> {
+    if (!type) {
+      return this.roomModel
+        .find({
+          $or: [
+            {
+              ownerId: userId,
+            },
+            {
+              sellerId: userId,
+            },
+          ],
+        })
+        .sort({
+          newestMessageTime: "desc",
+        })
+        .exec();
+    } else {
+      if (type === "open") {
+        return this.roomModel
+          .find({
+            $and: [
+              {
+                $or: [
+                  {
+                    ownerId: userId,
+                  },
+                  {
+                    sellerId: userId,
+                  },
+                ],
+              },
+              {
+                $or: [
+                  {
+                    status: RoomStatusEnum.CREATED,
+                  },
+                  {
+                    status: RoomStatusEnum.REQUESTED,
+                  },
+                ],
+              },
+            ],
+          })
+          .sort({
+            newestMessageTime: "desc",
+          })
+          .exec();
+      } else if (type === "close") {
+        return this.roomModel
+          .find({
+            $and: [
+              {
+                $or: [
+                  {
+                    ownerId: userId,
+                  },
+                  {
+                    sellerId: userId,
+                  },
+                ],
+              },
+              {
+                $or: [
+                  {
+                    status: RoomStatusEnum.BLOCKED,
+                  },
+                  {
+                    status: RoomStatusEnum.CLOSED,
+                  },
+                  {
+                    status: RoomStatusEnum.EXPIRED,
+                  },
+                ],
+              },
+            ],
+          })
+          .sort({
+            newestMessageTime: "desc",
+          })
+          .exec();
+      }
+    }
   }
 }

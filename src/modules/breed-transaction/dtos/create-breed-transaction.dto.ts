@@ -5,6 +5,8 @@ export class CreateBreedTransactionDTO {
   @ApiProperty()
   createdTime: Date;
   @ApiProperty()
+  placeMeeting: string;
+  @ApiProperty()
   meetingTime: Date;
   @ApiProperty()
   sellerReceive: number;
