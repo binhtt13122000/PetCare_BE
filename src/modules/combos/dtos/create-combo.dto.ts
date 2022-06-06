@@ -1,6 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { ComboService } from "src/entities/service/combo-service.entity";
 
 export class CreateComboDTO {
+  @ApiProperty()
+  name: string;
   @ApiProperty()
   price: number;
   @ApiProperty()
@@ -8,16 +11,5 @@ export class CreateComboDTO {
   @ApiProperty()
   isActive: boolean;
   @ApiProperty()
-  comboServices: ComboServiceDTO[];
-}
-
-export class ComboServiceDTO {
-  @ApiProperty()
-  comboId: number;
-  @ApiProperty()
-  serviceId: number;
-  @ApiProperty()
-  priority: number;
-  @ApiProperty()
-  nextEvent: number;
+  comboServices: Partial<ComboService[]>;
 }

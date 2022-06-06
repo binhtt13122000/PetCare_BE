@@ -13,6 +13,8 @@ export class Combo extends BaseEntity {
   id: number;
   @Column({ type: "int", nullable: false })
   price: number;
+  @Column({ type: "text", nullable: false, unique: true })
+  name: string;
   @Column({ type: "text", nullable: true })
   description: string;
   @Column({ type: "bool", nullable: false, default: true })

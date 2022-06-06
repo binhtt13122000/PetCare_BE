@@ -3,13 +3,18 @@ import {
   Body,
   Controller,
   Get,
+  HttpStatus,
+  NotFoundException,
   Param,
   Post,
+  Put,
+  HttpException,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { Combo } from "src/entities/service/combo.entity";
 import { CombosService } from "./combos.service";
 import { CreateComboDTO } from "./dtos/create-combo.dto";
+import { UpdateComboDTO } from "./dtos/update-combo.dto";
 
 @Controller("combos")
 @ApiTags("combos")
@@ -32,6 +37,21 @@ export class CombosController {
       return await this.combosService.store(body);
     } catch (error) {
       throw new BadRequestException(error);
+    }
+  }
+
+  @Put()
+  async update(@Body() body: UpdateComboDTO): Promise<Combo> {
+    try {
+      const combo = await this.combosService.findById(body.id);
+      if (!combo) {
+        throw new NotFoundException("Not found");
+      }
+      const instance = await this.combosService.findById(body.id);
+      Object.assign(instance, body);
+      return instance.save();
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
 }
