@@ -35,6 +35,7 @@ import { ReportsModule } from "./modules/reports/reports.module";
 import { TicketsModule } from "./modules/tickets/tickets.module";
 import { BreedTransactionModule } from "./modules/breed-transaction/breed-transaction.module";
 import { PetOwnerModule } from "./modules/pet-owner/pet-owner.module";
+import { CombosModule } from "./modules/combos/combos.module";
 
 const mongoConnectionString = configService.getMongoConnectionString();
 @Module({
@@ -68,6 +69,7 @@ const mongoConnectionString = configService.getMongoConnectionString();
     TicketsModule,
     BreedTransactionModule,
     PetOwnerModule,
+    CombosModule,
     CacheModule.register({
       isGlobal: true,
       ttl: 600,

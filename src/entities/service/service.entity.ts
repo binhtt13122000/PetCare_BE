@@ -10,6 +10,7 @@ import { HealthService } from "../health_service/health-service.entity";
 import { OrderDetail } from "../order_service/order-detail.entity";
 import { ServiceFee } from "./service-fee.entity";
 import { ServiceTicket } from "./service-ticket.entity";
+import { ComboService } from "./combo-service.entity";
 
 @Entity("service")
 export class Service extends BaseEntity {
@@ -38,6 +39,9 @@ export class Service extends BaseEntity {
 
   @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.service)
   orderDetails: OrderDetail[];
+
+  @OneToMany(() => ComboService, (comboService) => comboService.service)
+  comboServices: ComboService[];
 
   @OneToMany(() => ServiceFee, (serviceFee) => serviceFee.service, {
     cascade: true,

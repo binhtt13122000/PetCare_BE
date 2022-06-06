@@ -68,6 +68,10 @@ export class Room {
   @ApiProperty({ required: false })
   type?: ServiceEnum;
 
+  @Prop({ required: false })
+  @ApiProperty({ required: false })
+  petId?: number;
+
   @Prop()
   @ApiProperty({ enum: RoomStatusEnum, default: RoomStatusEnum.CREATED })
   status: RoomStatusEnum;
