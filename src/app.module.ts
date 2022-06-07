@@ -36,12 +36,14 @@ import { TicketsModule } from "./modules/tickets/tickets.module";
 import { BreedTransactionModule } from "./modules/breed-transaction/breed-transaction.module";
 import { PetOwnerModule } from "./modules/pet-owner/pet-owner.module";
 import { CombosModule } from "./modules/combos/combos.module";
+import { ScheduleModule } from "@nestjs/schedule";
 
 const mongoConnectionString = configService.getMongoConnectionString();
 @Module({
   imports: [
     TypeOrmModule.forRoot(ormconfig),
     MongooseModule.forRoot(mongoConnectionString),
+    ScheduleModule.forRoot(),
     AuthModule,
     UserModule,
     VaccineModule,

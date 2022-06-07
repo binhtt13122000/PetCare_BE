@@ -18,6 +18,9 @@ export class ComboService extends BaseEntity {
   @Column({ type: "int", nullable: false })
   nextEvent: number;
 
+  @Column({ type: "bool", nullable: false, default: true })
+  isActive: boolean;
+
   @Column({ name: "comboId" })
   comboId: number;
   @ManyToOne(() => Combo, (combo) => combo.comboServices, {})

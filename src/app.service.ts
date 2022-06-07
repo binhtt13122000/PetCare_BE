@@ -1,4 +1,5 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
+import { Cron } from "@nestjs/schedule";
 import { InjectEntityManager } from "@nestjs/typeorm";
 import { EntityManager } from "typeorm";
 
@@ -7,6 +8,15 @@ export class AppService {
   constructor(
     @InjectEntityManager() private readonly entityManager: EntityManager,
   ) {}
+
+  private readonly logger = new Logger(AppService.name);
+
+  @Cron("45 * * * * *")
+  handleCron(): void {
+    // eslint-disable-next-line no-console
+    console.log(new Date());
+    this.logger.debug("Called when the current second is 45");
+  }
 
   async isExist(table: string, field: string, value: string): Promise<boolean> {
     const x = await this.entityManager.query(
