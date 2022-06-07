@@ -122,6 +122,12 @@ export class BreedingTransaction extends BaseEntity {
   @JoinColumn({ name: "branchId", referencedColumnName: "id" })
   branch: Branch;
 
+  @Column({ name: "breedingBranchId", nullable: true })
+  breedingBranchId: number;
+  @ManyToOne(() => Branch, (branch) => branch.breedTransactions, {})
+  @JoinColumn({ name: "breedingBranchId", referencedColumnName: "id" })
+  breedingBranch: Branch;
+
   constructor(partial: Partial<BreedingTransaction>) {
     super();
     Object.assign(this, partial);

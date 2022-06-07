@@ -50,10 +50,12 @@ export class PetsController {
     @Query("customerId") customerId: number,
     @Query("speciesId") speciesId: number,
     @Query("type") type: "BREED" | "SALE",
+    @Query("gender") gender?: "MALE" | "FEMALE",
   ): Promise<Pet[]> {
     return await this.petsService.getPetListWithoutBreedToCreatePostByCustomerIdAndSpeciesId(
       customerId,
       type,
+      gender,
       speciesId,
     );
   }

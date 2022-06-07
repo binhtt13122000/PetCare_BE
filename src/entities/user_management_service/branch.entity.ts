@@ -92,6 +92,12 @@ export class Branch extends BaseEntity {
   )
   breedingTransactions: BreedingTransaction[];
 
+  @OneToMany(
+    () => BreedingTransaction,
+    (breedingTransaction) => breedingTransaction.breedingBranch,
+  )
+  breedTransactions: BreedingTransaction[];
+
   @OneToMany(() => SaleTransaction, (saleTransaction) => saleTransaction.branch)
   saleTransactions: SaleTransaction[];
 

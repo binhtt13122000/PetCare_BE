@@ -28,6 +28,7 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
   getPetListWithoutBreedToCreatePostByCustomerIdAndSpeciesId(
     customerId: number,
     type: "BREED" | "SALE",
+    gender?: "MALE" | "FEMALE",
     speciesId?: number,
   ): Promise<Pet[]> {
     let whereString = "";
@@ -39,7 +40,12 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
         "pet.status = 'NORMAL' and pet_owners.customerId = :customerId and pet_owners.isCurrentOwner = true";
     }
     if (type === "BREED") {
-      whereString += " and pet.isSeed = true and pet.gender = 'MALE'";
+      whereString += " and pet.isSeed = true";
+    }
+    if (gender === "FEMALE") {
+      whereString += " and pet.gender = 'FEMALE'";
+    } else if (gender === "MALE") {
+      whereString += " and pet.gender = 'MALE'";
     }
     return this.petsRepository
       .createQueryBuilder("pet")
