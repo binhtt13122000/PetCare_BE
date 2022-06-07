@@ -41,4 +41,17 @@ export class TicketsService extends BaseService<Ticket, TicketsRepository> {
       relations: ["serviceTickets", "serviceTickets.service"],
     });
   }
+
+  getTicketsByBranchId(branchId: number, date: Date): Promise<Ticket[]> {
+    return this.ticketsRepository.find({
+      where: {
+        branchId: branchId,
+        meetingDate: date,
+      },
+      relations: ["tickets"],
+      order: {
+        startTime: "ASC",
+      },
+    });
+  }
 }

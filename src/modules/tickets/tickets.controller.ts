@@ -35,6 +35,14 @@ export class TicketsController {
     return this.ticketsService.getOne(id);
   }
 
+  @Get("branches/:id")
+  async getByBranchId(
+    @Param("id") id: number,
+    @Query("date") date: Date,
+  ): Promise<Ticket[]> {
+    return this.ticketsService.getTicketsByBranchId(id, date);
+  }
+
   @Post()
   async create(@Body() body: CreateTicketDTO): Promise<Ticket> {
     try {
