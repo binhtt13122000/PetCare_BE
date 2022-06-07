@@ -1,5 +1,6 @@
 export enum BreedingTransactionEnum {
   CREATED = "CREATED",
+  REQUESTED = "REQUESTED",
   CANCELED = "CANCELED",
   REJECTED = "REJECTED",
   PAYMENTED = "PAYMENTED",

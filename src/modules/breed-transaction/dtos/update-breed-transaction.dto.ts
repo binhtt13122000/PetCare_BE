@@ -34,6 +34,8 @@ export class UpdateBreedTransactionDTO {
   review: string;
   @ApiProperty()
   reasonCancel: string;
+  @ApiProperty()
+  breedingBranchId: number;
   @ApiProperty({
     enum: BreedingTransactionEnum,
     default: BreedingTransactionEnum.CREATED,
