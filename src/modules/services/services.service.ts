@@ -8,4 +8,10 @@ export class ShopService extends BaseService<Service, ServiceRepository> {
   constructor(private readonly serviceRepository: ServiceRepository) {
     super(serviceRepository);
   }
+
+  getAll(): Promise<Service[]> {
+    return this.serviceRepository.find({
+      relations: ["serviceFees"],
+    });
+  }
 }

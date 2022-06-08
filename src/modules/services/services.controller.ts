@@ -30,8 +30,17 @@ export class ServicesController {
     private readonly ticketService: TicketsService,
   ) {}
 
+  @Get()
+  async getService(): Promise<Service[]> {
+    try {
+      return await this.shopService.getAll();
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   @Get("/tickets/:id")
-  async changeStatusTicket(@Param() params: IdParams): Promise<Ticket> {
+  async getTicket(@Param() params: IdParams): Promise<Ticket> {
     try {
       return await this.ticketService.findById(params.id);
     } catch (error) {
