@@ -23,7 +23,7 @@ export class ComboService extends BaseEntity {
 
   @Column({ name: "comboId" })
   comboId: number;
-  @ManyToOne(() => Combo, (combo) => combo.comboServices, {})
+  @ManyToOne(() => Combo, (combo) => combo.comboServices)
   @JoinColumn({ name: "comboId", referencedColumnName: "id" })
   combo: Combo;
 

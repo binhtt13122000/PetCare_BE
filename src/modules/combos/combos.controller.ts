@@ -11,6 +11,7 @@ import {
   HttpException,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { ComboService } from "src/entities/service/combo-service.entity";
 import { Combo } from "src/entities/service/combo.entity";
 import { CombosService } from "./combos.service";
 import { CreateComboDTO } from "./dtos/create-combo.dto";
@@ -28,7 +29,16 @@ export class CombosController {
 
   @Get(":id")
   async getOne(@Param("id") id: number): Promise<Combo> {
-    return await this.combosService.findOne(id);
+    const combosService = await this.combosService.findOne(id);
+    if (
+      combosService?.comboServices &&
+      combosService?.comboServices.length > 0
+    ) {
+      combosService.comboServices = combosService.comboServices.filter(
+        (item) => item.isActive === true,
+      );
+    }
+    return combosService;
   }
 
   @Post()
@@ -43,14 +53,46 @@ export class CombosController {
   @Put()
   async update(@Body() body: UpdateComboDTO): Promise<Combo> {
     try {
-      const combo = await this.combosService.findById(body.id);
+      const { deletedIds, comboServices, ...rest } = body;
+      const combo = await this.combosService.getOneWithComboServices(rest.id);
       if (!combo) {
         throw new NotFoundException("Not found");
+      } else {
+        combo.comboServices
+          ? (combo.comboServices = combo.comboServices.map((item) => {
+              if (deletedIds.includes(item.id)) {
+                item.isActive = false;
+              } else {
+                const findIndex = comboServices.findIndex(
+                  (itemCombo) => itemCombo?.id && item.id === itemCombo.id,
+                );
+                if (findIndex !== -1) {
+                  item.nextEvent = comboServices[findIndex].nextEvent;
+                  item.priority = comboServices[findIndex].priority;
+                  comboServices.splice(findIndex, 1);
+                }
+              }
+              return item;
+            }))
+          : "";
       }
-      const instance = await this.combosService.findById(body.id);
-      Object.assign(instance, body);
-      return instance.save();
+      comboServices &&
+        comboServices.length > 0 &&
+        comboServices.forEach((item) => {
+          const convertObject = new ComboService({
+            isActive: true,
+            comboId: Number(rest.id),
+            priority: item.priority,
+            nextEvent: item.nextEvent,
+            serviceId: item.serviceId,
+          });
+          combo.comboServices.push(convertObject);
+        });
+      Object.assign(combo, rest);
+      return await combo.save();
     } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error);
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }

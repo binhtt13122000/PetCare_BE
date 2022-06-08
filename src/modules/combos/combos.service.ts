@@ -17,4 +17,11 @@ export class CombosService extends BaseService<Combo, CombosRepository> {
       relations: ["comboServices", "comboServices.service"],
     });
   }
+
+  getOneWithComboServices(id: number): Promise<Combo> {
+    return this.combosRepository.findOne({
+      where: { id: id },
+      relations: ["comboServices"],
+    });
+  }
 }
