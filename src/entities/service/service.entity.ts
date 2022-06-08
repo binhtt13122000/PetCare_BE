@@ -11,6 +11,7 @@ import { OrderDetail } from "../order_service/order-detail.entity";
 import { ServiceFee } from "./service-fee.entity";
 import { ServiceTicket } from "./service-ticket.entity";
 import { ComboService } from "./combo-service.entity";
+import { PetComboService } from "../pet_service/pet-combo-service.entity";
 
 @Entity("service")
 export class Service extends BaseEntity {
@@ -51,6 +52,11 @@ export class Service extends BaseEntity {
   @OneToMany(() => ServiceTicket, (serviceTicket) => serviceTicket.service)
   serviceTickets: ServiceTicket[];
 
+  @OneToMany(
+    () => PetComboService,
+    (petComboService) => petComboService.service,
+  )
+  petComboServices: PetComboService[];
   constructor(partial: Partial<Service>) {
     super();
     Object.assign(this, partial);

@@ -5,6 +5,7 @@ import {
   Column,
   OneToMany,
 } from "typeorm";
+import { PetCombo } from "../pet_service/pet-combo.entity";
 import { ComboService } from "./combo-service.entity";
 
 @Entity("combo")
@@ -24,6 +25,9 @@ export class Combo extends BaseEntity {
     cascade: true,
   })
   comboServices: ComboService[];
+
+  @OneToMany(() => PetCombo, (petCombo) => petCombo.combo, {})
+  petCombos: PetCombo[];
 
   constructor(partial: Partial<Combo>) {
     super();

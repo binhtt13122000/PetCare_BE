@@ -24,6 +24,7 @@ import { Promotion } from "../service/promotion.entity";
 
 import { Type } from "class-transformer";
 import { SaleTransaction } from "../transaction_service/sale-transaction.entity";
+import { PetCombo } from "../pet_service/pet-combo.entity";
 @Entity("branch")
 export class Branch extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
@@ -100,6 +101,9 @@ export class Branch extends BaseEntity {
 
   @OneToMany(() => SaleTransaction, (saleTransaction) => saleTransaction.branch)
   saleTransactions: SaleTransaction[];
+
+  @OneToMany(() => PetCombo, (petCombo) => petCombo.branch, {})
+  petCombos: PetCombo[];
 
   constructor(partial: Partial<Branch>) {
     super();
