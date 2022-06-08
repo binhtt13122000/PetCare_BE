@@ -48,6 +48,7 @@ export class TicketsService extends BaseService<Ticket, TicketsRepository> {
       where: {
         branchId: branchId,
         meetingDate: date,
+        status: TicketStatusEnum.CREATED,
       },
       relations: ["branch"],
       order: {
@@ -63,9 +64,6 @@ export class TicketsService extends BaseService<Ticket, TicketsRepository> {
         status: TicketStatusEnum.CREATED,
       },
       relations: ["branch"],
-      order: {
-        startTime: "ASC",
-      },
     });
   }
 }
