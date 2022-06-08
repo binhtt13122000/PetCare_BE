@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { OrdersModule } from "../orders/orders.module";
 import { OrderDetailsController } from "./order-details.controller";
@@ -6,7 +6,10 @@ import { OrderDetailRepostiory } from "./order-details.repository";
 import { OrderDetailsService } from "./order-details.service";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([OrderDetailRepostiory]), OrdersModule],
+  imports: [
+    TypeOrmModule.forFeature([OrderDetailRepostiory]),
+    forwardRef(() => OrdersModule),
+  ],
   controllers: [OrderDetailsController],
   providers: [OrderDetailsService],
   exports: [OrderDetailsService],

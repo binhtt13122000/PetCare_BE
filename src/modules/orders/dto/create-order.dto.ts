@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { OrderDetail } from "src/entities/order_service/order-detail.entity";
 import { OrderEnum, PaymentOrderMethodEnum } from "src/enum";
-import { OrderDetailDTO } from "./order-detail.dto";
 export class CreateOrderDTO {
   @ApiProperty()
   provisionalTotal: number;
@@ -11,7 +11,7 @@ export class CreateOrderDTO {
   @ApiProperty({ required: false })
   description: string;
   @ApiProperty()
-  orderDetails: Partial<OrderDetailDTO[]>;
+  orderDetails: Partial<OrderDetail[]>;
   @ApiProperty()
   branchId: number;
   @ApiProperty()

@@ -9,6 +9,8 @@ export class UpdateOrderDTO extends CreateOrderDTO {
   star: number;
   @ApiProperty()
   review: string;
+  @ApiProperty({ required: false, isArray: true })
+  deletedIds: number[];
 }
 
 export class OrderPaymentDTO extends UpdateOrderDTO {

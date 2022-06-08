@@ -30,6 +30,13 @@ export class OrdersService extends BaseService<Order, OrdersRepository> {
     });
   }
 
+  getOneWithOrderDetails(id: number): Promise<Order> {
+    return this.ordersRepository.findOne({
+      where: { id: id },
+      relations: ["orderDetails"],
+    });
+  }
+
   async fetchOrders(pageOptionsDto: OrderOptionDto): Promise<PageDto<Order>> {
     const queryBuilder = await this.ordersRepository.createQueryBuilder(
       "order",

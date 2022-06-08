@@ -31,6 +31,10 @@ import { PageDto } from "src/common/page.dto";
 import { CreateOrderDTO } from "./dto/create-order.dto";
 import { Order } from "src/entities/order_service/order.entity";
 import { CustomerService } from "../customer/customer.service";
+import { OrderDetail } from "src/entities/order_service/order-detail.entity";
+import { OrderDetailDTO } from "./dto/order-detail.dto";
+import { EntityId } from "typeorm/repository/EntityId";
+import { OrderDetailsService } from "../order-details/order-details.service";
 
 @ApiTags("orders")
 @Controller("orders")
@@ -39,6 +43,7 @@ export class OrdersController {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly ordersService: OrdersService,
     private readonly customerService: CustomerService,
+    private readonly orderDetailsService: OrderDetailsService,
   ) {}
 
   @Get(":id")
@@ -58,15 +63,47 @@ export class OrdersController {
   @Put()
   async update(@Body() body: UpdateOrderDTO): Promise<Order> {
     try {
-      const order = await this.ordersService.findById(body.id);
+      const { deletedIds, orderDetails, ...rest } = body;
+      const order = await this.ordersService.findById(rest.id);
       if (!order) {
         throw new NotFoundException("Not found");
       }
       if (order.status === OrderEnum.SUCCESS) {
         throw new BadGatewayException("Cannot update");
       }
-      const instance = await this.ordersService.findById(body.id);
-      Object.assign(instance, body);
+      if (deletedIds && deletedIds.length > 0) {
+        await this.orderDetailsService.deleteItems(deletedIds);
+      }
+      const instance = await this.ordersService.getOneWithOrderDetails(rest.id);
+      instance.orderDetails;
+      if (instance?.orderDetails) {
+        instance.orderDetails = instance.orderDetails.map((item) => {
+          const findIndex = orderDetails.findIndex(
+            (itemOrderService) =>
+              itemOrderService?.id && item.id === itemOrderService.id,
+          );
+          if (findIndex !== -1) {
+            item.price = orderDetails[findIndex].price;
+            item.quantity = orderDetails[findIndex].quantity;
+            item.serviceId = orderDetails[findIndex].serviceId;
+            item.totalPrice = orderDetails[findIndex].totalPrice;
+            orderDetails.splice(findIndex, 1);
+          }
+          return item;
+        });
+      }
+      orderDetails &&
+        orderDetails.length > 0 &&
+        orderDetails.forEach((item) => {
+          const convertObject = new OrderDetail({
+            price: item.price,
+            quantity: item.quantity,
+            serviceId: item.serviceId,
+            totalPrice: item.totalPrice,
+          });
+          instance.orderDetails.push(convertObject);
+        });
+      Object.assign(order, rest);
       return instance.save();
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
