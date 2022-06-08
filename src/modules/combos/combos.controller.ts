@@ -9,8 +9,10 @@ import {
   Post,
   Put,
   HttpException,
+  Delete,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { IdParams } from "src/common";
 import { ComboService } from "src/entities/service/combo-service.entity";
 import { Combo } from "src/entities/service/combo.entity";
 import { CombosService } from "./combos.service";
@@ -93,6 +95,28 @@ export class CombosController {
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error);
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Delete(":id")
+  async delete(@Param() params: IdParams): Promise<Combo> {
+    try {
+      const combo = await this.combosService.findById(params.id);
+      if (!combo) {
+        throw new HttpException("The combo is not found", HttpStatus.NOT_FOUND);
+      }
+      if (!combo.isActive) {
+        throw new HttpException(
+          "The breed is inactive",
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      return this.combosService.update(params.id, {
+        ...combo,
+        isActive: false,
+      });
+    } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
