@@ -37,6 +37,7 @@ import { BreedTransactionModule } from "./modules/breed-transaction/breed-transa
 import { PetOwnerModule } from "./modules/pet-owner/pet-owner.module";
 import { CombosModule } from "./modules/combos/combos.module";
 import { ScheduleModule } from "@nestjs/schedule";
+import { PetComboModule } from "./modules/pet-combo/pet-combo.module";
 
 const mongoConnectionString = configService.getMongoConnectionString();
 @Module({
@@ -72,6 +73,7 @@ const mongoConnectionString = configService.getMongoConnectionString();
     BreedTransactionModule,
     PetOwnerModule,
     CombosModule,
+    PetComboModule,
     CacheModule.register({
       isGlobal: true,
       ttl: 600,
