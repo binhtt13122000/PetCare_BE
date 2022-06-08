@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { BaseService } from "src/base/base.service";
 import { Ticket } from "src/entities/service/ticket.entity";
+import { TicketStatusEnum } from "src/enum";
 import { TicketsRepository } from "./tickets.repository";
 
 @Injectable()
@@ -48,17 +49,18 @@ export class TicketsService extends BaseService<Ticket, TicketsRepository> {
         branchId: branchId,
         meetingDate: date,
       },
+      relations: ["branch"],
       order: {
         startTime: "ASC",
       },
     });
   }
 
-  getTicketsByUserId(customerId: number, date: Date): Promise<Ticket[]> {
-    return this.ticketsRepository.find({
+  getTicketsByUserId(customerId: number): Promise<Ticket> {
+    return this.ticketsRepository.findOne({
       where: {
         customerId: customerId,
-        meetingDate: date,
+        status: TicketStatusEnum.CREATED,
       },
       relations: ["branch"],
       order: {

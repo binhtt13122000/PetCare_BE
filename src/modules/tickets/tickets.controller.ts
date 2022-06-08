@@ -43,12 +43,9 @@ export class TicketsController {
     return this.ticketsService.getTicketsByBranchId(id, date);
   }
 
-  @Get("customer/:id")
-  async getByCustomerId(
-    @Param("id") id: number,
-    @Query("date") date: Date,
-  ): Promise<Ticket[]> {
-    return this.ticketsService.getTicketsByUserId(id, date);
+  @Get("customers/:id")
+  async getByCustomerId(@Param("id") id: number): Promise<Ticket> {
+    return this.ticketsService.getTicketsByUserId(id);
   }
 
   @Post()
