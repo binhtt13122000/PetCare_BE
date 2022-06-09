@@ -32,8 +32,6 @@ import { CreateOrderDTO } from "./dto/create-order.dto";
 import { Order } from "src/entities/order_service/order.entity";
 import { CustomerService } from "../customer/customer.service";
 import { OrderDetail } from "src/entities/order_service/order-detail.entity";
-import { OrderDetailDTO } from "./dto/order-detail.dto";
-import { EntityId } from "typeorm/repository/EntityId";
 import { OrderDetailsService } from "../order-details/order-details.service";
 
 @ApiTags("orders")
@@ -170,11 +168,10 @@ export class OrdersController {
           "order_id_" + id,
         );
         const updatedOrder: OrderPaymentDTO = JSON.parse(updateOrderJSON);
+        const { paymentPoint, ...rest } = updatedOrder;
         try {
-          const order = await this.ordersService.findById(updatedOrder.id);
-          const customer = await this.customerService.findById(
-            updatedOrder.customerId,
-          );
+          const order = await this.ordersService.findById(rest.id);
+          const customer = await this.customerService.findById(rest.customerId);
           if (!order) {
             throw new HttpException("not found", HttpStatus.NOT_FOUND);
           }
@@ -187,14 +184,13 @@ export class OrdersController {
           this.cacheManager.del("order_id_" + id);
           await this.ordersService.update(updatedOrder.id, {
             ...order,
-            ...updatedOrder,
+            ...rest,
             status: OrderEnum.SUCCESS,
             payment: updatedOrder.orderTotal,
           });
           await this.customerService.update(customer.id, {
             ...customer,
-            point:
-              customer.point + updatedOrder.point - updatedOrder.paymentPoint,
+            point: customer.point + updatedOrder.point - paymentPoint,
           });
         } catch (error) {
           throw new HttpException(error, HttpStatus.BAD_REQUEST);
