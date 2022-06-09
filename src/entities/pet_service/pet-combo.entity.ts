@@ -12,6 +12,7 @@ import { Branch } from "../user_management_service/branch.entity";
 import { PaymentOrderMethodEnum } from "src/enum";
 import { Combo } from "src/entities/service/combo.entity";
 import { PetComboService } from "./pet-combo-service.entity";
+import { BreedingTransaction } from "../transaction_service/breeding-transaction.entity";
 
 @Entity("pet_combo")
 export class PetCombo extends BaseEntity {
@@ -45,6 +46,16 @@ export class PetCombo extends BaseEntity {
   @ManyToOne(() => Combo, (combo) => combo.petCombos, {})
   @JoinColumn({ name: "comboId", referencedColumnName: "id" })
   combo: Combo;
+
+  @Column({ name: "breedingTransactionId" })
+  breedingTransactionId: number;
+  @ManyToOne(
+    () => BreedingTransaction,
+    (breedingTransaction) => breedingTransaction.petCombos,
+    {},
+  )
+  @JoinColumn({ name: "breedingTransactionId", referencedColumnName: "id" })
+  breedingTransaction: BreedingTransaction;
 
   @OneToMany(
     () => PetComboService,

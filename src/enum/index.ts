@@ -15,6 +15,13 @@ export enum OrderEnum {
   DRAFT = "DRAFT",
 }
 
+export enum ComboTypeEnum {
+  NORMAL = "NORMAL",
+  VACCINE = "VACCINE",
+  BREED = "BREED",
+  PERIODICAL = "PERIODICAL",
+}
+
 export enum PetEnum {
   DELETED = "DELETED",
   NORMAL = "NORMAL",

@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from "typeorm";
 import { Customer } from "../user_management_service/customer.entity";
 import { Pet } from "../pet_service/pet.entity";
@@ -12,6 +13,7 @@ import { Branch } from "../user_management_service/branch.entity";
 // import { Promotion } from "../service/promotion.entity";
 import { BreedingTransactionEnum } from "src/enum";
 import { BaseEntity } from "typeorm";
+import { PetCombo } from "../pet_service/pet-combo.entity";
 
 @Entity("breeding_transaction")
 export class BreedingTransaction extends BaseEntity {
@@ -127,6 +129,9 @@ export class BreedingTransaction extends BaseEntity {
   @ManyToOne(() => Branch, (branch) => branch.breedTransactions, {})
   @JoinColumn({ name: "breedingBranchId", referencedColumnName: "id" })
   breedingBranch: Branch;
+
+  @OneToMany(() => PetCombo, (petCombo) => petCombo.breedingTransaction, {})
+  petCombos: PetCombo[];
 
   constructor(partial: Partial<BreedingTransaction>) {
     super();

@@ -1,3 +1,4 @@
+import { ComboTypeEnum } from "src/enum";
 import {
   BaseEntity,
   PrimaryGeneratedColumn,
@@ -20,6 +21,8 @@ export class Combo extends BaseEntity {
   description: string;
   @Column({ type: "bool", nullable: false, default: true })
   isActive: boolean;
+  @Column({ type: "enum", enum: ComboTypeEnum, nullable: false })
+  type: ComboTypeEnum;
 
   @OneToMany(() => ComboService, (comboService) => comboService.combo, {
     cascade: true,
