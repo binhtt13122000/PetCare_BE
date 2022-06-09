@@ -14,7 +14,7 @@ export class PetComboService extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
   @Column({ type: "timestamp without time zone", nullable: false })
-  workingTime: string;
+  workingTime: Date;
   @Column({ type: "boolean", nullable: true, default: false })
   isCompleted: string;
 
