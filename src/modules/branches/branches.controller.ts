@@ -77,8 +77,8 @@ export class BranchesController {
     });
   }
 
-  @hasRoles(RoleEnum.ADMIN, RoleEnum.BRANCH_MANAGER)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @hasRoles(RoleEnum.ADMIN, RoleEnum.BRANCH_MANAGER)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   @Get("/statistics")
   async getStatisticBranches(
     @Query() query: StatisticBranchQuery,
