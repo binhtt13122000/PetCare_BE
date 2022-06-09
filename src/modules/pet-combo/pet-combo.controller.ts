@@ -54,9 +54,9 @@ export class PetComboController {
       const createPetCombo = await this.petCombosService.store(petCombo);
 
       comboService.forEach(async (item, index) => {
+        next += item.nextEvent;
         const ts = new Date(body.registerTime);
         ts.setDate(ts.getDate() + next);
-        next += item.nextEvent;
 
         if (index == 0) {
           await this.petComboServicesService.store({
