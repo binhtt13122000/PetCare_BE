@@ -15,4 +15,10 @@ export class PetComboDTO {
 
   @ApiProperty({ required: false })
   breedingTransactionId: number;
+
+  @ApiProperty({ required: false })
+  point: number;
+
+  @ApiProperty({ required: false })
+  paymentMethod: string;
 }

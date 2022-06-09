@@ -1,14 +1,21 @@
 import { Module } from "@nestjs/common";
-import { PetComboService } from "./pet-combo.service";
+import { PetCombosService } from "./pet-combo.service";
 import { PetComboController } from "./pet-combo.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { PetComboRepository } from "./pet-combo.repository";
 import { CombosModule } from "../combos/combos.module";
+import { ComboServiceModule } from "../combo-services/combo-services.module";
+import { PetComboServicesModule } from "../pet-combo-services/pet-combo-services.module";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PetComboRepository]), CombosModule],
-  providers: [PetComboService],
+  imports: [
+    TypeOrmModule.forFeature([PetComboRepository]),
+    CombosModule,
+    ComboServiceModule,
+    PetComboServicesModule,
+  ],
+  providers: [PetCombosService],
   controllers: [PetComboController],
-  exports: [PetComboService],
+  exports: [PetCombosService],
 })
 export class PetComboModule {}

@@ -38,10 +38,9 @@ import { PetOwnerModule } from "./modules/pet-owner/pet-owner.module";
 import { CombosModule } from "./modules/combos/combos.module";
 import { ScheduleModule } from "@nestjs/schedule";
 import { PetComboModule } from "./modules/pet-combo/pet-combo.module";
-import { ComboServiceModule } from "./modules/combo-service/combo-service.module";
-import { ComboServiceController } from "./modules/combo-service/combo-service.controller";
-import { ComboServiceService } from "./modules/combo-service/combo-service.service";
-import { ComboServiceModule } from "./modules/combo-service/combo-service.module";
+import { ComboServiceController } from "./modules/combo-services/combo-services.controller";
+import { ComboServiceModule } from "./modules/combo-services/combo-services.module";
+import { PetComboServicesModule } from "./modules/pet-combo-services/pet-combo-services.module";
 
 const mongoConnectionString = configService.getMongoConnectionString();
 @Module({
@@ -83,6 +82,7 @@ const mongoConnectionString = configService.getMongoConnectionString();
       ttl: 600,
     }),
     ComboServiceModule,
+    PetComboServicesModule,
   ],
   controllers: [AppController, ComboServiceController],
   providers: [
@@ -95,7 +95,6 @@ const mongoConnectionString = configService.getMongoConnectionString();
       useClass: ResponseDataInterceptor,
     },
     AppService,
-    ComboServiceService,
   ],
 })
 export class AppModule {}
