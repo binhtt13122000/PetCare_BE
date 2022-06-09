@@ -106,6 +106,11 @@ export class AuthPayloadDTO {
   phoneNumber: string;
 }
 
+export class ConvertAuthPayloadDTO {
+  userId: number;
+  phoneNumber: string;
+}
+
 export type Tokens = {
   accessToken: string;
   refreshToken: string;

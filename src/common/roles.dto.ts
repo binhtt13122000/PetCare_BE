@@ -1,0 +1,5 @@
+export enum RoleEnum {
+  BRANCH_MANAGER = "BRANCH_MANAGER",
+  CUSTOMER = "CUSTOMER",
+  ADMIN = "ADMIN",
+}

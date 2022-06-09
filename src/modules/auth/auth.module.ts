@@ -11,6 +11,9 @@ import { MulterModule } from "@nestjs/platform-express";
 import { SharedModule } from "src/shared/shared.module";
 import { BranchesModule } from "../branches/branches.module";
 import { CustomerModule } from "../customer/customer.module";
+import { JwtStrategy } from "./guards/jwt.strategy";
+import { RolesGuard } from "./guards/roles.guard";
+import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 
 @Module({
   imports: [
@@ -21,7 +24,7 @@ import { CustomerModule } from "../customer/customer.module";
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get("JWT_SECRET_KEY"),
-        signOptions: { expiresIn: 10 },
+        signOptions: { expiresIn: "60h" },
       }),
       inject: [ConfigService],
     }),
@@ -32,7 +35,7 @@ import { CustomerModule } from "../customer/customer.module";
     CustomerModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy, RolesGuard, JwtAuthGuard],
   exports: [AuthService],
 })
 export class AuthModule {}
