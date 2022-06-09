@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UserModule } from "../users/user.module";
 import { SharedModule } from "src/shared/shared.module";
@@ -9,9 +9,11 @@ import { OrdersModule } from "../orders/orders.module";
 import { SaleTransactionsModule } from "../sale-transactions/sale-transactions.module";
 import { BreedTransactionModule } from "../breed-transaction/breed-transaction.module";
 import { ServicesModule } from "../services/services.module";
+import { AuthModule } from "../auth/auth.module";
 
 @Module({
   imports: [
+    forwardRef(() => AuthModule),
     TypeOrmModule.forFeature([BranchesRepository]),
     UserModule,
     SharedModule,

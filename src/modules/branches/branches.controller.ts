@@ -11,6 +11,7 @@ import {
   Param,
   Get,
   Query,
+  UseGuards,
 } from "@nestjs/common";
 import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { Branch } from "src/entities/user_management_service/branch.entity";
@@ -19,7 +20,7 @@ import { BranchesService } from "./branches.service";
 import { UserService } from "../users/user.service";
 import { Account } from "src/entities/authenticate_service/account.entity";
 import { DEFAULT_PASSWORD } from "../../common/index";
-import { RoleIndexEnum } from "src/enum";
+import { RoleEnum, RoleIndexEnum } from "src/enum";
 import * as bcrypt from "bcrypt";
 import { getStartAndEndDateInCurrentMonth } from "src/common/utils";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -35,6 +36,9 @@ import {
 import { OrdersService } from "../orders/orders.service";
 import { SaleTransactionsService } from "../sale-transactions/sale-transactions.service";
 import { BreedTransactionService } from "../breed-transaction/breed-transaction.service";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../auth/guards/roles.guard";
+import { hasRoles } from "../auth/decorator/roles.decorator";
 
 @ApiTags("branches")
 @Controller("branches")
@@ -73,6 +77,8 @@ export class BranchesController {
     });
   }
 
+  // @hasRoles(RoleEnum.ADMIN, RoleEnum.BRANCH_MANAGER)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   @Get("/statistics")
   async getStatisticBranches(
     @Query() query: StatisticBranchQuery,
