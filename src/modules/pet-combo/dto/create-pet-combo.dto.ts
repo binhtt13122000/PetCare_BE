@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { PaymentOrderMethodEnum } from "src/enum";
 
 export class PetComboDTO {
   @ApiProperty()
@@ -19,6 +20,6 @@ export class PetComboDTO {
   @ApiProperty({ required: false })
   point: number;
 
-  @ApiProperty({ required: false })
-  paymentMethod: string;
+  @ApiProperty({ enum: PaymentOrderMethodEnum, required: false })
+  paymentMethod: PaymentOrderMethodEnum;
 }
