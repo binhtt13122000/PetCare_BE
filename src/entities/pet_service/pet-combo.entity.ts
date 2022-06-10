@@ -47,7 +47,7 @@ export class PetCombo extends BaseEntity {
   @JoinColumn({ name: "comboId", referencedColumnName: "id" })
   combo: Combo;
 
-  @Column({ name: "breedingTransactionId" })
+  @Column({ name: "breedingTransactionId", nullable: true })
   breedingTransactionId: number;
   @ManyToOne(
     () => BreedingTransaction,
