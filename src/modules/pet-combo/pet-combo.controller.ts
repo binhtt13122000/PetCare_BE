@@ -44,7 +44,7 @@ export class PetComboController {
         isCompleted: false,
         paymentMethod: PaymentOrderMethodEnum.CASH,
         orderTotal: combo.price,
-        point: 200,
+        point: body.point,
         petId: body.petId,
         branchId: body.branchId,
         comboId: body.comboId,
