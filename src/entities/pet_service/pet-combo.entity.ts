@@ -19,9 +19,9 @@ export class PetCombo extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
   @Column({ type: "timestamp without time zone", nullable: false })
-  registerTime: string;
+  registerTime: Date;
   @Column({ type: "boolean", nullable: true, default: false })
-  isCompleted: string;
+  isCompleted: boolean;
   @Column({ type: "enum", enum: PaymentOrderMethodEnum, nullable: true })
   paymentMethod: PaymentOrderMethodEnum;
   @Column({ type: "integer", nullable: false })
