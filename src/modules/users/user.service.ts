@@ -16,6 +16,13 @@ export class UserService extends BaseService<Account, UserRepository> {
     });
   }
 
+  getOneById(id: number): Promise<Account | null> {
+    return this.userRepository.findOne({
+      where: { id: id },
+      relations: ["role"],
+    });
+  }
+
   findByPhoneNumber(phoneNumber: string): Promise<Account | null> {
     return this.userRepository.findOne({
       where: { phoneNumber: phoneNumber },

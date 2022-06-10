@@ -11,16 +11,19 @@ import {
   Res,
   Response,
   Put,
+  NotFoundException,
 } from "@nestjs/common";
 import * as firebase from "firebase-admin";
 import { AuthService } from "./auth.service";
 import { getFirestore } from "firebase-admin/firestore";
 import {
+  AccessTokenDTO,
   ChangePasswordDTO,
   ChangePasswordWithNotLoginDTO,
   CheckPhoneNumberExistDTO,
   LoginBodyWithPasswordDTO,
   LoginResponseDTO,
+  ProfileResponseDTO,
   RefreshTokenBodyDTO,
   UserRegisterDTO,
 } from "./auth.dto";
@@ -44,6 +47,7 @@ import { Customer } from "src/entities/user_management_service/customer.entity";
 import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
 import { LoginBodyWithPhoneNumberDTO, Tokens } from "./auth.dto";
 import * as bcrypt from "bcrypt";
+import { JwtService } from "@nestjs/jwt";
 
 @Controller("auth")
 @ApiTags("authenticate")
@@ -54,6 +58,7 @@ export class AuthController {
     private branchService: BranchesService,
     private customerService: CustomerService,
     private userService: UserService,
+    private readonly jwtService: JwtService,
   ) {}
 
   @Post("demo-noti")
@@ -66,6 +71,48 @@ export class AuthController {
       0,
     );
     return "ok";
+  }
+
+  @Get("profile/:accessToken")
+  async getProfileByAccessToken(
+    @Param() param: AccessTokenDTO,
+  ): Promise<ProfileResponseDTO> {
+    try {
+      const decoded = this.jwtService.decode(param.accessToken) as {
+        sub: number;
+        phoneNumber: string;
+      };
+      const user = await this.userService.getOneById(decoded.sub);
+      if (!user) {
+        throw new NotFoundException("Can not found user!");
+      }
+      if (user.phoneNumber !== decoded.phoneNumber) {
+        throw new BadRequestException();
+      }
+      if (user?.role?.name) {
+        let informationUser: Customer | Branch | undefined;
+        switch (user.role.name) {
+          case RoleEnum.CUSTOMER:
+            informationUser = await this.customerService.findByPhoneNumber(
+              user.phoneNumber,
+            );
+            break;
+          case RoleEnum.BRANCH_MANAGER:
+            informationUser = await this.branchService.findByPhoneNumber(
+              user.phoneNumber,
+            );
+          default:
+            break;
+        }
+        return {
+          user: user,
+          information: informationUser,
+        };
+      }
+      throw new NotFoundException("Can not found information user!");
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
   }
 
   @Get("phone-number/:phoneNumber")

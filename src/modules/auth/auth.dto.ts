@@ -36,6 +36,13 @@ export class LoginResponseDTO {
   refreshToken?: string;
 }
 
+export class ProfileResponseDTO {
+  @ApiProperty()
+  user?: Partial<Account>;
+  @ApiProperty()
+  information?: Branch | Customer;
+}
+
 export class UserRegisterDTO {
   @ApiProperty()
   email: string;
@@ -74,6 +81,11 @@ export class UserRegisterDTO {
 export class RefreshTokenBodyDTO {
   @ApiProperty()
   refreshToken: string;
+}
+
+export class AccessTokenDTO {
+  @ApiProperty()
+  accessToken: string;
 }
 
 export class ChangePasswordDTO {
