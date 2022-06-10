@@ -38,6 +38,9 @@ import { PetOwnerModule } from "./modules/pet-owner/pet-owner.module";
 import { CombosModule } from "./modules/combos/combos.module";
 import { ScheduleModule } from "@nestjs/schedule";
 import { PetComboModule } from "./modules/pet-combo/pet-combo.module";
+import { ComboServiceController } from "./modules/combo-services/combo-services.controller";
+import { ComboServiceModule } from "./modules/combo-services/combo-services.module";
+import { PetComboServicesModule } from "./modules/pet-combo-services/pet-combo-services.module";
 
 const mongoConnectionString = configService.getMongoConnectionString();
 @Module({
@@ -78,8 +81,10 @@ const mongoConnectionString = configService.getMongoConnectionString();
       isGlobal: true,
       ttl: 600,
     }),
+    ComboServiceModule,
+    PetComboServicesModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, ComboServiceController],
   providers: [
     {
       provide: APP_FILTER,

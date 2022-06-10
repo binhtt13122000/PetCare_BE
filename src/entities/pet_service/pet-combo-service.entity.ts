@@ -16,7 +16,7 @@ export class PetComboService extends BaseEntity {
   @Column({ type: "timestamp without time zone", nullable: false })
   workingTime: Date;
   @Column({ type: "boolean", nullable: true, default: false })
-  isCompleted: string;
+  isCompleted: boolean;
 
   @Column({ name: "serviceId" })
   serviceId: number;
