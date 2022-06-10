@@ -38,7 +38,7 @@ export class PetComboController {
       let next = 0;
       const combo: Partial<Combo> = await this.combos.findById(body.comboId);
       const comboService: Partial<ComboService[]> =
-        await this.comboService.findComnoSericeByComboId(body.comboId);
+        await this.comboService.findComboServiceByComboId(body.comboId);
       const petCombo: Partial<PetCombo> = {
         registerTime: body.registerTime,
         isCompleted: false,
@@ -64,6 +64,8 @@ export class PetComboController {
             isCompleted: false,
             serviceId: item.serviceId,
             petComboId: createPetCombo.id,
+            priority: item.priority,
+            realTime: undefined,
           });
         } else {
           await this.petComboServicesService.store({
@@ -71,6 +73,8 @@ export class PetComboController {
             isCompleted: false,
             serviceId: item.serviceId,
             petComboId: createPetCombo.id,
+            priority: item.priority,
+            realTime: undefined,
           });
         }
       });

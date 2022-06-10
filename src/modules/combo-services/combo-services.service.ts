@@ -14,7 +14,7 @@ export class ComboServicesService extends BaseService<
     super(comboServicesRepository);
   }
 
-  async findComnoSericeByComboId(comboId: number): Promise<ComboService[]> {
+  async findComboServiceByComboId(comboId: number): Promise<ComboService[]> {
     return this.comboServicesRepository
       .createQueryBuilder("combo-services")
       .where("combo-services.comboId = :comboId", {

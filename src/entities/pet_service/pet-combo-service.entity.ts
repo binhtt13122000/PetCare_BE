@@ -15,8 +15,12 @@ export class PetComboService extends BaseEntity {
   id: number;
   @Column({ type: "timestamp without time zone", nullable: false })
   workingTime: Date;
+  @Column({ type: "timestamp without time zone", nullable: true })
+  realTime: Date;
   @Column({ type: "boolean", nullable: true, default: false })
   isCompleted: boolean;
+  @Column({ type: "int", nullable: true })
+  priority: number;
 
   @Column({ name: "serviceId" })
   serviceId: number;
