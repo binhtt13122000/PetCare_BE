@@ -28,6 +28,8 @@ export class Ticket extends BaseEntity {
   meetingDate: Date;
   @Column({ type: "integer", nullable: true })
   startTime: number;
+  @Column({ type: "text", nullable: true })
+  reasonCancel: string;
   @Column({ type: "integer", nullable: true })
   endTime: number;
   @Column({ name: "branchId" })

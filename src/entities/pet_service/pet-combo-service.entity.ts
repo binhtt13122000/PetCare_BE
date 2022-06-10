@@ -21,6 +21,10 @@ export class PetComboService extends BaseEntity {
   isCompleted: boolean;
   @Column({ type: "int", nullable: true })
   priority: number;
+  @Column({ type: "int", nullable: true })
+  star: number;
+  @Column({ type: "text", nullable: true })
+  review: number;
 
   @Column({ name: "serviceId" })
   serviceId: number;

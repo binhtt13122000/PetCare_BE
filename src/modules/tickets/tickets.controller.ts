@@ -13,6 +13,7 @@ import {
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { Ticket } from "src/entities/service/ticket.entity";
+import { TicketStatusEnum } from "src/enum";
 import ChangeStatusTicketDTO from "./dtos/change-status-ticket.dto";
 import { CreateTicketDTO } from "./dtos/create-ticket.dto";
 import { TicketsService } from "./tickets.service";
@@ -79,6 +80,9 @@ export class TicketsController {
         throw new HttpException("NOT FOUND", HttpStatus.NOT_FOUND);
       }
       ticket.status = body.status;
+      if (body.status === TicketStatusEnum.CANCELED) {
+        ticket.reasonCancel = body.reasonCancel;
+      }
       return ticket.save();
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);

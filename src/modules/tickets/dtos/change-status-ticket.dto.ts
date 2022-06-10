@@ -6,4 +6,6 @@ export default class ChangeStatusTicketDTO {
   id: number;
   @ApiProperty()
   status: TicketStatusEnum;
+  @ApiProperty()
+  reasonCancel: string;
 }
