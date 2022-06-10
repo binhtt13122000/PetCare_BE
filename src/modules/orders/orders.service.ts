@@ -48,7 +48,8 @@ export class OrdersService extends BaseService<Order, OrdersRepository> {
       .innerJoinAndSelect("orderDetails.service", "service")
       .where("order.customerId = :customerId", {
         customerId: pageOptionsDto.customerId,
-      });
+      })
+      .orderBy("order.registerTime", "DESC");
 
     const { entities } = await queryBuilder.getRawAndEntities();
     const itemCount = await queryBuilder.getCount();

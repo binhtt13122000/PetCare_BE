@@ -6,6 +6,8 @@ import { PetComboRepository } from "./pet-combo.repository";
 import { CombosModule } from "../combos/combos.module";
 import { ComboServiceModule } from "../combo-services/combo-services.module";
 import { PetComboServicesModule } from "../pet-combo-services/pet-combo-services.module";
+import { CustomerModule } from "../customer/customer.module";
+import { PetOwnerModule } from "../pet-owner/pet-owner.module";
 
 @Module({
   imports: [
@@ -13,6 +15,8 @@ import { PetComboServicesModule } from "../pet-combo-services/pet-combo-services
     CombosModule,
     ComboServiceModule,
     PetComboServicesModule,
+    CustomerModule,
+    PetOwnerModule,
   ],
   providers: [PetCombosService],
   controllers: [PetComboController],

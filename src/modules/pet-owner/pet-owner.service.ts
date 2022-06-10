@@ -10,6 +10,15 @@ export class PetOwnerService extends BaseService<PetOwner, PetOwnerRepository> {
     super(petOwnerRepository);
   }
 
+  getCurrentOwner(petId: number): Promise<PetOwner> {
+    return this.petOwnerRepository.findOne({
+      where: {
+        petId: petId,
+        isCurrentOwner: true,
+      },
+    });
+  }
+
   updateAllByPetId(petId: number): Promise<UpdateResult> {
     return this.petOwnerRepository
       .createQueryBuilder()

@@ -1,30 +1,43 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
   HttpException,
   HttpStatus,
   Post,
+  Query,
+  Req,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
+import { format } from "date-fns";
+import { Request } from "express";
+import { PaymentQuery } from "src/common";
 import { PetCombo } from "src/entities/pet_service/pet-combo.entity";
 import { ComboService } from "src/entities/service/combo-service.entity";
 import { Combo } from "src/entities/service/combo.entity";
 import { PaymentOrderMethodEnum } from "src/enum";
+import { vnpayService } from "src/external/vnpay.service";
 import { ComboServicesService } from "../combo-services/combo-services.service";
 import { CombosService } from "../combos/combos.service";
+import { ResponsePayment } from "../orders/dto/response-payment.dto";
 import { PetComboServicesService } from "../pet-combo-services/pet-combo-services.service";
 import { PetComboDTO } from "./dto/create-pet-combo.dto";
 import { PetCombosService } from "./pet-combo.service";
+import { NotFoundException } from "@nestjs/common";
+import { CustomerService } from "../customer/customer.service";
+import { PetOwnerService } from "../pet-owner/pet-owner.service";
 
 @Controller("pet-combos")
 @ApiTags("pet-combos")
 export class PetComboController {
   constructor(
     private readonly petCombosService: PetCombosService,
-    private combos: CombosService,
-    private comboService: ComboServicesService,
-    private petComboServicesService: PetComboServicesService,
+    private readonly combos: CombosService,
+    private readonly comboService: ComboServicesService,
+    private readonly petComboServicesService: PetComboServicesService,
+    private readonly customerService: CustomerService,
+    private readonly petOwnerService: PetOwnerService,
   ) {}
 
   @Get()
@@ -32,8 +45,60 @@ export class PetComboController {
     return await this.petCombosService.index();
   }
 
+  @Get("vnpay/vnpay_return")
+  vnPayReturn(@Req() req: Request): void {
+    vnpayService.vnpayReturn(
+      req,
+      async () => {
+        const vnp_Params = req.query;
+        const vnp_TxnRef = String(vnp_Params["vnp_TxnRef"]);
+        const id = vnp_TxnRef.slice(14);
+        try {
+          const petCombo: PetCombo = await this.petCombosService.findById(id);
+          if (!petCombo) {
+            throw new NotFoundException("not found petCombo");
+          }
+          if (!petCombo.isDraft) {
+            throw new BadRequestException("not draft");
+          }
+          await this.petCombosService.update(petCombo.id, {
+            ...petCombo,
+            isDraft: false,
+          });
+          const petOwner = await this.petOwnerService.getCurrentOwner(
+            petCombo.petId,
+          );
+          if (!petOwner) {
+            throw new NotFoundException("not found pet owner");
+          }
+          const customer = await this.customerService.findById(
+            petOwner.customerId,
+          );
+          if (!petOwner) {
+            throw new NotFoundException("not found customer");
+          }
+          await this.customerService.update(customer.id, {
+            ...customer,
+            point: customer.point + petCombo.point,
+          });
+        } catch (error) {
+          throw new HttpException(error, HttpStatus.BAD_REQUEST);
+        }
+      },
+      () => {
+        // eslint-disable-next-line no-console
+        console.log("Payment Failed");
+        // this.cacheManager.del("order_id_" + id);
+      },
+    );
+  }
+
   @Post()
-  async create(@Body() body: PetComboDTO): Promise<PetCombo> {
+  async create(
+    @Req() req: Request,
+    @Query() query: PaymentQuery,
+    @Body() body: PetComboDTO,
+  ): Promise<ResponsePayment> {
     try {
       let next = 0;
       const combo: Partial<Combo> = await this.combos.findById(body.comboId);
@@ -51,7 +116,10 @@ export class PetComboController {
         breedingTransactionId: body.breedingTransactionId,
       };
 
-      const createPetCombo = await this.petCombosService.store(petCombo);
+      const createPetCombo = await this.petCombosService.store({
+        ...petCombo,
+        isDraft: true,
+      });
 
       comboService.forEach(async (item, index) => {
         next += item.nextEvent;
@@ -78,7 +146,28 @@ export class PetComboController {
           });
         }
       });
-      return createPetCombo;
+      if (createPetCombo) {
+        switch (body.paymentMethod) {
+          case PaymentOrderMethodEnum.VNPAY:
+            const ipAddr: string = req.socket.remoteAddress;
+            const url = vnpayService.generatePaymentUrl(
+              format(new Date(), "yyyyMMddHHmmss") + createPetCombo.id,
+              query.returnUrl,
+              body.orderTotal,
+              ipAddr.split(":").pop() || "127.0.0.1",
+              query.message,
+              query.locale,
+              "NCB",
+              undefined,
+            );
+            if (url) {
+              return { url };
+            }
+            break;
+          default:
+            break;
+        }
+      }
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

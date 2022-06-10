@@ -6,6 +6,9 @@ export class PetComboDTO {
   registerTime: Date;
 
   @ApiProperty()
+  orderTotal: number;
+
+  @ApiProperty()
   branchId: number;
 
   @ApiProperty()
