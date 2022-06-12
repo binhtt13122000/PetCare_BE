@@ -5,6 +5,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  Param,
   Post,
   Query,
   Req,
@@ -43,6 +44,11 @@ export class PetComboController {
   @Get()
   async getAll(): Promise<PetCombo[]> {
     return await this.petCombosService.index();
+  }
+
+  @Get("pet/:id")
+  async getByPet(@Param("id") id: number): Promise<PetCombo[]> {
+    return await this.petCombosService.getPetComboByPetId(id);
   }
 
   @Get("vnpay/vnpay_return")
