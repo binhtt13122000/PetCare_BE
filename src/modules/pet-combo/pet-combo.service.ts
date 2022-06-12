@@ -11,4 +11,13 @@ export class PetCombosService extends BaseService<
   constructor(private readonly petComboRepository: PetComboRepository) {
     super(petComboRepository);
   }
+
+  getPetComboByPetId(petId: number): Promise<PetCombo[]> {
+    return this.petComboRepository.find({
+      where: {
+        petId,
+      },
+      relations: ["pet", "branch", "combo"],
+    });
+  }
 }
