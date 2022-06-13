@@ -46,6 +46,11 @@ export class PetComboController {
     return await this.petCombosService.index();
   }
 
+  @Get(":id")
+  async getOne(@Param("id") id: number): Promise<PetCombo> {
+    return await this.petCombosService.getOne(id);
+  }
+
   @Get("pet/:id")
   async getByPet(@Param("id") id: number): Promise<PetCombo[]> {
     return await this.petCombosService.getPetComboByPetId(id);

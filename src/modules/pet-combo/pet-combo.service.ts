@@ -12,6 +12,15 @@ export class PetCombosService extends BaseService<
     super(petComboRepository);
   }
 
+  getOne(id: number): Promise<PetCombo> {
+    return this.petComboRepository.findOne({
+      where: {
+        id: id,
+      },
+      relations: ["petComboServices", "petComboServices.service"],
+    });
+  }
+
   getPetComboByPetId(petId: number): Promise<PetCombo[]> {
     return this.petComboRepository.find({
       where: {
