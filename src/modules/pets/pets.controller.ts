@@ -32,8 +32,26 @@ export class PetsController {
   ) {}
 
   @Get()
-  async getAll(@Query("customerId") customerId: number): Promise<Pet[]> {
-    return await this.petsService.getPetListByCustomerId(customerId);
+  @ApiQuery({
+    name: "type",
+    enum: PetEnum,
+    required: false,
+  })
+  @ApiQuery({
+    name: "name",
+    type: String,
+    required: false,
+  })
+  async getAll(
+    @Query("customerId") customerId: number,
+    @Query("type") type?: PetEnum,
+    @Query("name") name?: string,
+  ): Promise<Pet[]> {
+    return await this.petsService.getPetListByCustomerId(
+      customerId,
+      type,
+      name,
+    );
   }
 
   @Get("fetch-pet")

@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { BaseService } from "src/base/base.service";
 import { Pet } from "src/entities/pet_service/pet.entity";
+import { PetEnum } from "src/enum";
 import { PetsRepository } from "./pets.repository";
 
 @Injectable()
@@ -9,13 +10,30 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
     super(petsRepository);
   }
 
-  getPetListByCustomerId(customerId: number): Promise<Pet[]> {
+  getPetListByCustomerId(
+    customerId: number,
+    type?: PetEnum,
+    name?: string,
+  ): Promise<Pet[]> {
+    let statusString = "";
+    if (!type) {
+      statusString = "pet.status != 'DELETED'";
+    } else {
+      statusString = `pet.status = '${type}'`;
+    }
+    if (!name) {
+      name = "%%";
+    } else {
+      name = `%${name}%`;
+    }
     return this.petsRepository
       .createQueryBuilder("pet")
       .where(
-        "pet.status != 'DELETED' and pet_owners.customerId = :customerId and pet_owners.isCurrentOwner = true",
+        statusString +
+          " and pet_owners.customerId = :customerId and pet_owners.isCurrentOwner = true and pet.name LIKE :name",
         {
           customerId,
+          name,
         },
       )
       .orderBy("pet.id", "DESC")
