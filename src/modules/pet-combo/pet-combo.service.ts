@@ -17,7 +17,13 @@ export class PetCombosService extends BaseService<
       where: {
         id: id,
       },
-      relations: ["petComboServices", "petComboServices.service"],
+      relations: [
+        "petComboServices",
+        "petComboServices.service",
+        "pet",
+        "branch",
+        "combo",
+      ],
     });
   }
 

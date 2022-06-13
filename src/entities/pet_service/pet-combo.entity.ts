@@ -61,7 +61,7 @@ export class PetCombo extends BaseEntity {
 
   @OneToMany(
     () => PetComboService,
-    (petComboService) => petComboService.service,
+    (petComboService) => petComboService.petCombo,
     {
       cascade: true,
     },
