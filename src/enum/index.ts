@@ -91,6 +91,12 @@ export enum PaymentOrderMethodEnum {
   VNPAY = "VNPAY",
 }
 
+export enum HealthPetRecordEnum {
+  VACCINE = "VACCINE",
+  HELMINTHIC = "HELMINTHIC",
+  TICKS = "TICKS",
+}
+
 export enum TicketStatusEnum {
   CREATED = "CREATED",
   CANCELED = "CANCELED",

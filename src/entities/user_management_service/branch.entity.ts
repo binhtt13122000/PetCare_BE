@@ -18,7 +18,7 @@ import { Order } from "../order_service/order.entity";
 import { Post } from "../transaction_service/post.entity";
 import { BreedingTransaction } from "../transaction_service/breeding-transaction.entity";
 import { HealthRecord } from "../health_service/health-record.entity";
-import { VaccinePetRecord } from "src/entities/pet_service/vaccine-pet-record.entity";
+import { HealthPetRecord } from "src/entities/pet_service/health-pet-record.entity";
 import { Ticket } from "../service/ticket.entity";
 import { Promotion } from "../service/promotion.entity";
 
@@ -82,10 +82,10 @@ export class Branch extends BaseEntity {
   tickets: Ticket[];
 
   @OneToMany(
-    () => VaccinePetRecord,
+    () => HealthPetRecord,
     (vaccinePetRecord) => vaccinePetRecord.branch,
   )
-  vaccinePetRecords: VaccinePetRecord[];
+  healthPetRecords: HealthPetRecord[];
 
   @OneToMany(
     () => BreedingTransaction,

@@ -16,6 +16,10 @@ export class PetCombosService extends BaseService<
     return this.petComboRepository.find({
       where: {
         petId,
+        isDraft: false,
+      },
+      order: {
+        registerTime: "DESC",
       },
       relations: ["pet", "branch", "combo"],
     });

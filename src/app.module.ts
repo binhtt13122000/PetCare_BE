@@ -9,7 +9,6 @@ import { ResponseDataInterceptor } from "./interceptors/response-data.intercepto
 import { AuthModule } from "./modules/auth/auth.module";
 import { UserModule } from "./modules/users/user.module";
 import { VaccineModule } from "./modules/vaccine/vaccine.module";
-import { PapersModule } from "./modules/papers/papers.module";
 import { PetsModule } from "./modules/pets/pets.module";
 import { SharedModule } from "./shared/shared.module";
 import { PostsModule } from "./modules/posts/posts.module";
@@ -25,7 +24,7 @@ import { BranchesModule } from "./modules/branches/branches.module";
 import { BreedsModule } from "./modules/breeds/breeds.module";
 import { SpeciesModule } from "./modules/species/species.module";
 import { TransactionFeesModule } from "./modules/transaction-fees/transaction-fees.module";
-import { VaccinePetRecordsModule } from "./modules/vaccine-pet-records/vaccine-pet-records.module";
+import { HealthPetRecordsModule } from "./modules/health-pet-records/health-pet-records.module";
 import { PromotionsModule } from "./modules/promotions/promotions.module";
 import { ServiceFeesModule } from "./modules/service-fees/service-fees.module";
 import { MessagesModule } from "./modules/messages/messages.module";
@@ -51,8 +50,7 @@ const mongoConnectionString = configService.getMongoConnectionString();
     AuthModule,
     UserModule,
     VaccineModule,
-    VaccinePetRecordsModule,
-    PapersModule,
+    HealthPetRecordsModule,
     PetsModule,
     SharedModule,
     PostsModule,

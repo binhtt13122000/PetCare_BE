@@ -6,11 +6,10 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Paper } from "./paper.entity";
 import { PetOwner } from "./pet-owner.entity";
 import { BaseEntity } from "typeorm";
 import { Breed } from "./breed.entity";
-import { VaccinePetRecord } from "./vaccine-pet-record.entity";
+import { HealthPetRecord } from "./health-pet-record.entity";
 import { IsString, IsBoolean } from "class-validator";
 import { HealthRecord } from "../health_service/health-record.entity";
 import { Post } from "../transaction_service/post.entity";
@@ -65,11 +64,8 @@ export class Pet extends BaseEntity {
   @OneToMany(() => PetCombo, (petCombo) => petCombo.pet, {})
   petCombos: PetCombo[];
 
-  @OneToMany(() => Paper, (paper) => paper.pet)
-  papers: Paper[];
-
-  @OneToMany(() => VaccinePetRecord, (vaccinePetRecord) => vaccinePetRecord.pet)
-  vaccinePetRecords: VaccinePetRecord[];
+  @OneToMany(() => HealthPetRecord, (healthPetRecord) => healthPetRecord.pet)
+  healthPetRecords: HealthPetRecord[];
 
   @OneToMany(() => HealthRecord, (healthRecord) => healthRecord.pet)
   healthRecords: HealthRecord[];

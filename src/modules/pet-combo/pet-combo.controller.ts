@@ -113,7 +113,7 @@ export class PetComboController {
       const petCombo: Partial<PetCombo> = {
         registerTime: body.registerTime,
         isCompleted: false,
-        paymentMethod: PaymentOrderMethodEnum.CASH,
+        paymentMethod: body.paymentMethod,
         orderTotal: combo.price,
         point: body.point,
         petId: body.petId,

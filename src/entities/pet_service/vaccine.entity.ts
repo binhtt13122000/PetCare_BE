@@ -1,5 +1,5 @@
 import { IsString, IsBoolean } from "class-validator";
-import { VaccinePetRecord } from "./vaccine-pet-record.entity";
+import { HealthPetRecord } from "./health-pet-record.entity";
 import {
   BaseEntity,
   Column,
@@ -24,11 +24,8 @@ export class Vaccine extends BaseEntity {
   @Column({ type: "bool", default: true })
   @IsBoolean()
   isActive: boolean;
-  @OneToMany(
-    () => VaccinePetRecord,
-    (vaccinePetRecord) => vaccinePetRecord.vaccine,
-  )
-  vaccinePetRecords: VaccinePetRecord[];
+  @OneToMany(() => HealthPetRecord, (healthPetRecord) => healthPetRecord.pet)
+  healthPetRecords: HealthPetRecord[];
 
   constructor(partial: Partial<Vaccine>) {
     super();
