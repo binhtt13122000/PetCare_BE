@@ -76,7 +76,6 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
         relations: [
           "breed",
           "breed.species",
-          "papers",
           "petOwners",
           "petOwners.customer",
           "healthPetRecords",
