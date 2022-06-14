@@ -24,7 +24,7 @@ export class HealthPetRecordsService extends BaseService<
         petId: petId,
         type: type,
       },
-      relations: ["vaccine"],
+      relations: ["vaccine", "branch"],
     });
   }
 }
