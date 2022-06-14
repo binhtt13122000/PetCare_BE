@@ -80,27 +80,27 @@ export class ChatGateway {
             typeNotification = NotificationEnum.APPROVE_REQUEST;
           } else {
             bodyNotification = room.isSellerMessage
-              ? "Buyer have been canceled. See information details now.>>>>"
-              : "Seller have been rejected. See information details now.>>>>";
+              ? "Buyer have been rejected. See information details now.>>>>"
+              : "Seller have been canceled. See information details now.>>>>";
             titleNotification = room.isSellerMessage
-              ? "Canceled Request"
-              : "Rejected Request";
+              ? "Rejected Request"
+              : "Canceled Request";
             typeNotification = room.isSellerMessage
               ? NotificationEnum.CANCELED_REQUEST
               : NotificationEnum.REJECT_REQUEST;
           }
         }
-        if (titleNotification && bodyNotification && typeNotification) {
-          await this.notificationProducerService.sendMessage(
-            {
-              body: bodyNotification,
-              title: titleNotification,
-              type: typeNotification,
-              metadata: String(existedRoomInstance._id),
-            },
-            userInstance.id,
-          );
-        }
+      }
+      if (titleNotification && bodyNotification && typeNotification) {
+        await this.notificationProducerService.sendMessage(
+          {
+            body: bodyNotification,
+            title: titleNotification,
+            type: typeNotification,
+            metadata: String(existedRoomInstance._id),
+          },
+          userInstance.id,
+        );
       }
     }
     const createdMessage = await this.messageService.create({
