@@ -5,5 +5,8 @@ export class ChangeStatusPostDTO {
   id: number;
 
   @ApiProperty()
+  reasonReject?: string;
+
+  @ApiProperty()
   status: PostEnum;
 }

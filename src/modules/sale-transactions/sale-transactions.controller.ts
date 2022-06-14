@@ -21,6 +21,7 @@ import { UpdateSaleTransactionDTO } from "./dtos/update-sale-transaction.dto";
 import { PaymentQuery } from "src/common";
 import { ResponsePayment } from "../orders/dto/response-payment.dto";
 import {
+  NotificationEnum,
   PaymentOrderMethodEnum,
   PetEnum,
   PostEnum,
@@ -41,6 +42,8 @@ import { MessageEnum } from "src/schemas/message.schema";
 import { PetOwnerService } from "../pet-owner/pet-owner.service";
 import { PetOwner } from "src/entities/pet_service/pet-owner.entity";
 import { PetsService } from "../pets/pets.service";
+import { UserService } from "../users/user.service";
+import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
 
 @Controller("sale-transactions")
 @ApiTags("sale-transactions")
@@ -55,6 +58,8 @@ export class SaleTransactionsController {
     private readonly messageService: MessagesService,
     private readonly petOwnerService: PetOwnerService,
     private readonly petsService: PetsService,
+    private readonly userService: UserService,
+    private notificationProducerService: NotificationProducerService,
   ) {}
 
   @Get()
@@ -242,11 +247,19 @@ export class SaleTransactionsController {
           const buyer = await this.customerService.findById(
             saleTransaction.buyerId,
           );
+          const seller = await this.customerService.findById(
+            saleTransaction.sellerId,
+          );
           const pet = await this.petsService.findById(saleTransaction.petId);
           const post = await this.postService.findById(saleTransaction.postId);
           if (!buyer) {
             throw new HttpException("not found", HttpStatus.NOT_FOUND);
           }
+          if (!seller) {
+            throw new HttpException("not found", HttpStatus.NOT_FOUND);
+          }
+          const accountSellerInstance =
+            await this.userService.findByPhoneNumber(seller.phoneNumber || "");
           if (saleTransaction.status !== SaleTransactionEnum.CREATED) {
             throw new HttpException("status error", HttpStatus.BAD_REQUEST);
           }
@@ -306,6 +319,15 @@ export class SaleTransactionsController {
               petId: saleTransaction.petId,
               date: updateSaleTransactionDTO.transactionTime,
             }),
+          );
+          await this.notificationProducerService.sendMessage(
+            {
+              body: "Buyer has successfully paid. See information details now.>>>>",
+              title: "Successful Sale Transaction.",
+              type: NotificationEnum.SUCCESS_SALE_TRANSACTION,
+              metadata: String(saleTransaction.id),
+            },
+            accountSellerInstance.id,
           );
           this.chatGateway.server
             .in(room._id.valueOf())

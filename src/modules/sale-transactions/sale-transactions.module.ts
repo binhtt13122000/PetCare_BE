@@ -10,6 +10,8 @@ import { ChatModule } from "../chat/chat.module";
 import { MessagesModule } from "../messages/messages.module";
 import { PetOwnerModule } from "../pet-owner/pet-owner.module";
 import { PetsModule } from "../pets/pets.module";
+import { UserModule } from "../users/user.module";
+import { SharedModule } from "src/shared/shared.module";
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { PetsModule } from "../pets/pets.module";
     MessagesModule,
     PetOwnerModule,
     PetsModule,
+    UserModule,
+    SharedModule,
   ],
   providers: [SaleTransactionsService],
   controllers: [SaleTransactionsController],

@@ -5,6 +5,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  NotFoundException,
   Param,
   Patch,
   Post,
@@ -13,7 +14,10 @@ import {
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { Ticket } from "src/entities/service/ticket.entity";
-import { TicketStatusEnum } from "src/enum";
+import { NotificationEnum, TicketStatusEnum } from "src/enum";
+import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
+import { CustomerService } from "../customer/customer.service";
+import { UserService } from "../users/user.service";
 import ChangeStatusTicketDTO from "./dtos/change-status-ticket.dto";
 import { CreateTicketDTO } from "./dtos/create-ticket.dto";
 import { TicketsService } from "./tickets.service";
@@ -21,7 +25,12 @@ import { TicketsService } from "./tickets.service";
 @Controller("tickets")
 @ApiTags("tickets")
 export class TicketsController {
-  constructor(private readonly ticketsService: TicketsService) {}
+  constructor(
+    private readonly ticketsService: TicketsService,
+    private readonly customerService: CustomerService,
+    private readonly userService: UserService,
+    private notificationProducerService: NotificationProducerService,
+  ) {}
 
   @Get()
   async getTickets(@Query("branchId") branchId: number): Promise<Ticket[]> {
@@ -52,7 +61,33 @@ export class TicketsController {
   @Post()
   async create(@Body() body: CreateTicketDTO): Promise<Ticket> {
     try {
-      return this.ticketsService.store(body);
+      const customerInstance = await this.customerService.findById(
+        body.customerId,
+      );
+      if (!customerInstance) {
+        throw new NotFoundException("Can not found customer!");
+      }
+      const userInstance = await this.userService.findByPhoneNumber(
+        customerInstance.phoneNumber || "",
+      );
+      let bodyNotification = "",
+        titleNotification = "",
+        typeNotification = "";
+      bodyNotification =
+        "Your ticket has been successfully created. See information details now.>>>>";
+      titleNotification = "Created Ticket";
+      typeNotification = NotificationEnum.CREATED_TICKET;
+      const ticketInstance = await this.ticketsService.store(body);
+      await this.notificationProducerService.sendMessage(
+        {
+          body: bodyNotification,
+          title: titleNotification,
+          type: typeNotification,
+          metadata: String(ticketInstance.id),
+        },
+        userInstance.id,
+      );
+      return ticketInstance;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

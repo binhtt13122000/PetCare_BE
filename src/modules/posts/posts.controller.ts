@@ -22,7 +22,7 @@ import { Post as PostEntity } from "src/entities/transaction_service/post.entity
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { Media } from "src/entities/transaction_service/media.entity";
 import { uploadService } from "src/external/uploadFile.service";
-import { NotificationEnum, PetEnum } from "src/enum";
+import { NotificationEnum, PetEnum, PostEnum } from "src/enum";
 import { UpdatePostDTO } from "./dto/update-post.dto";
 import { PageDto } from "src/common/page.dto";
 import { PostsOptionDto } from "./dto/post-option.dto";
@@ -119,12 +119,27 @@ export class PostsController {
       throw new NotFoundException("Can not found user!");
     }
     instance.status = body.status;
+    let bodyNotification = "",
+      titleNotification = "",
+      typeNotification = "";
+    if (body.status === PostEnum.PUBLISHED) {
+      bodyNotification =
+        "Your post have been verified. See information details now.>>>>";
+      titleNotification = "Verified your post";
+      typeNotification = NotificationEnum.CONFIRM_POST;
+    } else if (body.status === PostEnum.REJECTED) {
+      bodyNotification =
+        "Your post have been rejected. See information details now.>>>>";
+      titleNotification = "Rejected your post!";
+      instance.reasonReject = body.reasonReject;
+      typeNotification = NotificationEnum.REJECT_POST;
+    }
     const postChanged = await instance.save();
     await this.notificationProducerService.sendMessage(
       {
-        body: "Your post have been published. See information details now.>>>>",
-        title: "Notification about Published Post",
-        type: NotificationEnum.CONFIRM_POST,
+        body: bodyNotification,
+        title: titleNotification,
+        type: typeNotification,
         metadata: String(postChanged.id),
       },
       accountByPhoneNumber.id,
