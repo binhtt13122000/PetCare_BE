@@ -12,6 +12,7 @@ import {
   UploadedFiles,
   UseInterceptors,
   NotFoundException,
+  Patch,
 } from "@nestjs/common";
 import { PostsService } from "./posts.service";
 import { PetsService } from "../pets/pets.service";
@@ -21,13 +22,16 @@ import { Post as PostEntity } from "src/entities/transaction_service/post.entity
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { Media } from "src/entities/transaction_service/media.entity";
 import { uploadService } from "src/external/uploadFile.service";
-import { PetEnum } from "src/enum";
+import { NotificationEnum, PetEnum } from "src/enum";
 import { UpdatePostDTO } from "./dto/update-post.dto";
 import { PageDto } from "src/common/page.dto";
 import { PostsOptionDto } from "./dto/post-option.dto";
 import { MediasService } from "../medias/medias.service";
 import { FileProducerService } from "src/shared/file/file.producer.service";
 import { EntityId } from "typeorm/repository/EntityId";
+import { ChangeStatusPostDTO } from "./dto/change-status-post.dto";
+import { UserService } from "../users/user.service";
+import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
 @ApiTags("posts")
 @Controller("posts")
 export class PostsController {
@@ -35,7 +39,9 @@ export class PostsController {
     private readonly postsService: PostsService,
     private readonly petsService: PetsService,
     private readonly mediasService: MediasService,
+    private readonly userService: UserService,
     private fileProducerService: FileProducerService,
+    private notificationProducerService: NotificationProducerService,
   ) {}
 
   @Post()
@@ -96,6 +102,34 @@ export class PostsController {
     instance.id = Number(body.id);
     instance.medias = [...instance.medias, ...medias];
     return instance.save();
+  }
+
+  @Patch()
+  async changeStatusPost(
+    @Body() body: ChangeStatusPostDTO,
+  ): Promise<PostEntity> {
+    const instance = await this.postsService.getOneWithMedias(body.id);
+    if (!instance) {
+      throw new NotFoundException("Can not found post!");
+    }
+    const accountByPhoneNumber = await this.userService.findByPhoneNumber(
+      instance.customer.phoneNumber || "",
+    );
+    if (!accountByPhoneNumber) {
+      throw new NotFoundException("Can not found user!");
+    }
+    instance.status = body.status;
+    const postChanged = await instance.save();
+    await this.notificationProducerService.sendMessage(
+      {
+        body: "Your post have been published. See information details now.>>>>",
+        title: "Notification about Published Post",
+        type: NotificationEnum.CONFIRM_POST,
+        metadata: String(postChanged.id),
+      },
+      accountByPhoneNumber.id,
+    );
+    return postChanged;
   }
 
   @Get("/fetch-post")

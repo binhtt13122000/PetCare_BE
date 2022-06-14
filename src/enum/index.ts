@@ -120,3 +120,7 @@ export enum RoomStatusEnum {
   EXPIRED = "EXPIRED",
   REQUESTED = "REQUESTED",
 }
+
+export enum NotificationEnum {
+  CONFIRM_POST = "CONFIRM_POST",
+}
