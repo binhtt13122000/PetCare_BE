@@ -14,6 +14,7 @@ import { MessageEnum } from "src/schemas/message.schema";
 import { UserService } from "../users/user.service";
 import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
 import { CustomerService } from "../customer/customer.service";
+import { PostsService } from "../posts/posts.service";
 
 @WebSocketGateway({
   cors: {
@@ -26,6 +27,7 @@ export class ChatGateway {
   constructor(
     private readonly messageService: MessagesService,
     private readonly roomService: RoomsService,
+    private readonly postService: PostsService,
     private readonly userService: UserService,
     private readonly customerService: CustomerService,
     private readonly notificationProducerService: NotificationProducerService,
@@ -118,6 +120,9 @@ export class ChatGateway {
   @SubscribeMessage("chatToServer")
   async handleMessage(client: Socket, message: MessageDTO): Promise<void> {
     if (!message.room) {
+      const postInstance = await this.postService.findById(
+        message.postId || "",
+      );
       const createdRoom = await this.roomService.create({
         createdTime: message.createdTime,
         isSellerMessage: false,
@@ -137,6 +142,15 @@ export class ChatGateway {
       this.server
         .in(createdRoom._id.valueOf())
         .emit("chatToClient", createdMessage);
+      await this.notificationProducerService.sendMessage(
+        {
+          body: `${postInstance.title} - ${postInstance.provisionalTotal}`,
+          title: "A New Message",
+          type: NotificationEnum.NEW_ROOM_CREATED,
+          metadata: String(createdRoom._id),
+        },
+        message.sellerId,
+      );
     } else {
       const room = await this.roomService.findById(message.room);
       if (!room) {
