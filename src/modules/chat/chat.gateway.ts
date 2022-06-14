@@ -80,8 +80,8 @@ export class ChatGateway {
             typeNotification = NotificationEnum.APPROVE_REQUEST;
           } else {
             bodyNotification = room.isSellerMessage
-              ? "Buyer have been rejected. See information details now.>>>>"
-              : "Seller have been canceled. See information details now.>>>>";
+              ? "Seller have been rejected. See information details now.>>>>"
+              : "Buyer have been canceled. See information details now.>>>>";
             titleNotification = room.isSellerMessage
               ? "Rejected Request"
               : "Canceled Request";
