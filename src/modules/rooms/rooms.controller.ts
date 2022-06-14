@@ -55,7 +55,7 @@ export class RoomsController {
             bodyNotification =
               "You have an updated request. See information details now.>>>>";
             titleNotification = "Update Request";
-            typeNotification = NotificationEnum.NEW_REQUEST;
+            typeNotification = NotificationEnum.UPDATE_REQUEST;
           } else if (body.status === RoomStatusEnum.CREATED) {
             if (body.transactionId) {
               bodyNotification =
