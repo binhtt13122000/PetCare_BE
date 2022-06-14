@@ -123,6 +123,12 @@ export class ChatGateway {
       const postInstance = await this.postService.findById(
         message.postId || "",
       );
+      const sellerInstance = await this.customerService.findById(
+        message.sellerId,
+      );
+      const accountSellerInstance = await this.userService.findByPhoneNumber(
+        sellerInstance.phoneNumber,
+      );
       const createdRoom = await this.roomService.create({
         createdTime: message.createdTime,
         isSellerMessage: false,
@@ -142,6 +148,7 @@ export class ChatGateway {
       this.server
         .in(createdRoom._id.valueOf())
         .emit("chatToClient", createdMessage);
+
       await this.notificationProducerService.sendMessage(
         {
           body: `${postInstance.title} - ${postInstance.provisionalTotal}`,
@@ -149,7 +156,7 @@ export class ChatGateway {
           type: NotificationEnum.NEW_ROOM_CREATED,
           metadata: String(createdRoom._id),
         },
-        message.sellerId,
+        accountSellerInstance.id,
       );
     } else {
       const room = await this.roomService.findById(message.room);
