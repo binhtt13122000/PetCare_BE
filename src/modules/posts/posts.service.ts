@@ -30,7 +30,7 @@ export class PostsService extends BaseService<Post, PostsRepository> {
   getOneWithMedias(id: number): Promise<Post> {
     return this.postsRepository.findOne({
       where: { id: id },
-      relations: ["medias"],
+      relations: ["medias", "customer"],
     });
   }
 

@@ -11,7 +11,11 @@ import {
 import { ApiTags } from "@nestjs/swagger";
 import mongoose from "mongoose";
 import { IdParams } from "src/common";
+import { NotificationEnum, RoomStatusEnum } from "src/enum";
 import { Room } from "src/schemas/room.schemas";
+import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
+import { CustomerService } from "../customer/customer.service";
+import { UserService } from "../users/user.service";
 import { RoomsService } from "./rooms.service";
 
 @Controller("rooms")

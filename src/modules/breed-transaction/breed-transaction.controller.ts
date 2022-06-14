@@ -24,6 +24,7 @@ import { BreedTransactionPayment } from "./dtos/breed-transaction-payment.dto";
 import { CreateBreedTransactionDTO } from "./dtos/create-breed-transaction.dto";
 import {
   BreedingTransactionEnum,
+  NotificationEnum,
   PaymentOrderMethodEnum,
   PostEnum,
   RoomStatusEnum,
@@ -39,6 +40,8 @@ import { MessagesService } from "../messages/messages.service";
 import { MessageEnum } from "src/schemas/message.schema";
 import { UpdateBreedTransactionDTO } from "./dtos/update-breed-transaction.dto";
 import { PetsService } from "../pets/pets.service";
+import { UserService } from "../users/user.service";
+import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
 
 @Controller("breed-transactions")
 @ApiTags("breed-transactions")
@@ -52,6 +55,8 @@ export class BreedTransactionController {
     private readonly roomService: RoomsService,
     private readonly messageService: MessagesService,
     private readonly petsService: PetsService,
+    private readonly userService: UserService,
+    private readonly notificationProducerService: NotificationProducerService,
   ) {}
 
   @Get()
@@ -265,6 +270,10 @@ export class BreedTransactionController {
           if (!ownerPetFemale) {
             throw new HttpException("not found", HttpStatus.NOT_FOUND);
           }
+          const accountOwnerPetMaleInstance =
+            await this.userService.findByPhoneNumber(
+              ownerPetMale.phoneNumber || "",
+            );
           if (breedTransaction.status !== BreedingTransactionEnum.CREATED) {
             throw new HttpException("status error", HttpStatus.BAD_REQUEST);
           }
@@ -306,6 +315,15 @@ export class BreedTransactionController {
             type: MessageEnum.NORMAL,
             room: room._id,
           });
+          await this.notificationProducerService.sendMessage(
+            {
+              body: "Buyer has successfully paid. See information details now.>>>>",
+              title: "Successful Breeding Transaction.",
+              type: NotificationEnum.SUCCESS_BREEDING_TRANSACTION,
+              metadata: String(breedTransaction.id),
+            },
+            accountOwnerPetMaleInstance.id,
+          );
           this.chatGateway.server
             .in(room._id.valueOf())
             .emit("updatedRoom", updatedRoom);

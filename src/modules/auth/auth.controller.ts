@@ -12,6 +12,7 @@ import {
   Response,
   Put,
   NotFoundException,
+  Query,
 } from "@nestjs/common";
 import * as firebase from "firebase-admin";
 import { AuthService } from "./auth.service";
@@ -62,13 +63,13 @@ export class AuthController {
   ) {}
 
   @Post("demo-noti")
-  async sendNoti(): Promise<string> {
+  async sendNoti(@Query("userId") userId: number): Promise<string> {
     await this.notificationProducerService.sendMessage(
       {
         body: "Hello",
         title: "Hello",
       },
-      0,
+      userId,
     );
     return "ok";
   }

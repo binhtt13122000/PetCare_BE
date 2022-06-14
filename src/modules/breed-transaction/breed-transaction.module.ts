@@ -9,6 +9,8 @@ import { ChatModule } from "../chat/chat.module";
 import { RoomsModule } from "../rooms/rooms.module";
 import { MessagesModule } from "../messages/messages.module";
 import { PetsModule } from "../pets/pets.module";
+import { UserModule } from "../users/user.module";
+import { SharedModule } from "src/shared/shared.module";
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { PetsModule } from "../pets/pets.module";
     RoomsModule,
     MessagesModule,
     PetsModule,
+    UserModule,
+    SharedModule,
   ],
   providers: [BreedTransactionService],
   controllers: [BreedTransactionController],
