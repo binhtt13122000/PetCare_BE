@@ -86,8 +86,8 @@ export class ChatGateway {
               ? "Rejected Request"
               : "Canceled Request";
             typeNotification = room.isSellerMessage
-              ? NotificationEnum.CANCELED_REQUEST
-              : NotificationEnum.REJECT_REQUEST;
+              ? NotificationEnum.REJECT_REQUEST
+              : NotificationEnum.CANCELED_REQUEST;
           }
         }
       }
