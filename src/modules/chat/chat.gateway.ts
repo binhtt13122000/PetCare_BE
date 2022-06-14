@@ -7,10 +7,13 @@ import { Socket, Server } from "socket.io";
 import { MessagesService } from "../messages/messages.service";
 import { RoomsService } from "../rooms/rooms.service";
 import { MessageDTO } from "./message.dto";
-import { RoomStatusEnum } from "src/enum";
+import { NotificationEnum, RoomStatusEnum } from "src/enum";
 import { Room } from "src/schemas/room.schemas";
 import { NotFoundException } from "@nestjs/common";
 import { MessageEnum } from "src/schemas/message.schema";
+import { UserService } from "../users/user.service";
+import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
+import { CustomerService } from "../customer/customer.service";
 
 @WebSocketGateway({
   cors: {
@@ -23,6 +26,9 @@ export class ChatGateway {
   constructor(
     private readonly messageService: MessagesService,
     private readonly roomService: RoomsService,
+    private readonly userService: UserService,
+    private readonly customerService: CustomerService,
+    private readonly notificationProducerService: NotificationProducerService,
   ) {}
 
   @SubscribeMessage("joinRoom")
@@ -40,7 +46,63 @@ export class ChatGateway {
     client: Socket,
     room: Room & { message: string },
   ): Promise<void> {
+    const existedRoomInstance = await this.roomService.findById(room._id);
     const updatedRoom = await this.roomService.updateRoom(room);
+    const customerInstance = await this.customerService.findById(
+      room.isSellerMessage ? room.buyerId : room.sellerId,
+    );
+    const userInstance = await this.userService.findByPhoneNumber(
+      customerInstance.phoneNumber || "",
+    );
+    let bodyNotification = "",
+      titleNotification = "",
+      typeNotification = "";
+    if (existedRoomInstance && userInstance) {
+      if (
+        existedRoomInstance.status === RoomStatusEnum.CREATED &&
+        room.status === RoomStatusEnum.REQUESTED
+      ) {
+        bodyNotification =
+          "You have a new request. See information details now.>>>>";
+        titleNotification = "New Request";
+        typeNotification = NotificationEnum.NEW_REQUEST;
+      } else if (existedRoomInstance.status === RoomStatusEnum.REQUESTED) {
+        if (room.status === RoomStatusEnum.REQUESTED) {
+          bodyNotification =
+            "You have an updated request. See information details now.>>>>";
+          titleNotification = "Update Request";
+          typeNotification = NotificationEnum.UPDATE_REQUEST;
+        } else if (room.status === RoomStatusEnum.CREATED) {
+          if (room.transactionId) {
+            bodyNotification =
+              "Seller have been approved your request. See information details now.>>>>>";
+            titleNotification = "Approved Your Request";
+            typeNotification = NotificationEnum.APPROVE_REQUEST;
+          } else {
+            bodyNotification = room.isSellerMessage
+              ? "Buyer have been canceled. See information details now.>>>>"
+              : "Seller have been rejected. See information details now.>>>>";
+            titleNotification = room.isSellerMessage
+              ? "Canceled Request"
+              : "Rejected Request";
+            typeNotification = room.isSellerMessage
+              ? NotificationEnum.CANCELED_REQUEST
+              : NotificationEnum.REJECT_REQUEST;
+          }
+        }
+        if (titleNotification && bodyNotification && typeNotification) {
+          await this.notificationProducerService.sendMessage(
+            {
+              body: bodyNotification,
+              title: titleNotification,
+              type: typeNotification,
+              metadata: String(existedRoomInstance._id),
+            },
+            userInstance.id,
+          );
+        }
+      }
+    }
     const createdMessage = await this.messageService.create({
       content: room.message,
       createdTime: room.newestMessageTime,

@@ -270,9 +270,9 @@ export class BreedTransactionController {
           if (!ownerPetFemale) {
             throw new HttpException("not found", HttpStatus.NOT_FOUND);
           }
-          const accountOwnerPetFemaleInstance =
+          const accountOwnerPetMaleInstance =
             await this.userService.findByPhoneNumber(
-              ownerPetFemale.phoneNumber || "",
+              ownerPetMale.phoneNumber || "",
             );
           if (breedTransaction.status !== BreedingTransactionEnum.CREATED) {
             throw new HttpException("status error", HttpStatus.BAD_REQUEST);
@@ -322,7 +322,7 @@ export class BreedTransactionController {
               type: NotificationEnum.SUCCESS_BREEDING_TRANSACTION,
               metadata: String(breedTransaction.id),
             },
-            accountOwnerPetFemaleInstance.id,
+            accountOwnerPetMaleInstance.id,
           );
           this.chatGateway.server
             .in(room._id.valueOf())
