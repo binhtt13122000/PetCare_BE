@@ -6,6 +6,7 @@ export class SendNotificationService {
     fcmTokens: string[],
     msg: Message,
   ): Promise<BatchResponse> {
+    const { metadata, type, ...rest } = msg;
     try {
       const res = await getMessaging().sendMulticast({
         webpush: {
@@ -21,12 +22,18 @@ export class SendNotificationService {
             ],
             data: {
               link: msg.link,
+              metadata: metadata,
+              type: type,
             },
           },
         },
         android: {
           notification: {
-            ...msg,
+            ...rest,
+          },
+          data: {
+            metadata,
+            type,
           },
         },
         tokens: [...fcmTokens],

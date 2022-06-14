@@ -29,6 +29,8 @@ export interface Message {
   body: string;
   requireInteraction?: boolean;
   link?: string;
+  type?: string;
+  metadata?: string;
 }
 
 export const DEFAULT_PASSWORD = "123456";
