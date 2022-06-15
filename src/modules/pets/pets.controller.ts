@@ -11,6 +11,7 @@ import {
   UseInterceptors,
   Param,
   Query,
+  NotFoundException,
 } from "@nestjs/common";
 import { PetsService } from "./pets.service";
 import { CreatePetDTO } from "./dto/create-pet.dto";
@@ -145,10 +146,13 @@ export class PetsController {
     }
   }
 
-  @Delete()
-  async delete(id: number): Promise<Pet> {
+  @Delete(":id")
+  async delete(@Param("id") id: number): Promise<Pet> {
     try {
       const pet = await this.petsService.findById(id);
+      if (!pet) {
+        throw new NotFoundException("not found");
+      }
       if (pet.status === PetEnum.IN_POST || pet.status === PetEnum.DELETED) {
         throw Error("Cannot delete this pet");
       }
