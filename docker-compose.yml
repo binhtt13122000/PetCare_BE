@@ -74,6 +74,7 @@ services:
       - VNPAY_URL
       - VNPAY_VERSION
       - MONGO_CONNECTION_STRING
+      - BRANCH_ROOT_URL
   redis-server:
     image: redis
     command: redis-server --appendonly yes

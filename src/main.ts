@@ -17,13 +17,18 @@ async function bootstrap(): Promise<void> {
   const API_PORT = configService.getPort();
   const API_ROOT_URL = configService.getApiRootURL();
   const WEB_ADMIN_ROOT_URL = configService.getWebAdminRootURL();
+  const BRANCH_ROOT_URL = configService.getBranchRootUrl();
   const HASURA_ROOT_URL = configService.getHasuraUrl();
   const BUCKET = configService.getBucket();
   const API_PREFIX = configService.getPrefix();
 
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: [`${WEB_ADMIN_ROOT_URL}`],
+    origin: [
+      `${WEB_ADMIN_ROOT_URL}`,
+      `${BRANCH_ROOT_URL}`,
+      "http://localhost:3000",
+    ],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   });
   app.setGlobalPrefix(API_PREFIX);
