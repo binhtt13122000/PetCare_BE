@@ -23,6 +23,13 @@ export class LoginBodyWithPasswordDTO {
   role: RoleEnum;
 }
 
+export class LogoutDTO {
+  @ApiProperty({ required: true })
+  id: number;
+  @ApiProperty({ required: true, description: "device's FCM token" })
+  fcmToken: string;
+}
+
 export class LoginResponseDTO {
   @ApiProperty()
   user?: Partial<Account>;
@@ -128,4 +135,8 @@ export class ConvertAuthPayloadDTO {
 export type Tokens = {
   accessToken: string;
   refreshToken: string;
+};
+
+export type LogoutResponse = {
+  status: string;
 };
