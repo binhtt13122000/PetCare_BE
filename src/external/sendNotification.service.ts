@@ -10,6 +10,10 @@ export class SendNotificationService {
     try {
       const res = await getMessaging().sendMulticast({
         webpush: {
+          data: {
+            metadata,
+            type,
+          },
           notification: {
             ...msg,
             icon: "https://sc04.alicdn.com/kf/Hb9c51d5d61074e2d8d0f9c4b3fe2df0bw.jpg_Q55.jpg",

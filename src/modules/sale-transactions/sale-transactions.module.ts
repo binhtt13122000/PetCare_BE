@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { SaleTransactionsService } from "./sale-transactions.service";
 import { SaleTransactionsController } from "./sale-transactions.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -12,9 +12,11 @@ import { PetOwnerModule } from "../pet-owner/pet-owner.module";
 import { PetsModule } from "../pets/pets.module";
 import { UserModule } from "../users/user.module";
 import { SharedModule } from "src/shared/shared.module";
+import { BranchesModule } from "../branches/branches.module";
 
 @Module({
   imports: [
+    forwardRef(() => BranchesModule),
     TypeOrmModule.forFeature([SaleTransactionsRepository]),
     CustomerModule,
     PostsModule,

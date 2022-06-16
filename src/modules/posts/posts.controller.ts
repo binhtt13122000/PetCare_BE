@@ -32,6 +32,7 @@ import { EntityId } from "typeorm/repository/EntityId";
 import { ChangeStatusPostDTO } from "./dto/change-status-post.dto";
 import { UserService } from "../users/user.service";
 import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
+import { BranchesService } from "../branches/branches.service";
 @ApiTags("posts")
 @Controller("posts")
 export class PostsController {
@@ -40,6 +41,7 @@ export class PostsController {
     private readonly petsService: PetsService,
     private readonly mediasService: MediasService,
     private readonly userService: UserService,
+    private readonly branchService: BranchesService,
     private fileProducerService: FileProducerService,
     private notificationProducerService: NotificationProducerService,
   ) {}
@@ -52,6 +54,13 @@ export class PostsController {
     files: Array<Express.Multer.File>,
     @Body() body: CreatePostDTO,
   ): Promise<PostEntity> {
+    const branchInstance = await this.branchService.findById(body.branchId);
+    if (!branchInstance) {
+      throw new NotFoundException("Can not found branch!");
+    }
+    const accountBranchInstance = await this.userService.findByPhoneNumber(
+      branchInstance.phoneNumber || "",
+    );
     const medias: Media[] = await Promise.all(
       files?.map(async (value) => {
         const { url, type } = await uploadService.uploadFile(value);
@@ -65,7 +74,19 @@ export class PostsController {
     const pet = await this.petsService.findById(body.petId);
     pet.status = PetEnum.IN_POST;
     await this.petsService.update(body.petId, pet);
-    return await this.postsService.store(new PostEntity({ ...body, medias }));
+    const postCreated = await this.postsService.store(
+      new PostEntity({ ...body, medias }),
+    );
+    await this.notificationProducerService.sendMessage(
+      {
+        body: "Your branch has a new post registered.",
+        title: "New Post",
+        type: NotificationEnum.NEW_POST,
+        metadata: String(postCreated.id),
+      },
+      accountBranchInstance.id,
+    );
+    return postCreated;
   }
 
   @Put()

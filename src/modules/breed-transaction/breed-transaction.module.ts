@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { BreedTransactionService } from "./breed-transaction.service";
 import { BreedTransactionController } from "./breed-transaction.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -11,9 +11,11 @@ import { MessagesModule } from "../messages/messages.module";
 import { PetsModule } from "../pets/pets.module";
 import { UserModule } from "../users/user.module";
 import { SharedModule } from "src/shared/shared.module";
+import { BranchesModule } from "../branches/branches.module";
 
 @Module({
   imports: [
+    forwardRef(() => BranchesModule),
     TypeOrmModule.forFeature([BreedTransactionRepository]),
     CustomerModule,
     PostsModule,

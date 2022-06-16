@@ -42,6 +42,7 @@ import { UpdateBreedTransactionDTO } from "./dtos/update-breed-transaction.dto";
 import { PetsService } from "../pets/pets.service";
 import { UserService } from "../users/user.service";
 import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
+import { BranchesService } from "../branches/branches.service";
 
 @Controller("breed-transactions")
 @ApiTags("breed-transactions")
@@ -56,6 +57,7 @@ export class BreedTransactionController {
     private readonly messageService: MessagesService,
     private readonly petsService: PetsService,
     private readonly userService: UserService,
+    private readonly branchService: BranchesService,
     private readonly notificationProducerService: NotificationProducerService,
   ) {}
 
@@ -270,9 +272,19 @@ export class BreedTransactionController {
           if (!ownerPetFemale) {
             throw new HttpException("not found", HttpStatus.NOT_FOUND);
           }
+          const branchInstance = await this.branchService.findById(
+            breedTransaction.branchId,
+          );
+          if (!branchInstance) {
+            throw new HttpException("not found", HttpStatus.NOT_FOUND);
+          }
           const accountOwnerPetMaleInstance =
             await this.userService.findByPhoneNumber(
               ownerPetMale.phoneNumber || "",
+            );
+          const accountBranchInstance =
+            await this.userService.findByPhoneNumber(
+              branchInstance.phoneNumber || "",
             );
           if (breedTransaction.status !== BreedingTransactionEnum.CREATED) {
             throw new HttpException("status error", HttpStatus.BAD_REQUEST);
@@ -323,6 +335,15 @@ export class BreedTransactionController {
               metadata: String(breedTransaction.id),
             },
             accountOwnerPetMaleInstance.id,
+          );
+          await this.notificationProducerService.sendMessage(
+            {
+              body: `Transaction number: ${breedTransaction.id} have been paid. See information details now.`,
+              title: "Successful Breeding Transaction.",
+              type: NotificationEnum.SUCCESS_BREEDING_TRANSACTION,
+              metadata: String(breedTransaction.id),
+            },
+            accountBranchInstance.id,
           );
           this.chatGateway.server
             .in(room._id.valueOf())
