@@ -40,6 +40,7 @@ import { PetComboModule } from "./modules/pet-combo/pet-combo.module";
 import { ComboServiceController } from "./modules/combo-services/combo-services.controller";
 import { ComboServiceModule } from "./modules/combo-services/combo-services.module";
 import { PetComboServicesModule } from "./modules/pet-combo-services/pet-combo-services.module";
+import { HttpModule } from "@nestjs/axios";
 
 const mongoConnectionString = configService.getMongoConnectionString();
 @Module({
@@ -81,6 +82,7 @@ const mongoConnectionString = configService.getMongoConnectionString();
     }),
     ComboServiceModule,
     PetComboServicesModule,
+    HttpModule,
   ],
   controllers: [AppController, ComboServiceController],
   providers: [
