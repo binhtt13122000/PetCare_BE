@@ -141,9 +141,6 @@ export class PostsController {
     }
     instance.status = body.status;
     instance.isVaccineInject = body.isVaccineInject;
-    if (body.status === PostEnum.REJECTED) {
-      instance.rejectTime = body.rejectTime;
-    }
     let bodyNotification = "",
       titleNotification = "",
       typeNotification = "";
@@ -157,6 +154,7 @@ export class PostsController {
         "Your post have been rejected. See information details now.>>>>";
       titleNotification = "Rejected your post!";
       instance.reasonReject = body.reasonReject;
+      instance.rejectTime = body.rejectTime;
       typeNotification = NotificationEnum.REJECT_POST;
     }
     const postChanged = await instance.save();
