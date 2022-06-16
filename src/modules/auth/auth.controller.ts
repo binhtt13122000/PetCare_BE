@@ -8,8 +8,6 @@ import {
   HttpCode,
   Param,
   Post,
-  Res,
-  Response,
   Put,
   NotFoundException,
   Query,
@@ -40,7 +38,6 @@ import {
   ApiTags,
   ApiConsumes,
 } from "@nestjs/swagger";
-import { IdParams } from "src/common";
 import { Account } from "src/entities/authenticate_service/account.entity";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { uploadService } from "src/external/uploadFile.service";
