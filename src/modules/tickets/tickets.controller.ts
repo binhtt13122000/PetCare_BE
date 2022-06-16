@@ -16,6 +16,7 @@ import { ApiTags } from "@nestjs/swagger";
 import { Ticket } from "src/entities/service/ticket.entity";
 import { NotificationEnum, TicketStatusEnum } from "src/enum";
 import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
+import { BranchesService } from "../branches/branches.service";
 import { CustomerService } from "../customer/customer.service";
 import { UserService } from "../users/user.service";
 import ChangeStatusTicketDTO from "./dtos/change-status-ticket.dto";
@@ -29,6 +30,7 @@ export class TicketsController {
     private readonly ticketsService: TicketsService,
     private readonly customerService: CustomerService,
     private readonly userService: UserService,
+    private readonly branchService: BranchesService,
     private notificationProducerService: NotificationProducerService,
   ) {}
 
@@ -64,28 +66,28 @@ export class TicketsController {
       const customerInstance = await this.customerService.findById(
         body.customerId,
       );
+      const branchInstance = await this.branchService.findById(body.branchId);
       if (!customerInstance) {
         throw new NotFoundException("Can not found customer!");
       }
-      const userInstance = await this.userService.findByPhoneNumber(
-        customerInstance.phoneNumber || "",
+      if (!branchInstance) {
+        throw new NotFoundException("Can not found branch!");
+      }
+
+      const accountBranchInstance = await this.userService.findByPhoneNumber(
+        branchInstance.phoneNumber || "",
       );
-      let bodyNotification = "",
-        titleNotification = "",
-        typeNotification = "";
-      bodyNotification =
-        "Your ticket has been successfully created. See information details now.>>>>";
-      titleNotification = "Created Ticket";
+      let typeNotification = "";
       typeNotification = NotificationEnum.CREATED_TICKET;
       const ticketInstance = await this.ticketsService.store(body);
       await this.notificationProducerService.sendMessage(
         {
-          body: bodyNotification,
-          title: titleNotification,
+          body: "Your branch has a new ticket registered.",
+          title: "New Ticket",
           type: typeNotification,
           metadata: String(ticketInstance.id),
         },
-        userInstance.id,
+        accountBranchInstance.id,
       );
       return ticketInstance;
     } catch (error) {
