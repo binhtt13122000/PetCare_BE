@@ -121,7 +121,10 @@ export class AuthController {
     @Param() param: CheckPhoneNumberExistDTO,
   ): Promise<boolean> {
     try {
-      const user = await this.authService.validateUser(param.phoneNumber);
+      const user = await this.authService.validateUserWithRole(
+        param.phoneNumber,
+        param.role,
+      );
       return !!user;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);

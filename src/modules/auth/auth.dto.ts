@@ -3,7 +3,7 @@ import { IsString } from "class-validator";
 import { Account } from "src/entities/authenticate_service/account.entity";
 import { Customer } from "src/entities/user_management_service/customer.entity";
 import { Branch } from "src/entities/user_management_service/branch.entity";
-import { GenderEnum, LoginStatusEnum, RoleEnum } from "src/enum";
+import { GenderEnum, LoginStatusEnum, RoleEnum, RoleIndexEnum } from "src/enum";
 
 export class LoginBodyWithPhoneNumberDTO {
   @ApiProperty({ required: true, description: "Access token from Firebase" })
@@ -111,6 +111,8 @@ export class ChangePasswordWithNotLoginDTO {
 export class CheckPhoneNumberExistDTO {
   @ApiProperty()
   phoneNumber: string;
+  @ApiProperty({ required: false, enum: RoleIndexEnum })
+  role?: RoleIndexEnum;
 }
 
 export class AuthPayloadDTO {
