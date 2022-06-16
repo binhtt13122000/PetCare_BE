@@ -21,12 +21,15 @@ export class AppService {
     this.logger.debug("Called when the current second is 45");
   }
 
-  @Cron("0 30 3 * * *", {
+  @Cron("0 5 4 * * *", {
     name: "checkExpiredTicket",
     timeZone: "Asia/Ho_Chi_Minh",
   })
   async handleCronCheckExpiredTicket(): Promise<void> {
-    const yesterday = new Date(new Date().getTime() - 24 * 60 * 60 * 1000);
+    //add 7 hours(server GMT +0, local GMT +7)
+    const yesterday = new Date(
+      new Date().getTime() + 7 * 60 * 60 * 1000 - 24 * 60 * 60 * 1000,
+    );
     const ticketList =
       await this.ticketService.getTicketAvailableInSpecificDate(
         yesterday.toDateString(),
