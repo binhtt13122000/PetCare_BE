@@ -66,4 +66,13 @@ export class TicketsService extends BaseService<Ticket, TicketsRepository> {
       relations: ["branch"],
     });
   }
+
+  getTicketAvailableInSpecificDate(date: string): Promise<Ticket[]> {
+    return this.ticketsRepository.find({
+      where: {
+        meetingDate: date,
+        status: TicketStatusEnum.CREATED,
+      },
+    });
+  }
 }
