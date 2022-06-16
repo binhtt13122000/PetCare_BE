@@ -269,7 +269,7 @@ export class SaleTransactionsController {
           const accountSellerInstance =
             await this.userService.findByPhoneNumber(seller.phoneNumber || "");
           const accountBranchInstance =
-            await this.branchService.findByPhoneNumber(
+            await this.userService.findByPhoneNumber(
               branchInstance.phoneNumber || "",
             );
           if (saleTransaction.status !== SaleTransactionEnum.CREATED) {
