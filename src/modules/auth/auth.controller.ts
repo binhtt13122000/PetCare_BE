@@ -21,7 +21,6 @@ import {
   AccessTokenDTO,
   ChangePasswordDTO,
   ChangePasswordWithNotLoginDTO,
-  CheckPhoneNumberExistDTO,
   LoginBodyWithPasswordDTO,
   LoginResponseDTO,
   ProfileResponseDTO,
@@ -37,6 +36,7 @@ import {
   ApiOperation,
   ApiTags,
   ApiConsumes,
+  ApiQuery,
 } from "@nestjs/swagger";
 import { IdParams } from "src/common";
 import { Account } from "src/entities/authenticate_service/account.entity";
@@ -117,13 +117,19 @@ export class AuthController {
   }
 
   @Get("phone-number/:phoneNumber")
+  @ApiQuery({
+    name: "role",
+    type: "enum",
+    enum: RoleIndexEnum,
+  })
   async isExistPhoneNumber(
-    @Param() param: CheckPhoneNumberExistDTO,
+    @Param("phoneNumber") phoneNumber: string,
+    @Query("role") role: RoleIndexEnum,
   ): Promise<boolean> {
     try {
       const user = await this.authService.validateUserWithRole(
-        param.phoneNumber,
-        param.role,
+        phoneNumber,
+        role,
       );
       return !!user;
     } catch (error) {
