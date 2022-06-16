@@ -140,6 +140,10 @@ export class PostsController {
       throw new NotFoundException("Can not found user!");
     }
     instance.status = body.status;
+    instance.isVaccineInject = body.isVaccineInject;
+    if (body.status === PostEnum.REJECTED) {
+      instance.rejectTime = body.rejectTime;
+    }
     let bodyNotification = "",
       titleNotification = "",
       typeNotification = "";

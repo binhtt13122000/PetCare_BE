@@ -24,6 +24,8 @@ import {
   CheckPhoneNumberExistDTO,
   LoginBodyWithPasswordDTO,
   LoginResponseDTO,
+  LogoutDTO,
+  LogoutResponse,
   ProfileResponseDTO,
   RefreshTokenBodyDTO,
   UserRegisterDTO,
@@ -354,11 +356,23 @@ export class AuthController {
     return this.authService.refreshTokens(body.refreshToken);
   }
 
-  @Get("logout/:id")
+  @Post("logout")
   @ApiOperation({ description: "Logout" })
   @HttpCode(200)
-  async logout(@Res() res: Response, @Param() query: IdParams): Promise<void> {
-    await this.authService.removeRefreshToken(query.id);
-    res.headers.set("Authorization", null);
+  async logout(@Body() data: LogoutDTO): Promise<LogoutResponse> {
+    await this.authService.removeRefreshToken(data.id);
+    await getFirestore()
+      .collection("fcm")
+      .where("id", "==", data.id)
+      .where("fcm", "==", data.fcmToken)
+      .get()
+      .then(function (querySnapshot) {
+        querySnapshot.forEach(function (doc) {
+          doc.ref.delete();
+        });
+      });
+    return {
+      status: "ok",
+    };
   }
 }

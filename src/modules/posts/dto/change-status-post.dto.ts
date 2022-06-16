@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { required } from "joi";
 import { PostEnum } from "src/enum";
 export class ChangeStatusPostDTO {
   @ApiProperty()
@@ -9,4 +10,10 @@ export class ChangeStatusPostDTO {
 
   @ApiProperty()
   status: PostEnum;
+
+  @ApiProperty({ required: false })
+  rejectTime?: Date;
+
+  @ApiProperty({ required: false })
+  isVaccineInject?: boolean;
 }
