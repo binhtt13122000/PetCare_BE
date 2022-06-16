@@ -21,7 +21,7 @@ export class AppService {
     this.logger.debug("Called when the current second is 45");
   }
 
-  @Cron("0 50 4 * * *", {
+  @Cron("0 0 0 * * *", {
     name: "checkExpiredTicket",
     timeZone: "Asia/Ho_Chi_Minh",
   })
@@ -34,10 +34,6 @@ export class AppService {
       await this.ticketService.getTicketAvailableInSpecificDate(
         yesterday.toDateString(),
       );
-    // eslint-disable-next-line no-console
-    console.log("Check run cron job" + yesterday.toDateString());
-    // eslint-disable-next-line no-console
-    console.log(ticketList);
     if (ticketList && ticketList.length > 0) {
       ticketList.forEach(async (item) => {
         item.status = TicketStatusEnum.EXPIRED;
