@@ -33,4 +33,13 @@ export interface Message {
   metadata?: string;
 }
 
+export class ChainData {
+  @ApiProperty()
+  type: string;
+  @ApiProperty()
+  content: string;
+  @ApiProperty()
+  date: string;
+}
+
 export const DEFAULT_PASSWORD = "123456";

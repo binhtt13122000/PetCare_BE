@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from "@nestjs/common";
 import { AppService } from "./app.service";
 import { ApiQuery } from "@nestjs/swagger";
-import { pipe, map } from "rxjs";
+import { map } from "rxjs";
 import { HttpService } from "@nestjs/axios";
 
 @Controller()

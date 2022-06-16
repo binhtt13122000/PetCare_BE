@@ -23,6 +23,9 @@ import { UpdatePetDTO } from "./dto/update-pet.dto";
 import { PetEnum } from "src/enum";
 import { PetOwner } from "src/entities/pet_service/pet-owner.entity";
 import { FileProducerService } from "src/shared/file/file.producer.service";
+import { ChainData } from "src/common";
+import { map, Observable } from "rxjs";
+import { HttpService } from "@nestjs/axios";
 
 @Controller("pets")
 @ApiTags("pets")
@@ -30,6 +33,7 @@ export class PetsController {
   constructor(
     private readonly petsService: PetsService,
     private readonly fileProducerService: FileProducerService,
+    private readonly httpService: HttpService,
   ) {}
 
   @Get()
@@ -53,6 +57,22 @@ export class PetsController {
       type,
       name,
     );
+  }
+
+  @Get("chain/:id")
+  async getChain(
+    @Param("id") id: number,
+  ): Promise<Observable<Array<ChainData>>> {
+    const pet = await this.petsService.findById(id);
+    if (!pet) {
+      throw new NotFoundException("not found");
+    }
+    if (!pet.specialMarkings) {
+      throw new NotFoundException("not found microchip");
+    }
+    return this.httpService
+      .get("/api/getHistory/" + pet.specialMarkings)
+      .pipe(map((response) => response.data));
   }
 
   @Get("fetch-pet")

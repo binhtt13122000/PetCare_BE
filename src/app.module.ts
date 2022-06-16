@@ -43,6 +43,7 @@ import { PetComboServicesModule } from "./modules/pet-combo-services/pet-combo-s
 import { HttpModule } from "@nestjs/axios";
 
 const mongoConnectionString = configService.getMongoConnectionString();
+const blockchainServer = configService.getBlockchainServer();
 @Module({
   imports: [
     TypeOrmModule.forRoot(ormconfig),
@@ -82,7 +83,9 @@ const mongoConnectionString = configService.getMongoConnectionString();
     }),
     ComboServiceModule,
     PetComboServicesModule,
-    HttpModule,
+    HttpModule.register({
+      baseURL: blockchainServer,
+    }),
   ],
   controllers: [AppController, ComboServiceController],
   providers: [

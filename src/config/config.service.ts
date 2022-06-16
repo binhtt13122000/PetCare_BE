@@ -31,8 +31,12 @@ class ConfigService {
     return this.getValue("WEB_ADMIN_ROOT_URL", true);
   }
 
-  getBranchRootUrl(): string {
+  public getBranchRootUrl(): string {
     return this.getValue("BRANCH_ROOT_URL", true);
+  }
+
+  public getBlockchainServer(): string {
+    return this.getValue("BLOCKCHAIN_SERVER", true);
   }
 
   public getHasuraUrl(): string {

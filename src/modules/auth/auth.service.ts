@@ -11,6 +11,7 @@ import { Account } from "src/entities/authenticate_service/account.entity";
 import { UserService } from "../users/user.service";
 import * as bcrypt from "bcrypt";
 import { AuthPayloadDTO, Tokens } from "./auth.dto";
+import { RoleIndexEnum } from "src/enum/index";
 @Injectable()
 export class AuthService {
   constructor(
@@ -23,6 +24,20 @@ export class AuthService {
     const user = await this.userService.validate(phoneNumber);
 
     return user;
+  }
+
+  async validateUserWithRole(
+    phoneNumber: string,
+    role?: RoleIndexEnum,
+  ): Promise<Account | null> {
+    const user = await this.userService.validate(phoneNumber);
+    if (!role) {
+      return user;
+    }
+    if (user.roleId === role) {
+      return user;
+    }
+    return null;
   }
 
   async validateUserByPassword(
