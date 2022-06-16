@@ -21,7 +21,7 @@ export class AppService {
     this.logger.debug("Called when the current second is 45");
   }
 
-  @Cron("0 45 2 * * *", {
+  @Cron("0 0 3 * * *", {
     name: "checkExpiredTicket",
     timeZone: "Asia/Ho_Chi_Minh",
   })
