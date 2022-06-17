@@ -41,10 +41,6 @@ export class CreatePetDTO {
 
   @ApiProperty()
   @IsString()
-  specialMarkings: string;
-
-  @ApiProperty()
-  @IsString()
   vaccineDescription: string;
 
   @ApiProperty({ type: "string", format: "binary" })

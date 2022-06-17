@@ -85,7 +85,7 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
       .getMany();
   }
 
-  getOne(id: number, currentOwner: boolean): Promise<Pet> {
+  async getOne(id: number, currentOwner: boolean): Promise<Pet> {
     return this.petsRepository
       .findOne({
         where: {
