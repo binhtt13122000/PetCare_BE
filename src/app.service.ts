@@ -81,7 +81,7 @@ export class AppService {
   }
 
   //Run schedule after 06:30:00am each day to check expired sale transaction 3 days ago.
-  @Cron("0 30 16 * * *", {
+  @Cron("0 5 17 * * *", {
     name: "notificationServiceInComboInThreeDays",
     timeZone: "Asia/Ho_Chi_Minh",
   })
@@ -89,20 +89,11 @@ export class AppService {
     const DAYS = 3;
     const dateWithThreeDaysFuture = getSpecificDateFutureWithNumberDays(DAYS);
     const currentDate = getSpecificDateAgoWithNumberDays(0);
-    // eslint-disable-next-line no-console
-    console.log(
-      "DATE From",
-      currentDate.toDateString(),
-      "DATE TO ",
-      dateWithThreeDaysFuture.toDateString(),
-    );
     const petComboServicesList =
       await this.petComboServicesService.getServiceInComboAvailableInSpecificRangeDate(
         currentDate.toDateString(),
         dateWithThreeDaysFuture.toDateString(),
       );
-    // eslint-disable-next-line no-console
-    console.log("CRON Notfication" + JSON.stringify(petComboServicesList));
     if (petComboServicesList && petComboServicesList.length > 0) {
       petComboServicesList.forEach(async (item) => {
         if (item.phoneNumber) {
