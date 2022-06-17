@@ -34,6 +34,8 @@ export interface Message {
 }
 
 export class ChainData {
+  @ApiProperty({ required: false })
+  no?: string;
   @ApiProperty()
   type: string;
   @ApiProperty()

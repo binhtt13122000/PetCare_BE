@@ -8,7 +8,7 @@ export class CreateHealthPetRecordDTO {
   @ApiProperty({ required: false })
   description: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: HealthPetRecordEnum })
   type: HealthPetRecordEnum;
 
   @ApiProperty({

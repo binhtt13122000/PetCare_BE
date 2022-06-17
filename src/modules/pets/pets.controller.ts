@@ -12,6 +12,7 @@ import {
   Param,
   Query,
   NotFoundException,
+  BadRequestException,
 } from "@nestjs/common";
 import { PetsService } from "./pets.service";
 import { CreatePetDTO } from "./dto/create-pet.dto";
@@ -26,6 +27,7 @@ import { FileProducerService } from "src/shared/file/file.producer.service";
 import { ChainData } from "src/common";
 import { map, Observable } from "rxjs";
 import { HttpService } from "@nestjs/axios";
+import { CreateChainDTO } from "./dto/create-chain.dto";
 
 @Controller("pets")
 @ApiTags("pets")
@@ -72,6 +74,35 @@ export class PetsController {
     }
     return this.httpService
       .get("/api/getHistory/" + pet.specialMarkings)
+      .pipe(map((response) => response.data));
+  }
+
+  @Put("create-chain")
+  async createChain(@Body() body: CreateChainDTO): Promise<unknown> {
+    const pet = await this.petsService.findById(body.id);
+    if (!pet) {
+      throw new NotFoundException("not found");
+    }
+    if (pet.specialMarkings) {
+      throw new BadRequestException("had microchip");
+    }
+    await this.petsService.update(body.id, {
+      ...pet,
+      specialMarkings: body.specialMarkings,
+    });
+    const fullDataPet = await this.petsService.getOne(body.id, true);
+    return this.httpService
+      .post("/api/setData", {
+        no: fullDataPet.specialMarkings,
+        content: JSON.stringify({
+          current: fullDataPet,
+          write:
+            "The data of pet is init with adding microchip:" +
+            fullDataPet.specialMarkings,
+        }),
+        type: "CREATE",
+        date: body.initDate.toString(),
+      })
       .pipe(map((response) => response.data));
   }
 
@@ -148,7 +179,7 @@ export class PetsController {
   async update(
     @UploadedFile() file: Express.Multer.File,
     @Body() body: UpdatePetDTO,
-  ): Promise<Pet> {
+  ): Promise<unknown> {
     try {
       let avatar = null;
       if (file) {
@@ -160,14 +191,32 @@ export class PetsController {
         ...body,
         avatar: file ? avatar : body.avatar,
       };
-      return await this.petsService.update(pet.id, pet);
+      const updatePet = await this.petsService.update(pet.id, pet);
+      if (updatePet.specialMarkings) {
+        const fullDataPet = await this.petsService.getOne(body.id, true);
+        return this.httpService
+          .post("/api/setData", {
+            no: fullDataPet.specialMarkings,
+            content: JSON.stringify({
+              current: fullDataPet,
+              write: "Customer updated data of pet",
+            }),
+            type: "UPDATE",
+            date: new Date(
+              new Date().getTime() + 7 * 60 * 60 * 1000,
+            ).toString(),
+          })
+          .pipe(map((response) => response.data));
+      } else {
+        return updatePet;
+      }
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
 
   @Delete(":id")
-  async delete(@Param("id") id: number): Promise<Pet> {
+  async delete(@Param("id") id: number): Promise<unknown> {
     try {
       const pet = await this.petsService.findById(id);
       if (!pet) {
@@ -176,7 +225,28 @@ export class PetsController {
       if (pet.status === PetEnum.IN_POST || pet.status === PetEnum.DELETED) {
         throw Error("Cannot delete this pet");
       }
-      return this.petsService.update(id, { ...pet, status: PetEnum.DELETED });
+      const deletedPet = await this.petsService.update(id, {
+        ...pet,
+        status: PetEnum.DELETED,
+      });
+      if (deletedPet.specialMarkings) {
+        const fullDataPet = await this.petsService.getOne(id, true);
+        return this.httpService
+          .post("/api/setData", {
+            no: fullDataPet.specialMarkings,
+            content: JSON.stringify({
+              current: fullDataPet,
+              write: "Customer deleted the pet.",
+            }),
+            type: "DELETE_PET",
+            date: new Date(
+              new Date().getTime() + 7 * 60 * 60 * 1000,
+            ).toString(),
+          })
+          .pipe(map((response) => response.data));
+      } else {
+        return deletedPet;
+      }
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
