@@ -94,12 +94,12 @@ export class PetsController {
     return this.httpService
       .post("/api/setData", {
         no: fullDataPet.specialMarkings,
-        content: JSON.stringify({
+        content: {
           current: fullDataPet,
           write:
             "The data of pet is init with adding microchip:" +
             fullDataPet.specialMarkings,
-        }),
+        },
         type: "CREATE",
         date: body.initDate.toString(),
       })
@@ -197,10 +197,10 @@ export class PetsController {
         return this.httpService
           .post("/api/setData", {
             no: fullDataPet.specialMarkings,
-            content: JSON.stringify({
+            content: {
               current: fullDataPet,
               write: "Customer updated data of pet",
-            }),
+            },
             type: "UPDATE",
             date: new Date(
               new Date().getTime() + 7 * 60 * 60 * 1000,
@@ -234,10 +234,10 @@ export class PetsController {
         return this.httpService
           .post("/api/setData", {
             no: fullDataPet.specialMarkings,
-            content: JSON.stringify({
+            content: {
               current: fullDataPet,
               write: "Customer deleted the pet.",
-            }),
+            },
             type: "DELETE_PET",
             date: new Date(
               new Date().getTime() + 7 * 60 * 60 * 1000,
