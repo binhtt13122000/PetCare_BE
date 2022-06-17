@@ -59,7 +59,7 @@ export class AppService {
   }
 
   //Run schedule after 00:10:00am each day to check expired sale transaction 3 days ago.
-  @Cron("0 45 15 * * *", {
+  @Cron("0 10 0 * * *", {
     name: "checkExpiredSaleTransactionsThreeDaysAgo",
     timeZone: "Asia/Ho_Chi_Minh",
   })
@@ -80,7 +80,7 @@ export class AppService {
   }
 
   //Run schedule after 06:30:00am each day to check expired sale transaction 3 days ago.
-  @Cron("0 45 15 * * *", {
+  @Cron("0 15 16 * * *", {
     name: "notificationServiceInComboInThreeDays",
     timeZone: "Asia/Ho_Chi_Minh",
   })
@@ -88,6 +88,13 @@ export class AppService {
     const DAYS = 3;
     const dateWithThreeDaysAgo = getSpecificDateAgoWithNumberDays(DAYS);
     const currentDate = getSpecificDateAgoWithNumberDays(0);
+    // eslint-disable-next-line no-console
+    console.log(
+      "DATE From",
+      currentDate.toDateString(),
+      "DATE TO ",
+      dateWithThreeDaysAgo.toDateString(),
+    );
     const petComboServicesList =
       await this.petComboServicesService.getServiceInComboAvailableInSpecificRangeDate(
         currentDate.toDateString(),
