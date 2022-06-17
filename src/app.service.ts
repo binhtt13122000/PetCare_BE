@@ -2,14 +2,30 @@ import { Injectable, Logger } from "@nestjs/common";
 import { Cron } from "@nestjs/schedule";
 import { InjectEntityManager } from "@nestjs/typeorm";
 import { EntityManager } from "typeorm";
-import { TicketStatusEnum } from "./enum";
+import {
+  formatDateCustomDateMonthYear,
+  getSpecificDateAgoWithNumberDays,
+} from "./common/utils";
+import {
+  NotificationEnum,
+  SaleTransactionEnum,
+  TicketStatusEnum,
+} from "./enum";
+import { PetComboServicesService } from "./modules/pet-combo-services/pet-combo-services.service";
+import { SaleTransactionsService } from "./modules/sale-transactions/sale-transactions.service";
 import { TicketsService } from "./modules/tickets/tickets.service";
+import { UserService } from "./modules/users/user.service";
+import { NotificationProducerService } from "./shared/notification/notification.producer.service";
 
 @Injectable()
 export class AppService {
   constructor(
     @InjectEntityManager() private readonly entityManager: EntityManager,
     private readonly ticketService: TicketsService,
+    private readonly saleTransactionService: SaleTransactionsService,
+    private readonly petComboServicesService: PetComboServicesService,
+    private readonly userService: UserService,
+    private notificationProducerService: NotificationProducerService,
   ) {}
 
   private readonly logger = new Logger(AppService.name);
@@ -21,23 +37,90 @@ export class AppService {
     this.logger.debug("Called when the current second is 45");
   }
 
-  @Cron("0 0 0 * * *", {
-    name: "checkExpiredTicket",
+  //Run Schedule after 00:05:00am each day  to check expired ticket yesterday.
+  @Cron("0 20 15 * * *", {
+    name: "checkExpiredTicketsYesterday",
     timeZone: "Asia/Ho_Chi_Minh",
   })
   async handleCronCheckExpiredTicket(): Promise<void> {
-    //add 7 hours(server GMT +0, local GMT +7)
-    const yesterday = new Date(
-      new Date().getTime() + 7 * 60 * 60 * 1000 - 24 * 60 * 60 * 1000,
-    );
+    const DAYS = 1;
+    const yesterday = getSpecificDateAgoWithNumberDays(DAYS);
     const ticketList =
       await this.ticketService.getTicketAvailableInSpecificDate(
         yesterday.toDateString(),
       );
+    // eslint-disable-next-line no-console
+    console.log("CRON" + ticketList);
     if (ticketList && ticketList.length > 0) {
       ticketList.forEach(async (item) => {
         item.status = TicketStatusEnum.EXPIRED;
         await item.save();
+      });
+    }
+  }
+
+  //Run schedule after 00:10:00am each day to check expired sale transaction 3 days ago.
+  @Cron("0 20 15 * * *", {
+    name: "checkExpiredSaleTransactionsThreeDaysAgo",
+    timeZone: "Asia/Ho_Chi_Minh",
+  })
+  async handleCronCheckExpiredSaleTransaction(): Promise<void> {
+    const DAYS = 3;
+    const dateWithThreeDaysAgo = getSpecificDateAgoWithNumberDays(DAYS);
+    const saleTransactionList =
+      await this.saleTransactionService.getSaleTransactionAvailableInSpecificDate(
+        dateWithThreeDaysAgo.toDateString(),
+      );
+    // eslint-disable-next-line no-console
+    console.log("CRON" + saleTransactionList);
+    if (saleTransactionList && saleTransactionList.length > 0) {
+      saleTransactionList.forEach(async (item) => {
+        item.status = SaleTransactionEnum.EXPIRED;
+        await item.save();
+      });
+    }
+  }
+
+  //Run schedule after 06:30:00am each day to check expired sale transaction 3 days ago.
+  @Cron("0 20 15 * * *", {
+    name: "notificationServiceInComboInThreeDays",
+    timeZone: "Asia/Ho_Chi_Minh",
+  })
+  async handleCronNotificationServiceInComboInThreeDays(): Promise<void> {
+    const DAYS = 3;
+    const dateWithThreeDaysAgo = getSpecificDateAgoWithNumberDays(DAYS);
+    const currentDate = getSpecificDateAgoWithNumberDays(0);
+    const petComboServicesList =
+      await this.petComboServicesService.getServiceInComboAvailableInSpecificRangeDate(
+        currentDate.toDateString(),
+        dateWithThreeDaysAgo.toDateString(),
+      );
+    // eslint-disable-next-line no-console
+    console.log("CRON" + petComboServicesList);
+    if (petComboServicesList && petComboServicesList.length > 0) {
+      petComboServicesList.forEach(async (item) => {
+        if (item.phoneNumber) {
+          const accountCustomerInstance =
+            await this.userService.findByPhoneNumber(item.phoneNumber.trim());
+          if (accountCustomerInstance) {
+            // eslint-disable-next-line no-console
+            console.log("TE" + accountCustomerInstance);
+            petComboServicesList.forEach(async (item) => {
+              await this.notificationProducerService.sendMessage(
+                {
+                  body: `Service Name: ${item.name} - Date: ${
+                    formatDateCustomDateMonthYear(item.workingTime) ||
+                    formatDateCustomDateMonthYear(new Date())
+                  }`,
+                  title: `Service: ${item.name} is coming.`,
+                  type: NotificationEnum.AVAILABLE_SERVICE_IN_COMBO,
+                  metadata: String(item.petComboId),
+                },
+                accountCustomerInstance.id,
+              );
+            });
+          }
+        }
       });
     }
   }
