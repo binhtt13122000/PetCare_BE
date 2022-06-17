@@ -103,4 +103,15 @@ export class SaleTransactionsService extends BaseService<
       )
       .execute();
   }
+
+  getSaleTransactionAvailableInSpecificDate(
+    date: string,
+  ): Promise<SaleTransaction[]> {
+    return this.saleTransactionsRepository.find({
+      where: {
+        meetingDate: date,
+        status: SaleTransactionEnum.CREATED,
+      },
+    });
+  }
 }
