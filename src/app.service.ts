@@ -38,7 +38,7 @@ export class AppService {
   }
 
   //Run Schedule after 00:05:00am each day  to check expired ticket yesterday.
-  @Cron("0 20 15 * * *", {
+  @Cron("0 5 0 * * *", {
     name: "checkExpiredTicketsYesterday",
     timeZone: "Asia/Ho_Chi_Minh",
   })
@@ -50,7 +50,6 @@ export class AppService {
         yesterday.toDateString(),
       );
     // eslint-disable-next-line no-console
-    console.log("CRON" + ticketList);
     if (ticketList && ticketList.length > 0) {
       ticketList.forEach(async (item) => {
         item.status = TicketStatusEnum.EXPIRED;
@@ -60,7 +59,7 @@ export class AppService {
   }
 
   //Run schedule after 00:10:00am each day to check expired sale transaction 3 days ago.
-  @Cron("0 20 15 * * *", {
+  @Cron("0 10 0 * * *", {
     name: "checkExpiredSaleTransactionsThreeDaysAgo",
     timeZone: "Asia/Ho_Chi_Minh",
   })
@@ -72,7 +71,6 @@ export class AppService {
         dateWithThreeDaysAgo.toDateString(),
       );
     // eslint-disable-next-line no-console
-    console.log("CRON" + saleTransactionList);
     if (saleTransactionList && saleTransactionList.length > 0) {
       saleTransactionList.forEach(async (item) => {
         item.status = SaleTransactionEnum.EXPIRED;
@@ -82,7 +80,7 @@ export class AppService {
   }
 
   //Run schedule after 06:30:00am each day to check expired sale transaction 3 days ago.
-  @Cron("0 20 15 * * *", {
+  @Cron("0 15 16 * * *", {
     name: "notificationServiceInComboInThreeDays",
     timeZone: "Asia/Ho_Chi_Minh",
   })
@@ -90,13 +88,20 @@ export class AppService {
     const DAYS = 3;
     const dateWithThreeDaysAgo = getSpecificDateAgoWithNumberDays(DAYS);
     const currentDate = getSpecificDateAgoWithNumberDays(0);
+    // eslint-disable-next-line no-console
+    console.log(
+      "DATE From",
+      currentDate.toDateString(),
+      "DATE TO ",
+      dateWithThreeDaysAgo.toDateString(),
+    );
     const petComboServicesList =
       await this.petComboServicesService.getServiceInComboAvailableInSpecificRangeDate(
         currentDate.toDateString(),
         dateWithThreeDaysAgo.toDateString(),
       );
     // eslint-disable-next-line no-console
-    console.log("CRON" + petComboServicesList);
+    console.log("CRON Notfication" + JSON.stringify(petComboServicesList));
     if (petComboServicesList && petComboServicesList.length > 0) {
       petComboServicesList.forEach(async (item) => {
         if (item.phoneNumber) {

@@ -45,6 +45,7 @@ import { PetsService } from "../pets/pets.service";
 import { UserService } from "../users/user.service";
 import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
 import { BranchesService } from "../branches/branches.service";
+import { getSpecificDateAgoWithNumberDays } from "src/common/utils";
 
 @Controller("sale-transactions")
 @ApiTags("sale-transactions")
@@ -96,6 +97,18 @@ export class SaleTransactionsController {
       );
     }
     return await this.saleTransactionsService.index();
+  }
+  handleCronCheckExpiredSaleTransaction;
+
+  @Get("test-cronjob")
+  async getCheckExpiredSaleTransaction(): Promise<SaleTransaction[]> {
+    const DAYS = 3;
+    const dateWithThreeDaysAgo = getSpecificDateAgoWithNumberDays(DAYS);
+    const saleTransactionList =
+      await this.saleTransactionsService.getSaleTransactionAvailableInSpecificDate(
+        dateWithThreeDaysAgo.toDateString(),
+      );
+    return saleTransactionList;
   }
 
   @Get(":id")

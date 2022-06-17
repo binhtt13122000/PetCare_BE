@@ -109,7 +109,7 @@ export class SaleTransactionsService extends BaseService<
   ): Promise<SaleTransaction[]> {
     return this.saleTransactionsRepository.find({
       where: {
-        meetingDate: date,
+        meetingTime: date,
         status: SaleTransactionEnum.CREATED,
       },
     });
