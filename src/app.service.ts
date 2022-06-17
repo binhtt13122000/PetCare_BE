@@ -38,7 +38,7 @@ export class AppService {
   }
 
   //Run Schedule after 00:05:00am each day  to check expired ticket yesterday.
-  @Cron("0 55 14 * * *", {
+  @Cron("0 20 15 * * *", {
     name: "checkExpiredTicketsYesterday",
     timeZone: "Asia/Ho_Chi_Minh",
   })
@@ -49,6 +49,8 @@ export class AppService {
       await this.ticketService.getTicketAvailableInSpecificDate(
         yesterday.toDateString(),
       );
+    // eslint-disable-next-line no-console
+    console.log("CRON" + ticketList);
     if (ticketList && ticketList.length > 0) {
       ticketList.forEach(async (item) => {
         item.status = TicketStatusEnum.EXPIRED;
@@ -58,7 +60,7 @@ export class AppService {
   }
 
   //Run schedule after 00:10:00am each day to check expired sale transaction 3 days ago.
-  @Cron("0 55 14 * * *", {
+  @Cron("0 20 15 * * *", {
     name: "checkExpiredSaleTransactionsThreeDaysAgo",
     timeZone: "Asia/Ho_Chi_Minh",
   })
@@ -69,6 +71,8 @@ export class AppService {
       await this.saleTransactionService.getSaleTransactionAvailableInSpecificDate(
         dateWithThreeDaysAgo.toDateString(),
       );
+    // eslint-disable-next-line no-console
+    console.log("CRON" + saleTransactionList);
     if (saleTransactionList && saleTransactionList.length > 0) {
       saleTransactionList.forEach(async (item) => {
         item.status = SaleTransactionEnum.EXPIRED;
@@ -78,7 +82,7 @@ export class AppService {
   }
 
   //Run schedule after 06:30:00am each day to check expired sale transaction 3 days ago.
-  @Cron("0 55 14 * * *", {
+  @Cron("0 20 15 * * *", {
     name: "notificationServiceInComboInThreeDays",
     timeZone: "Asia/Ho_Chi_Minh",
   })
@@ -91,12 +95,16 @@ export class AppService {
         currentDate.toDateString(),
         dateWithThreeDaysAgo.toDateString(),
       );
+    // eslint-disable-next-line no-console
+    console.log("CRON" + petComboServicesList);
     if (petComboServicesList && petComboServicesList.length > 0) {
       petComboServicesList.forEach(async (item) => {
         if (item.phoneNumber) {
           const accountCustomerInstance =
             await this.userService.findByPhoneNumber(item.phoneNumber.trim());
           if (accountCustomerInstance) {
+            // eslint-disable-next-line no-console
+            console.log("TE" + accountCustomerInstance);
             petComboServicesList.forEach(async (item) => {
               await this.notificationProducerService.sendMessage(
                 {
