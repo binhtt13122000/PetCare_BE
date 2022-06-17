@@ -81,7 +81,7 @@ export class AppService {
   }
 
   //Run schedule after 06:30:00am each day to check expired sale transaction 3 days ago.
-  @Cron("0 25 16 * * *", {
+  @Cron("0 30 16 * * *", {
     name: "notificationServiceInComboInThreeDays",
     timeZone: "Asia/Ho_Chi_Minh",
   })
