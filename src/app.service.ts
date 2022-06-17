@@ -81,7 +81,7 @@ export class AppService {
   }
 
   //Run schedule after 06:30:00am each day to check expired sale transaction 3 days ago.
-  @Cron("0 5 17 * * *", {
+  @Cron("0 30 6 * * *", {
     name: "notificationServiceInComboInThreeDays",
     timeZone: "Asia/Ho_Chi_Minh",
   })
@@ -100,8 +100,6 @@ export class AppService {
           const accountCustomerInstance =
             await this.userService.findByPhoneNumber(item.phoneNumber.trim());
           if (accountCustomerInstance) {
-            // eslint-disable-next-line no-console
-            console.log("TE" + accountCustomerInstance);
             petComboServicesList.forEach(async (item) => {
               await this.notificationProducerService.sendMessage(
                 {
