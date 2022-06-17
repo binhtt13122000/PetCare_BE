@@ -38,7 +38,7 @@ export class AppService {
   }
 
   //Run Schedule after 00:05:00am each day  to check expired ticket yesterday.
-  @Cron("0 50 14 * * *", {
+  @Cron("0 55 14 * * *", {
     name: "checkExpiredTicketsYesterday",
     timeZone: "Asia/Ho_Chi_Minh",
   })
@@ -58,7 +58,7 @@ export class AppService {
   }
 
   //Run schedule after 00:10:00am each day to check expired sale transaction 3 days ago.
-  @Cron("0 50 14 * * *", {
+  @Cron("0 55 14 * * *", {
     name: "checkExpiredSaleTransactionsThreeDaysAgo",
     timeZone: "Asia/Ho_Chi_Minh",
   })
@@ -78,7 +78,7 @@ export class AppService {
   }
 
   //Run schedule after 06:30:00am each day to check expired sale transaction 3 days ago.
-  @Cron("0 50 14 * * *", {
+  @Cron("0 55 14 * * *", {
     name: "notificationServiceInComboInThreeDays",
     timeZone: "Asia/Ho_Chi_Minh",
   })
