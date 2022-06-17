@@ -64,10 +64,10 @@ export class HealthPetRecordsController {
         return this.httpService
           .post("/api/setData", {
             no: pet.specialMarkings,
-            content: JSON.stringify({
+            content: {
               current: pet,
               write: "A health pet record is removed",
-            }),
+            },
             type: "DELETE",
             date: new Date(
               new Date().getTime() + 7 * 60 * 60 * 1000,
@@ -101,10 +101,10 @@ export class HealthPetRecordsController {
         return this.httpService
           .post("/api/setData", {
             no: pet.specialMarkings,
-            content: JSON.stringify({
+            content: {
               current: pet,
               write: script,
-            }),
+            },
             type: "UPDATE",
             date: body.dateOfInjection.toString(),
           })
