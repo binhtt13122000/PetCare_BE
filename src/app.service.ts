@@ -5,6 +5,7 @@ import { EntityManager } from "typeorm";
 import {
   formatDateCustomDateMonthYear,
   getSpecificDateAgoWithNumberDays,
+  getSpecificDateFutureWithNumberDays,
 } from "./common/utils";
 import {
   NotificationEnum,
@@ -80,25 +81,25 @@ export class AppService {
   }
 
   //Run schedule after 06:30:00am each day to check expired sale transaction 3 days ago.
-  @Cron("0 15 16 * * *", {
+  @Cron("0 25 16 * * *", {
     name: "notificationServiceInComboInThreeDays",
     timeZone: "Asia/Ho_Chi_Minh",
   })
   async handleCronNotificationServiceInComboInThreeDays(): Promise<void> {
     const DAYS = 3;
-    const dateWithThreeDaysAgo = getSpecificDateAgoWithNumberDays(DAYS);
+    const dateWithThreeDaysFuture = getSpecificDateFutureWithNumberDays(DAYS);
     const currentDate = getSpecificDateAgoWithNumberDays(0);
     // eslint-disable-next-line no-console
     console.log(
       "DATE From",
       currentDate.toDateString(),
       "DATE TO ",
-      dateWithThreeDaysAgo.toDateString(),
+      dateWithThreeDaysFuture.toDateString(),
     );
     const petComboServicesList =
       await this.petComboServicesService.getServiceInComboAvailableInSpecificRangeDate(
         currentDate.toDateString(),
-        dateWithThreeDaysAgo.toDateString(),
+        dateWithThreeDaysFuture.toDateString(),
       );
     // eslint-disable-next-line no-console
     console.log("CRON Notfication" + JSON.stringify(petComboServicesList));
