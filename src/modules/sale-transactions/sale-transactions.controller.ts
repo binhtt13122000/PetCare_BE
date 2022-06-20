@@ -46,6 +46,8 @@ import { UserService } from "../users/user.service";
 import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
 import { BranchesService } from "../branches/branches.service";
 import { getSpecificDateAgoWithNumberDays } from "src/common/utils";
+import { HttpService } from "@nestjs/axios";
+import { map } from "rxjs";
 
 @Controller("sale-transactions")
 @ApiTags("sale-transactions")
@@ -63,6 +65,7 @@ export class SaleTransactionsController {
     private readonly userService: UserService,
     private readonly branchService: BranchesService,
     private notificationProducerService: NotificationProducerService,
+    private httpService: HttpService,
   ) {}
 
   @Get()
@@ -98,7 +101,6 @@ export class SaleTransactionsController {
     }
     return await this.saleTransactionsService.index();
   }
-  handleCronCheckExpiredSaleTransaction;
 
   @Get("test-cronjob")
   async getCheckExpiredSaleTransaction(): Promise<SaleTransaction[]> {
@@ -369,6 +371,22 @@ export class SaleTransactionsController {
           this.chatGateway.server
             .in(room._id.valueOf())
             .emit("chatToClient", createdMessage);
+          if (pet.specialMarkings) {
+            const fullDataPet = await this.petsService.getOne(pet.id, true);
+            return this.httpService
+              .post("/api/setData", {
+                no: fullDataPet.specialMarkings,
+                content: {
+                  current: fullDataPet,
+                  write: "The pet has new owner.",
+                },
+                type: "CHANGE_OWNER",
+                date: new Date(
+                  new Date().getTime() + 7 * 60 * 60 * 1000,
+                ).toString(),
+              })
+              .pipe(map((response) => response.data));
+          }
         } catch (error) {
           throw new HttpException(error, HttpStatus.BAD_REQUEST);
         }

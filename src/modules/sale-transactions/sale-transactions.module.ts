@@ -13,7 +13,10 @@ import { PetsModule } from "../pets/pets.module";
 import { UserModule } from "../users/user.module";
 import { SharedModule } from "src/shared/shared.module";
 import { BranchesModule } from "../branches/branches.module";
+import { HttpModule } from "@nestjs/axios";
+import { configService } from "src/config/config.service";
 
+const blockchainServer = configService.getBlockchainServer();
 @Module({
   imports: [
     forwardRef(() => BranchesModule),
@@ -27,6 +30,9 @@ import { BranchesModule } from "../branches/branches.module";
     PetsModule,
     UserModule,
     SharedModule,
+    HttpModule.register({
+      baseURL: blockchainServer,
+    }),
   ],
   providers: [SaleTransactionsService],
   controllers: [SaleTransactionsController],
