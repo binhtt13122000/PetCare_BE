@@ -26,6 +26,7 @@ export enum PetEnum {
   DELETED = "DELETED",
   NORMAL = "NORMAL",
   IN_POST = "IN_POST",
+  IN_BREED = "IN_BREED",
 }
 
 export enum PostEnum {

@@ -21,11 +21,15 @@ import { BreedingTransaction } from "src/entities/transaction_service/breeding-t
 import { ResponsePayment } from "../orders/dto/response-payment.dto";
 import { BreedTransactionService } from "./breed-transaction.service";
 import { BreedTransactionPayment } from "./dtos/breed-transaction-payment.dto";
-import { CreateBreedTransactionDTO } from "./dtos/create-breed-transaction.dto";
+import {
+  CreateBreedTransactionDTO,
+  PaymentForPetMaleOwnerDTO,
+} from "./dtos/create-breed-transaction.dto";
 import {
   BreedingTransactionEnum,
   NotificationEnum,
   PaymentOrderMethodEnum,
+  PetEnum,
   PostEnum,
   RoomStatusEnum,
 } from "src/enum/index";
@@ -95,6 +99,56 @@ export class BreedTransactionController {
     return await this.breedTransactionService.index();
   }
 
+  @Post("petMaleOwner/payment/:id")
+  async paymentForPetMaleOwner(
+    @Param("id") id: number,
+    @Body() body: PaymentForPetMaleOwnerDTO,
+  ): Promise<BreedingTransaction> {
+    const breedTransaction = await this.breedTransactionService.findById(id);
+    if (!breedTransaction) {
+      throw new NotFoundException("not found");
+    }
+    const petMale = await this.petsService.findById(breedTransaction.petMaleId);
+    if (!petMale) {
+      throw new NotFoundException("not found pet male");
+    }
+    const petFemale = await this.petsService.findById(
+      breedTransaction.petFemaleId,
+    );
+    if (!petFemale) {
+      throw new NotFoundException("not found pet female");
+    }
+    const buyer = await this.customerService.findById(
+      breedTransaction.petFemaleId,
+    );
+    if (!buyer) {
+      throw new NotFoundException("not found buyer");
+    }
+    const seller = await this.customerService.findById(
+      breedTransaction.petMaleId,
+    );
+    if (!seller) {
+      throw new NotFoundException("not found seller");
+    }
+    await this.petsService.update(petMale.id, {
+      ...petMale,
+      status: PetEnum.IN_BREED,
+    });
+    await this.petsService.update(petMale.id, {
+      ...petMale,
+      status: PetEnum.IN_BREED,
+    });
+    const updatedBreedTransaction = new BreedingTransaction({
+      ...breedTransaction,
+      paymentMethod: "VNPAY",
+      paymentForMalePetOwnerTime: body.paymentForMalePetOwnerTime,
+    });
+    return await this.breedTransactionService.update(id, {
+      ...updatedBreedTransaction,
+    });
+    return null;
+  }
+
   @Post()
   async create(
     @Body() body: CreateBreedTransactionDTO,
@@ -102,7 +156,7 @@ export class BreedTransactionController {
     try {
       const post = await this.postService.findById(body.postId);
       if (!post) {
-        throw new NotFoundException("dont have post");
+        throw new NotFoundException("don't have post");
       }
       post.status = PostEnum.WAITING_FOR_PAYMENT;
       await this.postService.update(post.id, post);

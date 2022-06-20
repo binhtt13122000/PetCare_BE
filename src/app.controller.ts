@@ -36,7 +36,7 @@ export class AppController {
       .pipe(map((response) => response.data));
   }
 
-  @Post(":id")
+  @Post("/deep-link/:id")
   async getSortLink(@Param("id") id: number): Promise<unknown> {
     const pet = await this.petService.findById(id);
     if (!pet) {

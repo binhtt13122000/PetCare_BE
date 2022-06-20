@@ -319,6 +319,10 @@ export class SaleTransactionsController {
             ...buyer,
             point: buyer.point + updateSaleTransactionDTO.point,
           });
+          await this.customerService.update(seller.id, {
+            ...seller,
+            point: seller.point + updateSaleTransactionDTO.point,
+          });
           const room = await this.roomService.findByBuyerAndPost(
             saleTransaction.buyerId,
             saleTransaction.postId,

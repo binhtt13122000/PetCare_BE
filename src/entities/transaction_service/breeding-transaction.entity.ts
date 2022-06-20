@@ -54,7 +54,12 @@ export class BreedingTransaction extends BaseEntity {
     type: "timestamp without time zone",
     nullable: true,
   })
-  transactionTime: Date;
+  paymentForMalePetOwnerTime: Date;
+  @Column({
+    type: "timestamp without time zone",
+    nullable: true,
+  })
+  paymentForBranchTime: Date;
   //fee
   @Column({ type: "int", nullable: false })
   sellerReceive: number;
