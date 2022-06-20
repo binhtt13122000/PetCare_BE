@@ -1,11 +1,17 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { SharedModule } from "src/shared/shared.module";
+import { UserModule } from "../users/user.module";
 import { PetComboServicesController } from "./pet-combo-services.controller";
 import { PetComboServiceRepository } from "./pet-combo-services.repository";
 import { PetComboServicesService } from "./pet-combo-services.service";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PetComboServiceRepository])],
+  imports: [
+    TypeOrmModule.forFeature([PetComboServiceRepository]),
+    UserModule,
+    SharedModule,
+  ],
   controllers: [PetComboServicesController],
   providers: [PetComboServicesService],
   exports: [PetComboServicesService],
