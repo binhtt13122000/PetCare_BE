@@ -6,7 +6,6 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { IsBoolean, IsString } from "class-validator";
-import { HealthService } from "../health_service/health-service.entity";
 import { OrderDetail } from "../order_service/order-detail.entity";
 import { ServiceFee } from "./service-fee.entity";
 import { ServiceTicket } from "./service-ticket.entity";
@@ -25,18 +24,10 @@ export class Service extends BaseEntity {
   @Column({ type: "bool", default: true })
   @IsBoolean()
   status: boolean;
-  @Column({ type: "bool", default: true })
-  @IsBoolean()
-  isHealthCheck: boolean;
   @Column({ type: "text", nullable: false })
   unit: string;
-  @Column({ type: "text", nullable: true })
-  healthCheckTemplate: string;
   @Column({ type: "integer", nullable: true })
   estimatedTime: number;
-
-  @OneToMany(() => HealthService, (healthService) => healthService.service)
-  healthServices: HealthService[];
 
   @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.service)
   orderDetails: OrderDetail[];

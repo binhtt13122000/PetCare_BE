@@ -11,7 +11,6 @@ import { BaseEntity } from "typeorm";
 import { Breed } from "./breed.entity";
 import { HealthPetRecord } from "./health-pet-record.entity";
 import { IsString, IsBoolean } from "class-validator";
-import { HealthRecord } from "../health_service/health-record.entity";
 import { Post } from "../transaction_service/post.entity";
 import { SaleTransaction } from "../transaction_service/sale-transaction.entity";
 import { BreedingTransaction } from "../transaction_service/breeding-transaction.entity";
@@ -66,9 +65,6 @@ export class Pet extends BaseEntity {
 
   @OneToMany(() => HealthPetRecord, (healthPetRecord) => healthPetRecord.pet)
   healthPetRecords: HealthPetRecord[];
-
-  @OneToMany(() => HealthRecord, (healthRecord) => healthRecord.pet)
-  healthRecords: HealthRecord[];
 
   @OneToMany(() => Post, (post) => post.pet)
   posts: Post[];
