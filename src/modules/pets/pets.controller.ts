@@ -13,6 +13,8 @@ import {
   Query,
   NotFoundException,
   BadRequestException,
+  Inject,
+  CACHE_MANAGER,
 } from "@nestjs/common";
 import { PetsService } from "./pets.service";
 import { CreatePetDTO } from "./dto/create-pet.dto";
@@ -28,6 +30,7 @@ import { ChainData } from "src/common";
 import { map, Observable } from "rxjs";
 import { HttpService } from "@nestjs/axios";
 import { CreateChainDTO } from "./dto/create-chain.dto";
+import { Cache } from "cache-manager";
 
 @Controller("pets")
 @ApiTags("pets")
@@ -36,6 +39,7 @@ export class PetsController {
     private readonly petsService: PetsService,
     private readonly fileProducerService: FileProducerService,
     private readonly httpService: HttpService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   @Get()
@@ -65,6 +69,24 @@ export class PetsController {
   async getChain(
     @Param("id") id: number,
   ): Promise<Observable<Array<ChainData>>> {
+    const pet = await this.petsService.findById(id);
+    if (!pet) {
+      throw new NotFoundException("not found");
+    }
+    if (!pet.specialMarkings) {
+      throw new NotFoundException("not found microchip");
+    }
+    return this.httpService
+      .get("/api/getHistory/" + pet.specialMarkings)
+      .pipe(map((response) => response.data));
+  }
+
+  @Get("chain/hash/:uuid")
+  async getChainByUUID(
+    @Param("uuid") uuid: string,
+  ): Promise<Observable<Array<ChainData>>> {
+    const data: number = await this.cacheManager.get(uuid);
+    const id = data ? Number(data) : 0;
     const pet = await this.petsService.findById(id);
     if (!pet) {
       throw new NotFoundException("not found");

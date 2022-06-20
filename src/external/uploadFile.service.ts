@@ -7,11 +7,7 @@ export class UploadFileService {
     file: Express.Multer.File,
   ): Promise<{ url: string | null; type: string }> {
     let contentType: string = null;
-    // eslint-disable-next-line no-console
-    console.log(file);
-    // eslint-disable-next-line no-console
-    console.log(file.mimetype);
-    if (file.mimetype.startsWith("video")) {
+    if (file.originalname.endsWith(".mp4")) {
       contentType = "video/mp4";
     } else {
       contentType = "image/jpeg";

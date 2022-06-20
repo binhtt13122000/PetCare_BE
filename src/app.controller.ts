@@ -5,14 +5,16 @@ import {
   Post,
   Query,
   NotFoundException,
+  Inject,
+  CACHE_MANAGER,
 } from "@nestjs/common";
 import { AppService } from "./app.service";
 import { ApiQuery } from "@nestjs/swagger";
 import { map } from "rxjs";
 import { HttpService } from "@nestjs/axios";
 import { PetsService } from "./modules/pets/pets.service";
-// import { getFirestore } from "firebase-admin/firestore";
-// import * as bcrypt from 'bcrypt';
+import { Cache } from "cache-manager";
+import { v4 } from "uuid";
 
 @Controller()
 export class AppController {
@@ -20,6 +22,7 @@ export class AppController {
     private readonly appService: AppService,
     private httpService: HttpService,
     private readonly petService: PetsService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
   @Get("check-exist")
@@ -44,17 +47,17 @@ export class AppController {
     if (!pet) {
       throw new NotFoundException("not found");
     }
-    // await getFirestore().collection("expire").doc().set({
-    //   petId: id,
-    //   token: await bcrypt.hash(, 12);
-    // });
+    const uuidKey = v4();
+    this.cacheManager.set(uuidKey, id, {
+      ttl: 30,
+    });
     return this.httpService
       .post(
         "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyAu__3q5Tu7b-cg-29qWpXgaNc00sR1-t4",
         {
           dynamicLinkInfo: {
             domainUriPrefix: "https://tpcs.page.link",
-            link: `https://pet-care-admin-fe.vercel.app/guest/${id}?petId=${id}`,
+            link: `https://pet-care-admin-fe.vercel.app/guest/${uuidKey}?petId=${uuidKey}`,
             androidInfo: {
               androidPackageName: "com.example.pet_app_mobile",
             },
