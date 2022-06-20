@@ -19,6 +19,7 @@ import { PetCombo } from "../pet_service/pet-combo.entity";
 export class BreedingTransaction extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
+  //date
   @Column({
     type: "timestamp without time zone",
     nullable: false,
@@ -26,7 +27,7 @@ export class BreedingTransaction extends BaseEntity {
   createdTime: Date;
   @Column({
     type: "timestamp without time zone",
-    nullable: false,
+    nullable: true,
   })
   meetingTime: Date;
   @Column({
@@ -34,14 +35,6 @@ export class BreedingTransaction extends BaseEntity {
     nullable: true,
   })
   dateOfBreeding: Date;
-  @Column({ type: "int", nullable: false })
-  sellerReceive: number;
-  @Column({ type: "int", nullable: false })
-  serviceFee: number;
-  @Column({ type: "int", nullable: false })
-  transactionTotal: number;
-  @Column({ type: "int", nullable: true })
-  point: number;
   @Column({
     type: "timestamp without time zone",
     nullable: true,
@@ -62,11 +55,23 @@ export class BreedingTransaction extends BaseEntity {
     nullable: true,
   })
   transactionTime: Date;
-  @Column({
-    type: "int",
-    nullable: true,
-  })
+  //fee
+  @Column({ type: "int", nullable: false })
+  sellerReceive: number;
+  @Column({ type: "int", nullable: false })
+  serviceFee: number;
+  @Column({ type: "int", nullable: true })
   transactionFee: number;
+  @Column({ type: "int", nullable: false })
+  transactionTotal: number;
+  @Column({ type: "int", nullable: true })
+  point: number;
+  //state
+  @Column({ type: "boolean", nullable: true, default: false })
+  self: boolean;
+  @Column({ type: "enum", enum: BreedingTransactionEnum })
+  status: BreedingTransactionEnum;
+  //extra
   @Column({
     type: "text",
     nullable: true,
@@ -78,14 +83,13 @@ export class BreedingTransaction extends BaseEntity {
   description: string;
   @Column({ type: "text", nullable: true })
   paymentMethod: string;
+  //review
   @Column({ type: "int", nullable: true })
   star: number;
   @Column({ type: "text", nullable: true })
   review: string;
   @Column({ type: "text", nullable: true })
   reasonCancel: string;
-  @Column({ type: "enum", enum: BreedingTransactionEnum })
-  status: BreedingTransactionEnum;
 
   //references
   @Column({ name: "ownerPetMaleId" })
