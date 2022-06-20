@@ -11,6 +11,8 @@ import { ApiQuery } from "@nestjs/swagger";
 import { map } from "rxjs";
 import { HttpService } from "@nestjs/axios";
 import { PetsService } from "./modules/pets/pets.service";
+// import { getFirestore } from "firebase-admin/firestore";
+// import * as bcrypt from 'bcrypt';
 
 @Controller()
 export class AppController {
@@ -42,6 +44,10 @@ export class AppController {
     if (!pet) {
       throw new NotFoundException("not found");
     }
+    // await getFirestore().collection("expire").doc().set({
+    //   petId: id,
+    //   token: await bcrypt.hash(, 12);
+    // });
     return this.httpService
       .post(
         "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=AIzaSyAu__3q5Tu7b-cg-29qWpXgaNc00sR1-t4",
