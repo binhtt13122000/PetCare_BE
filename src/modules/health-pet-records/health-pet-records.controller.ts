@@ -69,9 +69,7 @@ export class HealthPetRecordsController {
               write: "A health pet record is removed",
             },
             type: "DELETE",
-            date: new Date(
-              new Date().getTime() + 7 * 60 * 60 * 1000,
-            ).toString(),
+            date: new Date(new Date().getTime() + 7 * 60 * 60 * 1000),
           })
           .pipe(map((response) => response.data));
       } else {
@@ -106,7 +104,7 @@ export class HealthPetRecordsController {
               write: script,
             },
             type: "UPDATE",
-            date: body.dateOfInjection.toString(),
+            date: body.dateOfInjection,
           })
           .pipe(map((response) => response.data));
       } else {

@@ -101,7 +101,7 @@ export class PetsController {
             fullDataPet.specialMarkings,
         },
         type: "CREATE",
-        date: body.initDate.toString(),
+        date: body.initDate,
       })
       .pipe(map((response) => response.data));
   }
@@ -202,9 +202,7 @@ export class PetsController {
               write: "Customer updated data of pet",
             },
             type: "UPDATE",
-            date: new Date(
-              new Date().getTime() + 7 * 60 * 60 * 1000,
-            ).toString(),
+            date: new Date(new Date().getTime() + 7 * 60 * 60 * 1000),
           })
           .pipe(map((response) => response.data));
       } else {
@@ -239,9 +237,7 @@ export class PetsController {
               write: "Customer deleted the pet.",
             },
             type: "DELETE_PET",
-            date: new Date(
-              new Date().getTime() + 7 * 60 * 60 * 1000,
-            ).toString(),
+            date: new Date(new Date().getTime() + 7 * 60 * 60 * 1000),
           })
           .pipe(map((response) => response.data));
       } else {

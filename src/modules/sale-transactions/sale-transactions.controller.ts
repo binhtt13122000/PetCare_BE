@@ -381,9 +381,7 @@ export class SaleTransactionsController {
                   write: "The pet has new owner.",
                 },
                 type: "CHANGE_OWNER",
-                date: new Date(
-                  new Date().getTime() + 7 * 60 * 60 * 1000,
-                ).toString(),
+                date: new Date(new Date().getTime() + 7 * 60 * 60 * 1000),
               })
               .pipe(map((response) => response.data));
           }
