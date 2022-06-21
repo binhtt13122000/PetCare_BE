@@ -38,5 +38,7 @@ export class CreateBreedTransactionDTO {
 
 export class PaymentForPetMaleOwnerDTO {
   @ApiProperty()
+  id: number;
+  @ApiProperty()
   paymentForMalePetOwnerTime: Date;
 }

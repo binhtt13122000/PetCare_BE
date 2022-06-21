@@ -99,12 +99,13 @@ export class BreedTransactionController {
     return await this.breedTransactionService.index();
   }
 
-  @Post("petMaleOwner/payment/:id")
+  @Post("petMaleOwner/payment")
   async paymentForPetMaleOwner(
-    @Param("id") id: number,
     @Body() body: PaymentForPetMaleOwnerDTO,
   ): Promise<BreedingTransaction> {
-    const breedTransaction = await this.breedTransactionService.findById(id);
+    const breedTransaction = await this.breedTransactionService.findById(
+      body.id,
+    );
     if (!breedTransaction) {
       throw new NotFoundException("not found");
     }
@@ -132,21 +133,36 @@ export class BreedTransactionController {
     }
     await this.petsService.update(petMale.id, {
       ...petMale,
-      status: PetEnum.IN_BREED,
+      status: PetEnum.NORMAL,
+    });
+    const post = await this.postService.findById(breedTransaction.postId);
+    if (!post) {
+      throw new NotFoundException("not found post");
+    }
+    await this.postService.update(post.id, {
+      ...post,
+      status: PostEnum.CLOSED,
     });
     await this.petsService.update(petMale.id, {
       ...petMale,
-      status: PetEnum.IN_BREED,
+      status: PetEnum.NORMAL,
+    });
+    await this.customerService.update(seller.id, {
+      ...seller,
+      point: seller.point + breedTransaction.point,
+    });
+    await this.customerService.update(buyer.id, {
+      ...buyer,
+      point: buyer.point + breedTransaction.point,
     });
     const updatedBreedTransaction = new BreedingTransaction({
       ...breedTransaction,
       paymentMethod: "VNPAY",
       paymentForMalePetOwnerTime: body.paymentForMalePetOwnerTime,
     });
-    return await this.breedTransactionService.update(id, {
+    return await this.breedTransactionService.update(body.id, {
       ...updatedBreedTransaction,
     });
-    return null;
   }
 
   @Post()

@@ -10,11 +10,13 @@ import {
   Put,
   HttpException,
   Delete,
+  Query,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiQuery, ApiTags } from "@nestjs/swagger";
 import { IdParams } from "src/common";
 import { ComboService } from "src/entities/service/combo-service.entity";
 import { Combo } from "src/entities/service/combo.entity";
+import { ComboTypeEnum } from "src/enum";
 import { CombosService } from "./combos.service";
 import { CreateComboDTO } from "./dtos/create-combo.dto";
 import { UpdateComboDTO } from "./dtos/update-combo.dto";
@@ -27,6 +29,16 @@ export class CombosController {
   @Get()
   async getAll(): Promise<Combo[]> {
     return await this.combosService.index();
+  }
+
+  @ApiQuery({
+    name: "type",
+    type: "enum",
+    enum: ComboTypeEnum,
+  })
+  @Get("types/:type")
+  async getByType(@Query("type") type: ComboTypeEnum): Promise<Combo[]> {
+    return await this.combosService.getByType(type);
   }
 
   @Get(":id")
