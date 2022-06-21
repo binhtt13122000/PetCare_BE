@@ -53,7 +53,7 @@ export class RoomsService {
         .find({
           $or: [
             {
-              ownerId: userId,
+              buyerId: userId,
             },
             {
               sellerId: userId,
@@ -72,7 +72,7 @@ export class RoomsService {
               {
                 $or: [
                   {
-                    ownerId: userId,
+                    buyerId: userId,
                   },
                   {
                     sellerId: userId,
@@ -102,7 +102,7 @@ export class RoomsService {
               {
                 $or: [
                   {
-                    ownerId: userId,
+                    buyerId: userId,
                   },
                   {
                     sellerId: userId,
