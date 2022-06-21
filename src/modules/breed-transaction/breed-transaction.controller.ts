@@ -120,13 +120,13 @@ export class BreedTransactionController {
       throw new NotFoundException("not found pet female");
     }
     const buyer = await this.customerService.findById(
-      breedTransaction.petFemaleId,
+      breedTransaction.ownerPetFemaleId,
     );
     if (!buyer) {
       throw new NotFoundException("not found buyer");
     }
     const seller = await this.customerService.findById(
-      breedTransaction.petMaleId,
+      breedTransaction.ownerPetMaleId,
     );
     if (!seller) {
       throw new NotFoundException("not found seller");
