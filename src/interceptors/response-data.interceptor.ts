@@ -4,7 +4,6 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-  Logger,
   NestInterceptor,
 } from "@nestjs/common";
 import { Observable } from "rxjs";
@@ -29,10 +28,10 @@ export class ResponseDataInterceptor implements NestInterceptor {
               HttpStatus.NOT_FOUND,
             );
           }
-          Logger.debug(
-            `Response: \n ${JSON.stringify(data)}`,
-            "ResponseDataInterceptor",
-          );
+          // Logger.debug(
+          //   `Response: \n ${JSON.stringify(data)}`,
+          //   "ResponseDataInterceptor",
+          // );
           return {
             success: true,
             message: "Retrieved data successfully",

@@ -8,14 +8,10 @@ import {
   Put,
   Query,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiQuery, ApiTags } from "@nestjs/swagger";
 import mongoose from "mongoose";
 import { IdParams } from "src/common";
-import { NotificationEnum, RoomStatusEnum } from "src/enum";
 import { Room } from "src/schemas/room.schemas";
-import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
-import { CustomerService } from "../customer/customer.service";
-import { UserService } from "../users/user.service";
 import { RoomsService } from "./rooms.service";
 
 @Controller("rooms")
@@ -29,6 +25,10 @@ export class RoomsController {
   }
 
   @Get("user/:id")
+  @ApiQuery({
+    name: "type",
+    required: false,
+  })
   async findByUserId(
     @Param() params: IdParams,
     @Query("type") type?: "open" | "close",
