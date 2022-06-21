@@ -29,6 +29,7 @@ import { NotFoundException } from "@nestjs/common";
 import { CustomerService } from "../customer/customer.service";
 import { PetOwnerService } from "../pet-owner/pet-owner.service";
 import { BreedTransactionService } from "../breed-transaction/breed-transaction.service";
+import { BreedingTransactionEnum } from "../../enum/index";
 
 @Controller("pet-combos")
 @ApiTags("pet-combos")
@@ -124,6 +125,7 @@ export class PetComboController {
               sellerReceive: 0,
               transactionTotal: petCombo.orderTotal,
               transactionFee: 0,
+              status: BreedingTransactionEnum.PAYMENTED,
             });
           }
         } catch (error) {
