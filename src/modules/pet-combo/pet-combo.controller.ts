@@ -17,19 +17,21 @@ import { PaymentQuery } from "src/common";
 import { PetCombo } from "src/entities/pet_service/pet-combo.entity";
 import { ComboService } from "src/entities/service/combo-service.entity";
 import { Combo } from "src/entities/service/combo.entity";
-import { ComboTypeEnum, PaymentOrderMethodEnum } from "src/enum";
+import { ComboTypeEnum, PaymentOrderMethodEnum, PetEnum } from "src/enum";
 import { vnpayService } from "src/external/vnpay.service";
 import { ComboServicesService } from "../combo-services/combo-services.service";
 import { CombosService } from "../combos/combos.service";
 import { ResponsePayment } from "../orders/dto/response-payment.dto";
 import { PetComboServicesService } from "../pet-combo-services/pet-combo-services.service";
-import { PetComboDTO } from "./dto/create-pet-combo.dto";
+import { PetComboDTO, PetComboPaymentDTO } from "./dto/create-pet-combo.dto";
 import { PetCombosService } from "./pet-combo.service";
 import { NotFoundException } from "@nestjs/common";
 import { CustomerService } from "../customer/customer.service";
 import { PetOwnerService } from "../pet-owner/pet-owner.service";
 import { BreedTransactionService } from "../breed-transaction/breed-transaction.service";
 import { BreedingTransactionEnum } from "../../enum/index";
+import { BreedingTransaction } from "src/entities/transaction_service/breeding-transaction.entity";
+import { PetsService } from "../pets/pets.service";
 
 @Controller("pet-combos")
 @ApiTags("pet-combos")
@@ -42,6 +44,7 @@ export class PetComboController {
     private readonly customerService: CustomerService,
     private readonly petOwnerService: PetOwnerService,
     private readonly breedTransactionService: BreedTransactionService,
+    private readonly petsService: PetsService,
   ) {}
 
   @Get()
@@ -75,10 +78,6 @@ export class PetComboController {
           if (!petCombo.isDraft) {
             throw new BadRequestException("not draft");
           }
-          await this.petCombosService.update(petCombo.id, {
-            ...petCombo,
-            isDraft: false,
-          });
           const petOwner = await this.petOwnerService.getCurrentOwner(
             petCombo.petId,
           );
@@ -100,33 +99,48 @@ export class PetComboController {
             throw new NotFoundException("not found combo");
           }
           if (combo.type === ComboTypeEnum.BREED) {
-            this.breedTransactionService.store({
-              branchId: petCombo.branchId,
-              breedingBranchId: petCombo.branchId,
-              createdTime: new Date(new Date().getTime() + 7 * 60 * 60 * 1000),
-              self: true,
-              dateOfBreeding: petCombo.registerTime,
-              ownerPetFemaleId: petOwner.customerId,
-              ownerPetMaleId: petOwner.customerId,
-              paymentMethod: "VNPAY",
-              paymentForBranchTime: new Date(
-                new Date().getTime() + 7 * 60 * 60 * 1000,
-              ),
-              paymentForMalePetOwnerTime: new Date(
-                new Date().getTime() + 7 * 60 * 60 * 1000,
-              ),
-              meetingTime: new Date(new Date().getTime() + 7 * 60 * 60 * 1000),
-              petFemaleId: petCombo.petId,
-              petMaleId: petCombo.petId,
-              point: 0,
-              placeMeeting: "",
-              description: "",
-              postId: null,
-              sellerReceive: 0,
-              transactionTotal: petCombo.orderTotal,
-              transactionFee: 0,
-              serviceFee: petCombo.orderTotal,
-              status: BreedingTransactionEnum.PAYMENTED,
+            const createdBreedingTransaction =
+              await this.breedTransactionService.store({
+                branchId: petCombo.branchId,
+                breedingBranchId: petCombo.branchId,
+                createdTime: new Date(
+                  new Date().getTime() + 7 * 60 * 60 * 1000,
+                ),
+                self: true,
+                dateOfBreeding: petCombo.registerTime,
+                ownerPetFemaleId: petOwner.customerId,
+                ownerPetMaleId: petOwner.customerId,
+                paymentMethod: "VNPAY",
+                paymentForBranchTime: new Date(
+                  new Date().getTime() + 7 * 60 * 60 * 1000,
+                ),
+                paymentForMalePetOwnerTime: new Date(
+                  new Date().getTime() + 7 * 60 * 60 * 1000,
+                ),
+                meetingTime: new Date(
+                  new Date().getTime() + 7 * 60 * 60 * 1000,
+                ),
+                petFemaleId: petCombo.petId,
+                petMaleId: petCombo.petId,
+                point: 0,
+                placeMeeting: "",
+                description: "",
+                postId: null,
+                sellerReceive: 0,
+                transactionTotal: petCombo.orderTotal,
+                transactionFee: 0,
+                serviceFee: petCombo.orderTotal,
+                status: BreedingTransactionEnum.PAYMENTED,
+              });
+            await this.petCombosService.update(petCombo.id, {
+              ...petCombo,
+              isDraft: false,
+              breedingTransactionId: createdBreedingTransaction.id,
+            });
+          } else {
+            await this.petCombosService.update(petCombo.id, {
+              ...petCombo,
+              isDraft: false,
             });
           }
         } catch (error) {
@@ -139,6 +153,127 @@ export class PetComboController {
         // this.cacheManager.del("order_id_" + id);
       },
     );
+  }
+
+  @Post("payment")
+  async createPayment(
+    @Body() body: PetComboPaymentDTO,
+  ): Promise<BreedingTransaction> {
+    try {
+      const breedingTransaction = await this.breedTransactionService.findById(
+        body.breedingTransactionId,
+      );
+      if (!breedingTransaction) {
+        throw new NotFoundException("not found breed transaction");
+      }
+      const petMale = await this.petsService.findById(
+        breedingTransaction.petMaleId,
+      );
+      if (!petMale) {
+        throw new NotFoundException("not found pet male");
+      }
+      const petFemale = await this.petsService.findById(
+        breedingTransaction.petFemaleId,
+      );
+      if (!petFemale) {
+        throw new NotFoundException("not found pet female");
+      }
+      const buyer = await this.customerService.findById(
+        breedingTransaction.ownerPetFemaleId,
+      );
+      if (!buyer) {
+        throw new NotFoundException("not found buyer");
+      }
+      const seller = await this.customerService.findById(
+        breedingTransaction.ownerPetMaleId,
+      );
+      if (!seller) {
+        throw new NotFoundException("not found seller");
+      }
+      await this.petsService.update(petMale.id, {
+        ...petMale,
+        status: PetEnum.IN_BREED,
+      });
+      await this.petsService.update(petFemale.id, {
+        ...petFemale,
+        status: PetEnum.IN_BREED,
+      });
+      await this.customerService.update(buyer.id, {
+        ...buyer,
+        point: buyer.point + body.point,
+      });
+      let next = 0;
+      const combo: Partial<Combo> = await this.combos.findById(body.comboId);
+      const comboService: Partial<ComboService[]> =
+        await this.comboService.findComboServiceByComboId(body.comboId);
+      const petCombo: Partial<PetCombo> = {
+        registerTime: body.registerTime,
+        isCompleted: false,
+        paymentMethod: body.paymentMethod,
+        orderTotal: combo.price,
+        point: body.point,
+        petId: body.petId,
+        branchId: body.branchId,
+        comboId: body.comboId,
+        breedingTransactionId: body.breedingTransactionId,
+      };
+
+      const createPetCombo = await this.petCombosService.store({
+        ...petCombo,
+        isDraft: true,
+      });
+
+      comboService.forEach(async (item, index) => {
+        next += item.nextEvent;
+        const ts = new Date(body.registerTime);
+        ts.setDate(ts.getDate() + next);
+
+        if (index == 0) {
+          await this.petComboServicesService.store({
+            workingTime: body.registerTime,
+            isCompleted: false,
+            serviceId: item.serviceId,
+            petComboId: createPetCombo.id,
+            priority: item.priority,
+            realTime: undefined,
+          });
+        } else {
+          await this.petComboServicesService.store({
+            workingTime: ts,
+            isCompleted: false,
+            serviceId: item.serviceId,
+            petComboId: createPetCombo.id,
+            priority: item.priority,
+            realTime: undefined,
+          });
+        }
+      });
+      if (createPetCombo) {
+        switch (body.paymentMethod) {
+          case PaymentOrderMethodEnum.VNPAY:
+            const updatedBreedingTransaction: Partial<BreedingTransaction> = {
+              ...breedingTransaction,
+              breedingBranchId: body.branchId,
+              transactionTotal: 0,
+              serviceFee: body.orderTotal,
+              paymentForBranchTime: new Date(
+                new Date().getTime() + 7 * 60 * 60 * 1000,
+              ),
+              dateOfBreeding: body.dateOfBreeding,
+            };
+            await this.breedTransactionService.update(
+              body.breedingTransactionId,
+              updatedBreedingTransaction,
+            );
+            break;
+          default:
+            break;
+        }
+      }
+      return null;
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
   }
 
   @Post()

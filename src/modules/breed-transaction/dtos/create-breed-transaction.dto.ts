@@ -42,3 +42,12 @@ export class PaymentForPetMaleOwnerDTO {
   @ApiProperty()
   paymentForMalePetOwnerTime: Date;
 }
+
+export class PaymentForBranchDTO {
+  @ApiProperty()
+  id: number;
+  @ApiProperty()
+  comboId: number;
+  @ApiProperty()
+  paymentForMalePetOwnerTime: Date;
+}

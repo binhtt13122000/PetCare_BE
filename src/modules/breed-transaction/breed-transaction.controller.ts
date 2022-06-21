@@ -23,6 +23,7 @@ import { BreedTransactionService } from "./breed-transaction.service";
 import { BreedTransactionPayment } from "./dtos/breed-transaction-payment.dto";
 import {
   CreateBreedTransactionDTO,
+  // PaymentForBranchDTO,
   PaymentForPetMaleOwnerDTO,
 } from "./dtos/create-breed-transaction.dto";
 import {
@@ -131,10 +132,6 @@ export class BreedTransactionController {
     if (!seller) {
       throw new NotFoundException("not found seller");
     }
-    await this.petsService.update(petMale.id, {
-      ...petMale,
-      status: PetEnum.NORMAL,
-    });
     const post = await this.postService.findById(breedTransaction.postId);
     if (!post) {
       throw new NotFoundException("not found post");
@@ -145,6 +142,10 @@ export class BreedTransactionController {
     });
     await this.petsService.update(petMale.id, {
       ...petMale,
+      status: PetEnum.NORMAL,
+    });
+    await this.petsService.update(petFemale.id, {
+      ...petFemale,
       status: PetEnum.NORMAL,
     });
     await this.customerService.update(seller.id, {
@@ -159,11 +160,83 @@ export class BreedTransactionController {
       ...breedTransaction,
       paymentMethod: "VNPAY",
       paymentForMalePetOwnerTime: body.paymentForMalePetOwnerTime,
+      status: BreedingTransactionEnum.PAYMENTED,
     });
     return await this.breedTransactionService.update(body.id, {
       ...updatedBreedTransaction,
     });
   }
+
+  // @Post("branch/payment")
+  // async paymentForBranch(
+  //   @Body() body: PaymentForBranchDTO,
+  // ): Promise<BreedingTransaction> {
+  //   const breedTransaction = await this.breedTransactionService.findById(
+  //     body.id,
+  //   );
+  //   if (!breedTransaction) {
+  //     throw new NotFoundException("not found");
+  //   }
+  //   const petMale = await this.petsService.findById(breedTransaction.petMaleId);
+  //   if (!petMale) {
+  //     throw new NotFoundException("not found pet male");
+  //   }
+  //   const petFemale = await this.petsService.findById(
+  //     breedTransaction.petFemaleId,
+  //   );
+  //   if (!petFemale) {
+  //     throw new NotFoundException("not found pet female");
+  //   }
+  //   const buyer = await this.customerService.findById(
+  //     breedTransaction.ownerPetFemaleId,
+  //   );
+  //   if (!buyer) {
+  //     throw new NotFoundException("not found buyer");
+  //   }
+  //   const seller = await this.customerService.findById(
+  //     breedTransaction.ownerPetMaleId,
+  //   );
+  //   if (!seller) {
+  //     throw new NotFoundException("not found seller");
+  //   }
+  //   await this.petsService.update(petMale.id, {
+  //     ...petMale,
+  //     status: PetEnum.NORMAL,
+  //   });
+  //   const post = await this.postService.findById(breedTransaction.postId);
+  //   if (!post) {
+  //     throw new NotFoundException("not found post");
+  //   }
+  //   await this.postService.update(post.id, {
+  //     ...post,
+  //     status: PostEnum.CLOSED,
+  //   });
+  //   await this.petsService.update(petMale.id, {
+  //     ...petMale,
+  //     status: PetEnum.NORMAL,
+  //   });
+  //   await this.petsService.update(petFemale.id, {
+  //     ...petFemale,
+  //     status: PetEnum.NORMAL,
+  //   });
+  //   await this.customerService.update(seller.id, {
+  //     ...seller,
+  //     point: seller.point + breedTransaction.point,
+  //   });
+  //   await this.customerService.update(buyer.id, {
+  //     ...buyer,
+  //     point: buyer.point + breedTransaction.point,
+  //   });
+  //   const updatedBreedTransaction = new BreedingTransaction({
+  //     ...breedTransaction,
+  //     paymentMethod: "VNPAY",
+  //     paymentForMalePetOwnerTime: body.paymentForMalePetOwnerTime,
+  //     status: BreedingTransactionEnum.PAYMENTED,
+  //   });
+  //   return await this.breedTransactionService.update(body.id, {
+  //     ...updatedBreedTransaction,
+  //   });
+  // }
 
   @Post()
   async create(

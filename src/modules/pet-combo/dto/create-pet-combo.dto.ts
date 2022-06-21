@@ -26,3 +26,8 @@ export class PetComboDTO {
   @ApiProperty({ enum: PaymentOrderMethodEnum, required: false })
   paymentMethod: PaymentOrderMethodEnum;
 }
+
+export class PetComboPaymentDTO extends PetComboDTO {
+  @ApiProperty()
+  dateOfBreeding: Date;
+}
