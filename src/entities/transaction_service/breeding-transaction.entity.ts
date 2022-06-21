@@ -71,6 +71,8 @@ export class BreedingTransaction extends BaseEntity {
   transactionTotal: number;
   @Column({ type: "int", nullable: true })
   point: number;
+  @Column({ type: "int", nullable: true })
+  servicePoint: number;
   //state
   @Column({ type: "boolean", nullable: true, default: false })
   self: boolean;
@@ -121,7 +123,7 @@ export class BreedingTransaction extends BaseEntity {
   @JoinColumn({ name: "petFemaleId", referencedColumnName: "id" })
   petFemale: Pet;
 
-  @Column({ name: "postId" })
+  @Column({ name: "postId", nullable: true })
   postId: number;
   @ManyToOne(() => Post, (post) => post.breedingTransactions, {})
   @JoinColumn({ name: "postId", referencedColumnName: "id" })

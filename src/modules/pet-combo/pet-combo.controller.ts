@@ -17,7 +17,7 @@ import { PaymentQuery } from "src/common";
 import { PetCombo } from "src/entities/pet_service/pet-combo.entity";
 import { ComboService } from "src/entities/service/combo-service.entity";
 import { Combo } from "src/entities/service/combo.entity";
-import { PaymentOrderMethodEnum } from "src/enum";
+import { ComboTypeEnum, PaymentOrderMethodEnum } from "src/enum";
 import { vnpayService } from "src/external/vnpay.service";
 import { ComboServicesService } from "../combo-services/combo-services.service";
 import { CombosService } from "../combos/combos.service";
@@ -28,6 +28,7 @@ import { PetCombosService } from "./pet-combo.service";
 import { NotFoundException } from "@nestjs/common";
 import { CustomerService } from "../customer/customer.service";
 import { PetOwnerService } from "../pet-owner/pet-owner.service";
+import { BreedTransactionService } from "../breed-transaction/breed-transaction.service";
 
 @Controller("pet-combos")
 @ApiTags("pet-combos")
@@ -39,6 +40,7 @@ export class PetComboController {
     private readonly petComboServicesService: PetComboServicesService,
     private readonly customerService: CustomerService,
     private readonly petOwnerService: PetOwnerService,
+    private readonly breedTransactionService: BreedTransactionService,
   ) {}
 
   @Get()
@@ -92,6 +94,38 @@ export class PetComboController {
             ...customer,
             point: customer.point + petCombo.point,
           });
+          const combo = await this.combos.findById(petCombo.comboId);
+          if (!combo) {
+            throw new NotFoundException("not found combo");
+          }
+          if (combo.type === ComboTypeEnum.BREED) {
+            this.breedTransactionService.store({
+              branchId: petCombo.branchId,
+              breedingBranchId: petCombo.branchId,
+              createdTime: new Date(new Date().getTime() + 7 * 60 * 60 * 1000),
+              self: true,
+              dateOfBreeding: petCombo.registerTime,
+              ownerPetFemaleId: petOwner.customerId,
+              ownerPetMaleId: petOwner.customerId,
+              paymentMethod: "VNPAY",
+              paymentForBranchTime: new Date(
+                new Date().getTime() + 7 * 60 * 60 * 1000,
+              ),
+              paymentForMalePetOwnerTime: new Date(
+                new Date().getTime() + 7 * 60 * 60 * 1000,
+              ),
+              meetingTime: new Date(new Date().getTime() + 7 * 60 * 60 * 1000),
+              petFemaleId: petCombo.petId,
+              petMaleId: petCombo.petId,
+              point: 0,
+              placeMeeting: "",
+              description: "",
+              postId: null,
+              sellerReceive: 0,
+              transactionTotal: petCombo.orderTotal,
+              transactionFee: 0,
+            });
+          }
         } catch (error) {
           throw new HttpException(error, HttpStatus.BAD_REQUEST);
         }
