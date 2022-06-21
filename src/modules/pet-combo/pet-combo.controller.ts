@@ -125,6 +125,7 @@ export class PetComboController {
               sellerReceive: 0,
               transactionTotal: petCombo.orderTotal,
               transactionFee: 0,
+              serviceFee: petCombo.orderTotal,
               status: BreedingTransactionEnum.PAYMENTED,
             });
           }
