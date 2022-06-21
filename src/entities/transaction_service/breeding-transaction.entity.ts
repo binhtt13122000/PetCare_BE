@@ -63,7 +63,7 @@ export class BreedingTransaction extends BaseEntity {
   //fee
   @Column({ type: "int", nullable: false })
   sellerReceive: number;
-  @Column({ type: "int", nullable: false })
+  @Column({ type: "int", nullable: true })
   serviceFee: number;
   @Column({ type: "int", nullable: true })
   transactionFee: number;
