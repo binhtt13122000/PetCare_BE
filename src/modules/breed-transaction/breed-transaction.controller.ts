@@ -13,8 +13,10 @@ import {
   CACHE_MANAGER,
   Inject,
   Put,
+  UseInterceptors,
+  UploadedFile,
 } from "@nestjs/common";
-import { ApiQuery, ApiTags } from "@nestjs/swagger";
+import { ApiConsumes, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { Request } from "express";
 import { PaymentQuery } from "src/common";
 import { BreedingTransaction } from "src/entities/transaction_service/breeding-transaction.entity";
@@ -22,9 +24,15 @@ import { ResponsePayment } from "../orders/dto/response-payment.dto";
 import { BreedTransactionService } from "./breed-transaction.service";
 import { BreedTransactionPayment } from "./dtos/breed-transaction-payment.dto";
 import {
+  CancelDTO,
+  ChangeToFinishDTO,
+  ChangeToInProgressDTO,
+  CheckSuccessDTO,
   CreateBreedTransactionDTO,
   PaymentForBranchDTO,
   PaymentForPetMaleOwnerDTO,
+  PickUpFemaleDTO,
+  PickUpMaleDTO,
 } from "./dtos/create-breed-transaction.dto";
 import {
   BreedingTransactionEnum,
@@ -48,6 +56,8 @@ import { PetsService } from "../pets/pets.service";
 import { UserService } from "../users/user.service";
 import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
 import { BranchesService } from "../branches/branches.service";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { uploadService } from "src/external/uploadFile.service";
 
 @Controller("breed-transactions")
 @ApiTags("breed-transactions")
@@ -207,20 +217,11 @@ export class BreedTransactionController {
       ...petFemale,
       status: PetEnum.IN_BREED,
     });
-    // await this.customerService.update(buyer.id, {
-    //   ...buyer,
-    //   point: buyer.point + body.servicePoint,
-    // });
     const updatedBreedTransaction = new BreedingTransaction({
       ...breedTransaction,
-      paymentForBranchTime: body.paymentForBranchTime,
-      // serviceFee: body.serviceFee,
       status: BreedingTransactionEnum.BREEDING_REQUESTED,
       breedingBranchId: body.breedingBranchId,
       dateOfBreeding: body.dateOfBreeding,
-      // servicePoint: body.servicePoint,
-      // transactionTotal:
-      //   breedTransaction.transactionTotal + breedTransaction.serviceFee,
     });
     return await this.breedTransactionService.update(body.id, {
       ...updatedBreedTransaction,
@@ -236,14 +237,279 @@ export class BreedTransactionController {
       if (!post) {
         throw new NotFoundException("don't have post");
       }
+      const petMale = await this.petsService.findById(body.petMaleId);
+      if (!petMale) {
+        throw new NotFoundException("don't have pet male");
+      }
+      const petFemale = await this.petsService.findById(body.petFemaleId);
+      if (!petFemale) {
+        throw new NotFoundException("don't have pet female");
+      }
       post.status = PostEnum.WAITING_FOR_PAYMENT;
       await this.postService.update(post.id, post);
+      await this.petsService.update(petMale.id, {
+        ...petMale,
+        status: PetEnum.IN_BREED,
+      });
+      await this.petsService.update(petFemale.id, {
+        ...petFemale,
+        status: PetEnum.IN_BREED,
+      });
       return await this.breedTransactionService.store(
-        new BreedingTransaction({ ...body }),
+        new BreedingTransaction({
+          ...body,
+          status: BreedingTransactionEnum.CREATED,
+        }),
       );
     } catch (error) {
       throw new BadRequestException(error);
     }
+  }
+
+  @Put("cancel")
+  async cancel(@Body() body: CancelDTO): Promise<BreedingTransaction> {
+    try {
+      const breedingTransaction = await this.breedTransactionService.findById(
+        body.id,
+      );
+      if (!breedingTransaction) {
+        throw new NotFoundException("not found breeding transaction");
+      }
+      const petMale = await this.petsService.findById(
+        breedingTransaction.petMaleId,
+      );
+      if (!petMale) {
+        throw new NotFoundException("don't have pet male");
+      }
+      const petFemale = await this.petsService.findById(
+        breedingTransaction.petFemaleId,
+      );
+      if (!petFemale) {
+        throw new NotFoundException("don't have pet female");
+      }
+      await this.petsService.update(petMale.id, {
+        ...petMale,
+        status: PetEnum.IN_POST,
+      });
+      await this.petsService.update(petFemale.id, {
+        ...petFemale,
+        status: PetEnum.NORMAL,
+      });
+      return await this.breedTransactionService.update(breedingTransaction.id, {
+        ...breedingTransaction,
+        status: BreedingTransactionEnum.CANCELED,
+        reasonCancel: body.reasonCancel,
+        cancelTime: body.cancelTime,
+      });
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  @Put("cancel-breed")
+  async cancelBreed(@Body() body: CancelDTO): Promise<BreedingTransaction> {
+    try {
+      const breedingTransaction = await this.breedTransactionService.findById(
+        body.id,
+      );
+      if (!breedingTransaction) {
+        throw new NotFoundException("not found breeding transaction");
+      }
+      const petMale = await this.petsService.findById(
+        breedingTransaction.petMaleId,
+      );
+      if (!petMale) {
+        throw new NotFoundException("don't have pet male");
+      }
+      const petFemale = await this.petsService.findById(
+        breedingTransaction.petFemaleId,
+      );
+      if (!petFemale) {
+        throw new NotFoundException("don't have pet female");
+      }
+      await this.petsService.update(petMale.id, {
+        ...petMale,
+        status: PetEnum.NORMAL,
+      });
+      await this.petsService.update(petFemale.id, {
+        ...petFemale,
+        status: PetEnum.NORMAL,
+      });
+      return await this.breedTransactionService.update(breedingTransaction.id, {
+        ...breedingTransaction,
+        status: BreedingTransactionEnum.BREEDING_CANCELED,
+        reasonCancel: body.reasonCancel,
+        cancelTime: body.cancelTime,
+      });
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
+  }
+
+  @Put("change-to-in-progress")
+  async changeToInProgress(
+    @Body() body: ChangeToInProgressDTO,
+  ): Promise<BreedingTransaction> {
+    const breedingTransaction = await this.breedTransactionService.findById(
+      body.id,
+    );
+    if (!breedingTransaction) {
+      throw new NotFoundException("not found breeding transaction");
+    }
+    const petMale = await this.petsService.findById(
+      breedingTransaction.petMaleId,
+    );
+    if (!petMale) {
+      throw new NotFoundException("don't have pet male");
+    }
+    const petFemale = await this.petsService.findById(
+      breedingTransaction.petFemaleId,
+    );
+    if (!petFemale) {
+      throw new NotFoundException("don't have pet female");
+    }
+    await this.petsService.update(petMale.id, {
+      ...petMale,
+      status: PetEnum.IN_BREED,
+    });
+    await this.petsService.update(petFemale.id, {
+      ...petFemale,
+      status: PetEnum.IN_BREED,
+    });
+    return await this.breedTransactionService.update(breedingTransaction.id, {
+      ...breedingTransaction,
+      status: BreedingTransactionEnum.IN_PROGRESS,
+    });
+  }
+
+  @Put("change-to-finish")
+  async changeToFinish(
+    @Body() body: ChangeToFinishDTO,
+  ): Promise<BreedingTransaction> {
+    const breedingTransaction = await this.breedTransactionService.findById(
+      body.id,
+    );
+    if (!breedingTransaction) {
+      throw new NotFoundException("not found breeding transaction");
+    }
+    return await this.breedTransactionService.update(breedingTransaction.id, {
+      ...breedingTransaction,
+      status: BreedingTransactionEnum.BREEDING_FINISHED,
+      timeToCheckBreeding: body.timeToCheckBreeding,
+      serviceFee: body.serviceFee,
+      servicePoint: body.servicePoint,
+      transactionTotal: breedingTransaction.transactionTotal + body.serviceFee,
+    });
+  }
+
+  @Put("pick-up-pet-male")
+  async pickUpPetMale(
+    @Body() body: PickUpMaleDTO,
+  ): Promise<BreedingTransaction> {
+    const breedingTransaction = await this.breedTransactionService.findById(
+      body.id,
+    );
+    if (!breedingTransaction) {
+      throw new NotFoundException("not found breeding transaction");
+    }
+    const petMale = await this.petsService.findById(
+      breedingTransaction.petMaleId,
+    );
+    if (!petMale) {
+      throw new NotFoundException("don't have pet male");
+    }
+    await this.petsService.update(petMale.id, {
+      ...petMale,
+      status: PetEnum.NORMAL,
+    });
+    return await this.breedTransactionService.update(breedingTransaction.id, {
+      ...breedingTransaction,
+      pickupMalePetTime: body.pickupMalePetTime,
+    });
+  }
+
+  @Put("pick-up-pet-female")
+  async pickUpPetFemale(
+    @Body() body: PickUpFemaleDTO,
+  ): Promise<BreedingTransaction> {
+    const breedingTransaction = await this.breedTransactionService.findById(
+      body.id,
+    );
+    if (!breedingTransaction) {
+      throw new NotFoundException("not found breeding transaction");
+    }
+    const petFemale = await this.petsService.findById(
+      breedingTransaction.petFemaleId,
+    );
+    if (!petFemale) {
+      throw new NotFoundException("don't have pet female");
+    }
+    const buyer = await this.customerService.findById(
+      breedingTransaction.ownerPetFemaleId,
+    );
+    if (!buyer) {
+      throw new NotFoundException("not found buyer");
+    }
+    const seller = await this.customerService.findById(
+      breedingTransaction.ownerPetMaleId,
+    );
+    if (!seller) {
+      throw new NotFoundException("not found seller");
+    }
+    await this.customerService.update(seller.id, {
+      ...seller,
+      point: seller.point + breedingTransaction.servicePoint,
+    });
+    await this.customerService.update(buyer.id, {
+      ...buyer,
+      point: buyer.point + breedingTransaction.servicePoint,
+    });
+    await this.petsService.update(petFemale.id, {
+      ...petFemale,
+      status: PetEnum.NORMAL,
+    });
+    return await this.breedTransactionService.update(breedingTransaction.id, {
+      ...breedingTransaction,
+      pickupMalePetTime: body.pickupMalePetTime,
+      status: BreedingTransactionEnum.BREEDING_SUCCESS,
+    });
+  }
+
+  @Put("check-success")
+  @ApiConsumes("multipart/form-data")
+  @UseInterceptors(FileInterceptor("file"))
+  async checkSuccess(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: CheckSuccessDTO,
+  ): Promise<BreedingTransaction> {
+    const breedingTransaction = await this.breedTransactionService.findById(
+      body.id,
+    );
+    if (!breedingTransaction) {
+      throw new NotFoundException("not found breeding transaction");
+    }
+    if (!body.isSuccess) {
+      const buyer = await this.customerService.findById(
+        breedingTransaction.ownerPetFemaleId,
+      );
+      if (!buyer) {
+        throw new NotFoundException("not found buyer");
+      }
+      await this.customerService.update(buyer.id, {
+        ...buyer,
+        point: buyer.point + breedingTransaction.serviceFee / 1000,
+      });
+    }
+    let evidence = null;
+    if (file) {
+      const { url } = await uploadService.uploadFile(file);
+      evidence = url;
+    }
+    return await this.breedTransactionService.update(breedingTransaction.id, {
+      ...breedingTransaction,
+      isSuccess: body.isSuccess,
+      evidence: evidence,
+    });
   }
 
   @Put()
