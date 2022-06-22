@@ -8,10 +8,12 @@ import {
   getSpecificDateFutureWithNumberDays,
 } from "./common/utils";
 import {
+  BreedingTransactionEnum,
   NotificationEnum,
   SaleTransactionEnum,
   TicketStatusEnum,
 } from "./enum";
+import { BreedTransactionService } from "./modules/breed-transaction/breed-transaction.service";
 import { PetComboServicesService } from "./modules/pet-combo-services/pet-combo-services.service";
 import { SaleTransactionsService } from "./modules/sale-transactions/sale-transactions.service";
 import { TicketsService } from "./modules/tickets/tickets.service";
@@ -24,6 +26,7 @@ export class AppService {
     @InjectEntityManager() private readonly entityManager: EntityManager,
     private readonly ticketService: TicketsService,
     private readonly saleTransactionService: SaleTransactionsService,
+    private readonly breedingTransactionService: BreedTransactionService,
     private readonly petComboServicesService: PetComboServicesService,
     private readonly userService: UserService,
     private notificationProducerService: NotificationProducerService,
@@ -50,7 +53,6 @@ export class AppService {
       await this.ticketService.getTicketAvailableInSpecificDate(
         yesterday.toDateString(),
       );
-    // eslint-disable-next-line no-console
     if (ticketList && ticketList.length > 0) {
       ticketList.forEach(async (item) => {
         item.status = TicketStatusEnum.EXPIRED;
@@ -64,14 +66,13 @@ export class AppService {
     name: "checkExpiredSaleTransactionsThreeDaysAgo",
     timeZone: "Asia/Ho_Chi_Minh",
   })
-  async handleCronCheckExpiredSaleTransaction(): Promise<void> {
+  async handleCronCheckExpiredSaleTransactions(): Promise<void> {
     const DAYS = 3;
     const dateWithThreeDaysAgo = getSpecificDateAgoWithNumberDays(DAYS);
     const saleTransactionList =
       await this.saleTransactionService.getSaleTransactionAvailableInSpecificDate(
         dateWithThreeDaysAgo.toDateString(),
       );
-    // eslint-disable-next-line no-console
     if (saleTransactionList && saleTransactionList.length > 0) {
       saleTransactionList.forEach(async (item) => {
         item.status = SaleTransactionEnum.EXPIRED;
@@ -80,7 +81,27 @@ export class AppService {
     }
   }
 
-  //Run schedule after 06:30:00am each day to check expired sale transaction 3 days ago.
+  //Run schedule after 00:15:00am each day to check expired breeding transactions 3 days ago.
+  @Cron("0 15 0 * * *", {
+    name: "checkExpiredBreedingTransactionsThreeDaysAgo",
+    timeZone: "Asia/Ho_Chi_Minh",
+  })
+  async handleCronCheckExpiredBreedingTransactions(): Promise<void> {
+    const DAYS = 3;
+    const dateWithThreeDaysAgo = getSpecificDateAgoWithNumberDays(DAYS);
+    const breedingTransactionList =
+      await this.breedingTransactionService.getBreedingTransactionsAvailableInSpecificDate(
+        dateWithThreeDaysAgo.toDateString(),
+      );
+    if (breedingTransactionList && breedingTransactionList.length > 0) {
+      breedingTransactionList.forEach(async (item) => {
+        item.status = BreedingTransactionEnum.EXPIRED;
+        await item.save();
+      });
+    }
+  }
+
+  //Run schedule after 06:30:00am each day to check coming available services in combo before 3 days.
   @Cron("0 30 6 * * *", {
     name: "notificationServiceInComboInThreeDays",
     timeZone: "Asia/Ho_Chi_Minh",
