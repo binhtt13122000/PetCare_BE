@@ -50,7 +50,7 @@ export class PostsService extends BaseService<Post, PostsRepository> {
     // const checkAgeRangeTo = pageOptionsDto.ageRangeTo;
     // const checkBreedName = pageOptionsDto.breedName;
     // const checkGender = pageOptionsDto.gender;
-    const checkType = pageOptionsDto.type;
+    // const checkType = pageOptionsDto.type;
     // const checkIsSeed = pageOptionsDto.isSeed;
     // const checkPrice = pageOptionsDto.price;
     // const checkStatus = pageOptionsDto.status;

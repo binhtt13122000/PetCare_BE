@@ -78,6 +78,8 @@ export class BreedingTransaction extends BaseEntity {
   point: number;
   @Column({ type: "int", nullable: true })
   servicePoint: number;
+  @Column({ type: "bool", nullable: true })
+  isSuccess: boolean;
   //state
   @Column({ type: "boolean", nullable: true, default: false })
   self: boolean;

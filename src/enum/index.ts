@@ -1,10 +1,15 @@
 export enum BreedingTransactionEnum {
   CREATED = "CREATED",
-  REQUESTED = "REQUESTED",
   CANCELED = "CANCELED",
-  REJECTED = "REJECTED",
+  SUCCESS = "SUCCESS",
   PAYMENTED = "PAYMENTED",
   BREEDING_FINISHED = "BREEDING_FINISHED",
+  EXPIRED = "EXPIRED",
+}
+
+export enum SaleTransactionEnum {
+  CREATED = "CREATED",
+  CANCELED = "CANCELED",
   SUCCESS = "SUCCESS",
   EXPIRED = "EXPIRED",
 }
@@ -36,14 +41,6 @@ export enum PostEnum {
   WAITING_FOR_PAYMENT = "WAITING_FOR_PAYMENT",
   CANCELED = "CANCELED",
   CLOSED = "CLOSED",
-}
-
-export enum SaleTransactionEnum {
-  CREATED = "CREATED",
-  CANCELED = "CANCELED",
-  REJECTED = "REJECTED",
-  SUCCESS = "SUCCESS",
-  EXPIRED = "EXPIRED",
 }
 
 export enum GenderEnum {
