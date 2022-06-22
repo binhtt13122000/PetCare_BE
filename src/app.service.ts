@@ -81,21 +81,43 @@ export class AppService {
     }
   }
 
-  //Run schedule after 00:15:00am each day to check expired breeding transactions 3 days ago.
+  //Run schedule after 00:15:00am each day to check expired breeding transactions at status created 3 days ago.
   @Cron("0 15 0 * * *", {
-    name: "checkExpiredBreedingTransactionsThreeDaysAgo",
+    name: "checkExpiredBreedingTransactionsAtStatusCreatedThreeDaysAgo",
     timeZone: "Asia/Ho_Chi_Minh",
   })
-  async handleCronCheckExpiredBreedingTransactions(): Promise<void> {
+  async handleCronCheckExpiredBreedingTransactionsAtStatusCreated(): Promise<void> {
     const DAYS = 3;
     const dateWithThreeDaysAgo = getSpecificDateAgoWithNumberDays(DAYS);
     const breedingTransactionList =
       await this.breedingTransactionService.getBreedingTransactionsAvailableInSpecificDate(
         dateWithThreeDaysAgo.toDateString(),
+        BreedingTransactionEnum.CREATED,
       );
     if (breedingTransactionList && breedingTransactionList.length > 0) {
       breedingTransactionList.forEach(async (item) => {
         item.status = BreedingTransactionEnum.EXPIRED;
+        await item.save();
+      });
+    }
+  }
+
+  //Run schedule after 00:30:00am each day to check expired breeding transactions at status breeding requested 3 days ago.
+  @Cron("0 30 0 * * *", {
+    name: "checkExpiredBreedingTransactionsAtStatusBreedingRequestedThreeDaysAgo",
+    timeZone: "Asia/Ho_Chi_Minh",
+  })
+  async handleCronCheckExpiredBreedingTransactionsAtStatusBreedingRequested(): Promise<void> {
+    const DAYS = 3;
+    const dateWithThreeDaysAgo = getSpecificDateAgoWithNumberDays(DAYS);
+    const breedingTransactionList =
+      await this.breedingTransactionService.getBreedingTransactionsAvailableInSpecificDate(
+        dateWithThreeDaysAgo.toDateString(),
+        BreedingTransactionEnum.BREEDING_REQUESTED,
+      );
+    if (breedingTransactionList && breedingTransactionList.length > 0) {
+      breedingTransactionList.forEach(async (item) => {
+        item.status = BreedingTransactionEnum.BREEDING_EXPIRED;
         await item.save();
       });
     }

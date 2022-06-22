@@ -128,11 +128,12 @@ export class BreedTransactionService extends BaseService<
 
   getBreedingTransactionsAvailableInSpecificDate(
     date: string,
+    status: BreedingTransactionEnum,
   ): Promise<BreedingTransaction[]> {
     return this.breedTransactionRepository.find({
       where: {
         meetingTime: date,
-        status: BreedingTransactionEnum.CREATED,
+        status: status,
       },
     });
   }
