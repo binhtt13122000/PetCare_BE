@@ -167,7 +167,7 @@ export class BreedTransactionController {
     });
   }
 
-  @Post("branch/payment")
+  @Post("branch/request")
   async paymentForBranch(
     @Body() body: PaymentForBranchDTO,
   ): Promise<BreedingTransaction> {
@@ -207,19 +207,20 @@ export class BreedTransactionController {
       ...petFemale,
       status: PetEnum.IN_BREED,
     });
-    await this.customerService.update(buyer.id, {
-      ...buyer,
-      point: buyer.point + breedTransaction.serviceFee / 1000,
-    });
+    // await this.customerService.update(buyer.id, {
+    //   ...buyer,
+    //   point: buyer.point + body.servicePoint,
+    // });
     const updatedBreedTransaction = new BreedingTransaction({
       ...breedTransaction,
       paymentForBranchTime: body.paymentForBranchTime,
-      serviceFee: body.serviceFee,
-      status: BreedingTransactionEnum.PAYMENTED,
+      // serviceFee: body.serviceFee,
+      status: BreedingTransactionEnum.BREEDING_REQUESTED,
       breedingBranchId: body.breedingBranchId,
       dateOfBreeding: body.dateOfBreeding,
-      transactionTotal:
-        breedTransaction.transactionTotal + breedTransaction.serviceFee,
+      // servicePoint: body.servicePoint,
+      // transactionTotal:
+      //   breedTransaction.transactionTotal + breedTransaction.serviceFee,
     });
     return await this.breedTransactionService.update(body.id, {
       ...updatedBreedTransaction,

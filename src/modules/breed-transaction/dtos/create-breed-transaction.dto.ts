@@ -47,8 +47,6 @@ export class PaymentForBranchDTO {
   @ApiProperty()
   id: number;
   @ApiProperty()
-  serviceFee: number;
-  @ApiProperty()
   paymentForBranchTime: Date;
   @ApiProperty()
   breedingBranchId: number;

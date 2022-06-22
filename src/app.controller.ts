@@ -49,7 +49,7 @@ export class AppController {
     }
     const uuidKey = v4();
     this.cacheManager.set(uuidKey, id, {
-      ttl: 3000,
+      ttl: 60,
     });
     return this.httpService
       .post(
