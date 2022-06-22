@@ -39,6 +39,11 @@ export class BreedingTransaction extends BaseEntity {
     type: "timestamp without time zone",
     nullable: true,
   })
+  timeToCheckBreeding: Date;
+  @Column({
+    type: "timestamp without time zone",
+    nullable: true,
+  })
   pickupMalePetTime: Date;
   @Column({
     type: "timestamp without time zone",
