@@ -12,6 +12,7 @@ import {
   CACHE_MANAGER,
   Get,
   Param,
+  BadRequestException,
 } from "@nestjs/common";
 import { ApiQuery, ApiTags } from "@nestjs/swagger";
 import { SaleTransaction } from "src/entities/transaction_service/sale-transaction.entity";
@@ -394,6 +395,7 @@ export class SaleTransactionsController {
         }
       },
       () => {
+        throw new BadRequestException("USER_CANCEL_REQUEST");
         // eslint-disable-next-line no-console
         console.log("Payment Failed");
         // this.cacheManager.del("order_id_" + id);

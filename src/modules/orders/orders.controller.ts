@@ -14,6 +14,7 @@ import {
   NotFoundException,
   BadGatewayException,
   Param,
+  BadRequestException,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { OrdersService } from "./orders.service";
@@ -197,6 +198,7 @@ export class OrdersController {
         }
       },
       () => {
+        throw new BadRequestException("USER_CANCEL_REQUEST");
         // eslint-disable-next-line no-console
         console.log("Payment Failed");
         // this.cacheManager.del("order_id_" + id);

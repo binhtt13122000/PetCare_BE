@@ -758,6 +758,7 @@ export class BreedTransactionController {
         }
       },
       () => {
+        throw new BadRequestException("USER_CANCEL_REQUEST");
         // eslint-disable-next-line no-console
         console.log("Payment Failed");
         // this.cacheManager.del("order_id_" + id);
