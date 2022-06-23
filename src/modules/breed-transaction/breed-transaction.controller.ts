@@ -379,6 +379,7 @@ export class BreedTransactionController {
     return await this.breedTransactionService.update(breedingTransaction.id, {
       ...breedingTransaction,
       status: BreedingTransactionEnum.IN_PROGRESS,
+      realDateOfBreeding: body.realDateOfBreeding,
     });
   }
 
@@ -396,6 +397,7 @@ export class BreedTransactionController {
       ...breedingTransaction,
       status: BreedingTransactionEnum.BREEDING_FINISHED,
       timeToCheckBreeding: body.timeToCheckBreeding,
+      realDateOfFinish: body.realDateOfFinish,
       serviceFee: body.serviceFee,
       servicePoint: body.servicePoint,
       transactionTotal: breedingTransaction.transactionTotal + body.serviceFee,
@@ -470,8 +472,9 @@ export class BreedTransactionController {
     });
     return await this.breedTransactionService.update(breedingTransaction.id, {
       ...breedingTransaction,
-      pickupMalePetTime: body.pickupMalePetTime,
+      pickupFemalePetTime: body.pickupFemalePetTime,
       status: BreedingTransactionEnum.BREEDING_SUCCESS,
+      paymentForBranchTime: body.paymentForBranchTime,
     });
   }
 
@@ -509,6 +512,7 @@ export class BreedTransactionController {
       ...breedingTransaction,
       isSuccess: body.isSuccess,
       evidence: evidence,
+      realDateOfBreeding: body.realTimeToCheckBreeding,
     });
   }
 

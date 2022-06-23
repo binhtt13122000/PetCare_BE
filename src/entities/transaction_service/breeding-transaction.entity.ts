@@ -39,7 +39,22 @@ export class BreedingTransaction extends BaseEntity {
     type: "timestamp without time zone",
     nullable: true,
   })
+  realDateOfBreeding: Date;
+  @Column({
+    type: "timestamp without time zone",
+    nullable: true,
+  })
+  realDateOfFinish: Date;
+  @Column({
+    type: "timestamp without time zone",
+    nullable: true,
+  })
   timeToCheckBreeding: Date;
+  @Column({
+    type: "timestamp without time zone",
+    nullable: true,
+  })
+  realTimeToCheckBreeding: Date;
   @Column({
     type: "timestamp without time zone",
     nullable: true,
@@ -102,6 +117,10 @@ export class BreedingTransaction extends BaseEntity {
   star: number;
   @Column({ type: "text", nullable: true })
   review: string;
+  @Column({ type: "int", nullable: true })
+  starBranch: number;
+  @Column({ type: "text", nullable: true })
+  reviewBranch: string;
   @Column({ type: "text", nullable: true })
   reasonCancel: string;
 

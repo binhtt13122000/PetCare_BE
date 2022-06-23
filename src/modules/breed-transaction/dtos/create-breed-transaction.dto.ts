@@ -66,6 +66,8 @@ export class CancelDTO {
 export class ChangeToInProgressDTO {
   @ApiProperty()
   id: number;
+  @ApiProperty()
+  realDateOfBreeding: Date;
 }
 
 export class PickUpMaleDTO {
@@ -79,14 +81,18 @@ export class PickUpFemaleDTO {
   @ApiProperty()
   id: number;
   @ApiProperty()
-  pickupMalePetTime: Date;
+  pickupFemalePetTime: Date;
+  @ApiProperty()
+  paymentForBranchTime: Date;
 }
 
 export class ChangeToFinishDTO {
   @ApiProperty()
   id: number;
   @ApiProperty()
-  timeToCheckBreeding: number;
+  timeToCheckBreeding: Date;
+  @ApiProperty()
+  realDateOfFinish: Date;
   @ApiProperty()
   serviceFee: number;
   @ApiProperty()
@@ -100,4 +106,6 @@ export class CheckSuccessDTO {
   file: Express.Multer.File;
   @ApiProperty()
   isSuccess: boolean;
+  @ApiProperty()
+  realTimeToCheckBreeding: Date;
 }
