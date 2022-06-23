@@ -26,7 +26,7 @@ export class PetComboService extends BaseEntity {
   @Column({ type: "text", nullable: true })
   review: number;
   @Column({ type: "text", nullable: true })
-  evidence: number;
+  evidence: string;
 
   @Column({ name: "serviceId" })
   serviceId: number;

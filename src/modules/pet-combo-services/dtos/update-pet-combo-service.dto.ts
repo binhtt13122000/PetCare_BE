@@ -13,4 +13,8 @@ export class UpdatePetComboServiceDTO {
   review: number;
   @ApiProperty()
   isAllCompleted: boolean;
+  @ApiProperty()
+  workingTime: Date;
+  @ApiProperty({ type: "string", format: "binary" })
+  file: Express.Multer.File;
 }
