@@ -17,7 +17,7 @@ import { PaymentQuery } from "src/common";
 import { PetCombo } from "src/entities/pet_service/pet-combo.entity";
 import { ComboService } from "src/entities/service/combo-service.entity";
 import { Combo } from "src/entities/service/combo.entity";
-import { ComboTypeEnum, PaymentOrderMethodEnum, PetEnum } from "src/enum";
+import { PaymentOrderMethodEnum, PetEnum } from "src/enum";
 import { vnpayService } from "src/external/vnpay.service";
 import { ComboServicesService } from "../combo-services/combo-services.service";
 import { CombosService } from "../combos/combos.service";
@@ -94,55 +94,10 @@ export class PetComboController {
             ...customer,
             point: customer.point + petCombo.point,
           });
-          const combo = await this.combos.findById(petCombo.comboId);
-          if (!combo) {
-            throw new NotFoundException("not found combo");
-          }
-          if (combo.type === ComboTypeEnum.BREED) {
-            const createdBreedingTransaction =
-              await this.breedTransactionService.store({
-                branchId: petCombo.branchId,
-                breedingBranchId: petCombo.branchId,
-                createdTime: new Date(
-                  new Date().getTime() + 7 * 60 * 60 * 1000,
-                ),
-                self: true,
-                dateOfBreeding: petCombo.registerTime,
-                ownerPetFemaleId: petOwner.customerId,
-                ownerPetMaleId: petOwner.customerId,
-                paymentMethod: "VNPAY",
-                paymentForBranchTime: new Date(
-                  new Date().getTime() + 7 * 60 * 60 * 1000,
-                ),
-                paymentForMalePetOwnerTime: new Date(
-                  new Date().getTime() + 7 * 60 * 60 * 1000,
-                ),
-                meetingTime: new Date(
-                  new Date().getTime() + 7 * 60 * 60 * 1000,
-                ),
-                petFemaleId: petCombo.petId,
-                petMaleId: petCombo.petId,
-                point: 0,
-                placeMeeting: "",
-                description: "",
-                postId: null,
-                sellerReceive: 0,
-                transactionTotal: petCombo.orderTotal,
-                transactionFee: 0,
-                serviceFee: petCombo.orderTotal,
-                status: BreedingTransactionEnum.SUCCESS,
-              });
-            await this.petCombosService.update(petCombo.id, {
-              ...petCombo,
-              isDraft: false,
-              breedingTransactionId: createdBreedingTransaction.id,
-            });
-          } else {
-            await this.petCombosService.update(petCombo.id, {
-              ...petCombo,
-              isDraft: false,
-            });
-          }
+          await this.petCombosService.update(petCombo.id, {
+            ...petCombo,
+            isDraft: false,
+          });
         } catch (error) {
           throw new HttpException(error, HttpStatus.BAD_REQUEST);
         }
