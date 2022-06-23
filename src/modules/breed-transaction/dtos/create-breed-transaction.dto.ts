@@ -109,3 +109,12 @@ export class CheckSuccessDTO {
   @ApiProperty()
   realTimeToCheckBreeding: Date;
 }
+
+export class ReviewDTO {
+  @ApiProperty()
+  id: number;
+  @ApiProperty()
+  star: number;
+  @ApiProperty()
+  review: string;
+}

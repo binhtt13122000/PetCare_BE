@@ -33,6 +33,7 @@ import {
   PaymentForPetMaleOwnerDTO,
   PickUpFemaleDTO,
   PickUpMaleDTO,
+  ReviewDTO,
 } from "./dtos/create-breed-transaction.dto";
 import {
   BreedingTransactionEnum,
@@ -513,6 +514,36 @@ export class BreedTransactionController {
       isSuccess: body.isSuccess,
       evidence: evidence,
       realDateOfBreeding: body.realTimeToCheckBreeding,
+    });
+  }
+
+  @Put("review")
+  async review(@Body() body: ReviewDTO): Promise<BreedingTransaction> {
+    const breedingTransaction = await this.breedTransactionService.findById(
+      body.id,
+    );
+    if (!breedingTransaction) {
+      throw new NotFoundException("not found breeding transaction");
+    }
+    return await this.breedTransactionService.update(body.id, {
+      ...breedingTransaction,
+      star: body.star,
+      review: body.review,
+    });
+  }
+
+  @Put("review-branch")
+  async reviewBranch(@Body() body: ReviewDTO): Promise<BreedingTransaction> {
+    const breedingTransaction = await this.breedTransactionService.findById(
+      body.id,
+    );
+    if (!breedingTransaction) {
+      throw new NotFoundException("not found breeding transaction");
+    }
+    return await this.breedTransactionService.update(body.id, {
+      ...breedingTransaction,
+      starBranch: body.star,
+      reviewBranch: body.review,
     });
   }
 
