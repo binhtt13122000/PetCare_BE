@@ -130,7 +130,7 @@ export class PetComboController {
                 transactionTotal: petCombo.orderTotal,
                 transactionFee: 0,
                 serviceFee: petCombo.orderTotal,
-                status: BreedingTransactionEnum.PAYMENTED,
+                status: BreedingTransactionEnum.SUCCESS,
               });
             await this.petCombosService.update(petCombo.id, {
               ...petCombo,
