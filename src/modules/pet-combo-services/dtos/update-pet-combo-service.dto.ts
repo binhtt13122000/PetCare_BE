@@ -11,4 +11,6 @@ export class UpdatePetComboServiceDTO {
   star: number;
   @ApiProperty()
   review: number;
+  @ApiProperty()
+  isAllCompleted: boolean;
 }

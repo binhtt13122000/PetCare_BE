@@ -8,12 +8,14 @@ import {
   getSpecificDateFutureWithNumberDays,
 } from "src/common/utils";
 import { NotificationPetComboServiceDTO } from "./dtos/notification-pet-combo-service.dto";
+import { PetCombosService } from "../pet-combo/pet-combo.service";
 
 @Controller("pet-combo-services")
 @ApiTags("pet-combo-services")
 export class PetComboServicesController {
   constructor(
     private readonly petComboServicesService: PetComboServicesService,
+    private readonly petCombosService: PetCombosService,
   ) {}
 
   @Get()
@@ -31,13 +33,32 @@ export class PetComboServicesController {
   async update(
     @Body() body: UpdatePetComboServiceDTO,
   ): Promise<PetComboService> {
-    const petComboService = this.petComboServicesService.findById(body.id);
+    const { isAllCompleted, ...rest } = body;
+    const petComboService = await this.petComboServicesService.findById(
+      body.id,
+    );
     if (!petComboService) {
       throw new NotFoundException("not found");
     }
-    return this.petComboServicesService.update(body.id, {
-      ...petComboService,
-      ...body,
-    });
+    const petCombo = await this.petCombosService.findById(
+      petComboService.petComboId,
+    );
+    if (!petCombo) {
+      throw new NotFoundException("not found pet combo");
+    }
+    const updatePetComboService = await this.petComboServicesService.update(
+      body.id,
+      {
+        ...petComboService,
+        ...rest,
+      },
+    );
+    if (isAllCompleted) {
+      await this.petCombosService.update(petCombo.id, {
+        ...petCombo,
+        isCompleted: true,
+      });
+    }
+    return updatePetComboService;
   }
 }
