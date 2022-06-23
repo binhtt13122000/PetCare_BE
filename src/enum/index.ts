@@ -9,7 +9,6 @@ export enum BreedingTransactionEnum {
   IN_PROGRESS = "IN_PROGRESS",
   BREEDING_FINISHED = "BREEDING_FINISHED",
   BREEDING_SUCCESS = "BREEDING_SUCCESS",
-  PAYMENTED = "PAYMENTED",
 }
 
 export enum SaleTransactionEnum {
