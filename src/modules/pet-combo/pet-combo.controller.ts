@@ -29,7 +29,6 @@ import { NotFoundException } from "@nestjs/common";
 import { CustomerService } from "../customer/customer.service";
 import { PetOwnerService } from "../pet-owner/pet-owner.service";
 import { BreedTransactionService } from "../breed-transaction/breed-transaction.service";
-import { BreedingTransactionEnum } from "../../enum/index";
 import { BreedingTransaction } from "src/entities/transaction_service/breeding-transaction.entity";
 import { PetsService } from "../pets/pets.service";
 
