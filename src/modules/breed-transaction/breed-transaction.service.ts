@@ -88,6 +88,10 @@ export class BreedTransactionService extends BaseService<
         "petFemale.breed.species",
         "petMale.breed",
         "petMale.breed.species",
+        "breedingBranch",
+        "petCombos",
+        "petCombos.petComboServices",
+        "petCombos.petComboServices.service",
       ],
     });
   }
