@@ -8,8 +8,6 @@ import { ComboServiceModule } from "../combo-services/combo-services.module";
 import { PetComboServicesModule } from "../pet-combo-services/pet-combo-services.module";
 import { CustomerModule } from "../customer/customer.module";
 import { PetOwnerModule } from "../pet-owner/pet-owner.module";
-import { BreedTransactionModule } from "../breed-transaction/breed-transaction.module";
-import { PetsModule } from "../pets/pets.module";
 
 @Module({
   imports: [
@@ -19,8 +17,6 @@ import { PetsModule } from "../pets/pets.module";
     PetComboServicesModule,
     CustomerModule,
     PetOwnerModule,
-    BreedTransactionModule,
-    PetsModule,
   ],
   providers: [PetCombosService],
   controllers: [PetComboController],

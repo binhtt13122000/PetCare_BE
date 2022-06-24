@@ -17,20 +17,17 @@ import { PaymentQuery } from "src/common";
 import { PetCombo } from "src/entities/pet_service/pet-combo.entity";
 import { ComboService } from "src/entities/service/combo-service.entity";
 import { Combo } from "src/entities/service/combo.entity";
-import { PaymentOrderMethodEnum, PetEnum } from "src/enum";
+import { PaymentOrderMethodEnum } from "src/enum";
 import { vnpayService } from "src/external/vnpay.service";
 import { ComboServicesService } from "../combo-services/combo-services.service";
 import { CombosService } from "../combos/combos.service";
 import { ResponsePayment } from "../orders/dto/response-payment.dto";
 import { PetComboServicesService } from "../pet-combo-services/pet-combo-services.service";
-import { PetComboDTO, PetComboPaymentDTO } from "./dto/create-pet-combo.dto";
+import { PetComboDTO } from "./dto/create-pet-combo.dto";
 import { PetCombosService } from "./pet-combo.service";
 import { NotFoundException } from "@nestjs/common";
 import { CustomerService } from "../customer/customer.service";
 import { PetOwnerService } from "../pet-owner/pet-owner.service";
-import { BreedTransactionService } from "../breed-transaction/breed-transaction.service";
-import { BreedingTransaction } from "src/entities/transaction_service/breeding-transaction.entity";
-import { PetsService } from "../pets/pets.service";
 
 @Controller("pet-combos")
 @ApiTags("pet-combos")
@@ -42,8 +39,6 @@ export class PetComboController {
     private readonly petComboServicesService: PetComboServicesService,
     private readonly customerService: CustomerService,
     private readonly petOwnerService: PetOwnerService,
-    private readonly breedTransactionService: BreedTransactionService,
-    private readonly petsService: PetsService,
   ) {}
 
   @Get()
@@ -111,52 +106,8 @@ export class PetComboController {
   }
 
   @Post("payment")
-  async createPayment(
-    @Body() body: PetComboPaymentDTO,
-  ): Promise<BreedingTransaction> {
+  async createPayment(@Body() body: PetComboDTO): Promise<PetCombo> {
     try {
-      const breedingTransaction = await this.breedTransactionService.findById(
-        body.breedingTransactionId,
-      );
-      if (!breedingTransaction) {
-        throw new NotFoundException("not found breed transaction");
-      }
-      const petMale = await this.petsService.findById(
-        breedingTransaction.petMaleId,
-      );
-      if (!petMale) {
-        throw new NotFoundException("not found pet male");
-      }
-      const petFemale = await this.petsService.findById(
-        breedingTransaction.petFemaleId,
-      );
-      if (!petFemale) {
-        throw new NotFoundException("not found pet female");
-      }
-      const buyer = await this.customerService.findById(
-        breedingTransaction.ownerPetFemaleId,
-      );
-      if (!buyer) {
-        throw new NotFoundException("not found buyer");
-      }
-      const seller = await this.customerService.findById(
-        breedingTransaction.ownerPetMaleId,
-      );
-      if (!seller) {
-        throw new NotFoundException("not found seller");
-      }
-      await this.petsService.update(petMale.id, {
-        ...petMale,
-        status: PetEnum.IN_BREED,
-      });
-      await this.petsService.update(petFemale.id, {
-        ...petFemale,
-        status: PetEnum.IN_BREED,
-      });
-      await this.customerService.update(buyer.id, {
-        ...buyer,
-        point: buyer.point + body.point,
-      });
       let next = 0;
       const combo: Partial<Combo> = await this.combos.findById(body.comboId);
       const comboService: Partial<ComboService[]> =
@@ -175,9 +126,8 @@ export class PetComboController {
 
       const createPetCombo = await this.petCombosService.store({
         ...petCombo,
-        isDraft: true,
+        isDraft: false,
       });
-
       comboService.forEach(async (item, index) => {
         next += item.nextEvent;
         const ts = new Date(body.registerTime);
@@ -202,30 +152,24 @@ export class PetComboController {
             realTime: undefined,
           });
         }
-      });
-      if (createPetCombo) {
-        switch (body.paymentMethod) {
-          case PaymentOrderMethodEnum.VNPAY:
-            const updatedBreedingTransaction: Partial<BreedingTransaction> = {
-              ...breedingTransaction,
-              breedingBranchId: body.branchId,
-              transactionTotal: 0,
-              serviceFee: body.orderTotal,
-              paymentForBranchTime: new Date(
-                new Date().getTime() + 7 * 60 * 60 * 1000,
-              ),
-              dateOfBreeding: body.dateOfBreeding,
-            };
-            await this.breedTransactionService.update(
-              body.breedingTransactionId,
-              updatedBreedingTransaction,
-            );
-            break;
-          default:
-            break;
+        const petOwner = await this.petOwnerService.getCurrentOwner(
+          createPetCombo.petId,
+        );
+        if (!petOwner) {
+          throw new NotFoundException("not found pet owner");
         }
-      }
-      return null;
+        const customer = await this.customerService.findById(
+          petOwner.customerId,
+        );
+        if (!petOwner) {
+          throw new NotFoundException("not found customer");
+        }
+        await this.customerService.update(customer.id, {
+          ...customer,
+          point: customer.point + petCombo.point,
+        });
+      });
+      return createPetCombo;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
