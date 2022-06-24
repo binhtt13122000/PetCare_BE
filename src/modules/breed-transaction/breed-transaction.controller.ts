@@ -513,7 +513,7 @@ export class BreedTransactionController {
       ...breedingTransaction,
       isSuccess: body.isSuccess,
       evidence: evidence,
-      realDateOfBreeding: body.realTimeToCheckBreeding,
+      realTimeToCheckBreeding: body.realTimeToCheckBreeding,
     });
   }
 
