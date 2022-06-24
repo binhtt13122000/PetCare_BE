@@ -203,6 +203,8 @@ export class PetComboController {
         isDraft: true,
       });
 
+      comboService.sort((a, b) => a.priority - b.priority);
+
       comboService.forEach(async (item, index) => {
         next += item.nextEvent;
         const ts = new Date(body.registerTime);
