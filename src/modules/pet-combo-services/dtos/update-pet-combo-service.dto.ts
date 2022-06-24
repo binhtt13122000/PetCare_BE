@@ -11,7 +11,7 @@ export class UpdatePetComboServiceDTO {
   star: number;
   @ApiProperty()
   review: number;
-  @ApiProperty()
+  @ApiProperty({ required: false })
   isAllCompleted: boolean;
   @ApiProperty()
   workingTime: Date;

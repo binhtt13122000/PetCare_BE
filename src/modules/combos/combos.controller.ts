@@ -10,9 +10,8 @@ import {
   Put,
   HttpException,
   Delete,
-  Query,
 } from "@nestjs/common";
-import { ApiQuery, ApiTags } from "@nestjs/swagger";
+import { ApiParam, ApiTags } from "@nestjs/swagger";
 import { IdParams } from "src/common";
 import { ComboService } from "src/entities/service/combo-service.entity";
 import { Combo } from "src/entities/service/combo.entity";
@@ -31,13 +30,13 @@ export class CombosController {
     return await this.combosService.index();
   }
 
-  @ApiQuery({
+  @ApiParam({
     name: "type",
     type: "enum",
     enum: ComboTypeEnum,
   })
   @Get("types/:type")
-  async getByType(@Query("type") type: ComboTypeEnum): Promise<Combo[]> {
+  async getByType(@Param("type") type: ComboTypeEnum): Promise<Combo[]> {
     return await this.combosService.getByType(type);
   }
 
