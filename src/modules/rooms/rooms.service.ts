@@ -47,6 +47,18 @@ export class RoomsService {
       .exec();
   }
 
+  async findAllRoomAvailableByPost(postId: number): Promise<Room[]> {
+    return this.roomModel
+      .find({
+        $and: [
+          {
+            postId: postId,
+          },
+        ],
+      })
+      .exec();
+  }
+
   async getUserRooms(userId: number, type?: "open" | "close"): Promise<Room[]> {
     if (!type) {
       return this.roomModel

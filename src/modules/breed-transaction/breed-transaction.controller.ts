@@ -159,6 +159,18 @@ export class BreedTransactionController {
     if (!post) {
       throw new NotFoundException("not found post");
     }
+    const roomList = await this.roomService.findAllRoomAvailableByPost(
+      breedTransaction.postId,
+    );
+    if (roomList && roomList.length > 0) {
+      roomList.forEach(async (item) => {
+        item.status = RoomStatusEnum.CLOSED;
+        const updatedRoom = await this.roomService.updateRoom(item);
+        this.chatGateway.server
+          .in(item._id.valueOf())
+          .emit("updatedRoom", updatedRoom);
+      });
+    }
     await this.postService.update(post.id, {
       ...post,
       status: PostEnum.CLOSED,
