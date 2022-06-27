@@ -248,6 +248,14 @@ export class BreedTransactionController {
     if (!branchInstance) {
       throw new HttpException("not found branch", HttpStatus.NOT_FOUND);
     }
+    const post = await this.postService.findById(breedTransaction.postId);
+    if (!post) {
+      throw new NotFoundException("not found post");
+    }
+    await this.postService.update(post.id, {
+      ...post,
+      status: PostEnum.CLOSED,
+    });
     const accountBranchInstance = await this.userService.findByPhoneNumber(
       branchInstance.phoneNumber || "",
     );
