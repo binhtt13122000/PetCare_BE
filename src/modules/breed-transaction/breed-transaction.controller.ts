@@ -182,7 +182,7 @@ export class BreedTransactionController {
     const updatedBreedTransaction = new BreedingTransaction({
       ...breedTransaction,
       paymentMethod: "VNPAY",
-      paymentForMalePetOwnerTime: body.paymentForMalePetOwnerTime,
+      paymentTime: body.paymentTime,
       status: BreedingTransactionEnum.SUCCESS,
     });
     const breedingTransactionUpdated =
@@ -248,14 +248,6 @@ export class BreedTransactionController {
     if (!branchInstance) {
       throw new HttpException("not found branch", HttpStatus.NOT_FOUND);
     }
-    const post = await this.postService.findById(breedTransaction.postId);
-    if (!post) {
-      throw new NotFoundException("not found post");
-    }
-    await this.postService.update(post.id, {
-      ...post,
-      status: PostEnum.CLOSED,
-    });
     const accountBranchInstance = await this.userService.findByPhoneNumber(
       branchInstance.phoneNumber || "",
     );
@@ -390,6 +382,14 @@ export class BreedTransactionController {
       if (!petFemale) {
         throw new NotFoundException("don't have pet female");
       }
+      const post = await this.postService.findById(breedingTransaction.postId);
+      if (!post) {
+        throw new NotFoundException("not found post");
+      }
+      await this.postService.update(post.id, {
+        ...post,
+        status: PostEnum.PUBLISHED,
+      });
       await this.petsService.update(petMale.id, {
         ...petMale,
         status: PetEnum.NORMAL,
@@ -602,6 +602,14 @@ export class BreedTransactionController {
     if (!seller) {
       throw new NotFoundException("not found seller");
     }
+    const post = await this.postService.findById(breedingTransaction.postId);
+    if (!post) {
+      throw new NotFoundException("not found post");
+    }
+    await this.postService.update(post.id, {
+      ...post,
+      status: PostEnum.CLOSED,
+    });
     await this.customerService.update(seller.id, {
       ...seller,
       point: seller.point + breedingTransaction.servicePoint,
@@ -620,7 +628,7 @@ export class BreedTransactionController {
         ...breedingTransaction,
         pickupFemalePetTime: body.pickupFemalePetTime,
         status: BreedingTransactionEnum.BREEDING_SUCCESS,
-        paymentForBranchTime: body.paymentForBranchTime,
+        paymentTime: body.paymentTime,
       },
     );
     return breedTransactionUpdated;

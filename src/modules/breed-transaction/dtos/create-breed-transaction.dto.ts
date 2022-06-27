@@ -40,7 +40,7 @@ export class PaymentForPetMaleOwnerDTO {
   @ApiProperty()
   id: number;
   @ApiProperty()
-  paymentForMalePetOwnerTime: Date;
+  paymentTime: Date;
 }
 
 export class PaymentForBranchDTO {
@@ -83,7 +83,7 @@ export class PickUpFemaleDTO {
   @ApiProperty()
   pickupFemalePetTime: Date;
   @ApiProperty()
-  paymentForBranchTime: Date;
+  paymentTime: Date;
 }
 
 export class ChangeToFinishDTO {
