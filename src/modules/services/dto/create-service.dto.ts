@@ -16,10 +16,8 @@ export class CreateServiceDTO {
   @IsBoolean()
   status: boolean;
   @ApiProperty()
-  @IsBoolean()
-  isHealthCheck: boolean;
   @ApiProperty()
   unit: string;
   @ApiProperty()
-  healthCheckTemplate: string;
+  estimatedTime: number;
 }
