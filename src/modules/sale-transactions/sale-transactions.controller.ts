@@ -331,7 +331,10 @@ export class SaleTransactionsController {
             await Promise.all(
               roomList.map(async (item) => {
                 item.status = RoomStatusEnum.CLOSED;
-                item.newestMessage = message;
+                item.newestMessage =
+                  item.buyerId === saleTransaction.buyerId
+                    ? message
+                    : "We sincerely apologize. The post has made the transaction. We hope to receive your understanding and look forward to continuing to serve you in future transactions.";
                 item.newestMessageTime =
                   updateSaleTransactionDTO.transactionTime;
                 item.isSellerMessage = true;
