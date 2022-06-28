@@ -59,6 +59,7 @@ import { NotificationProducerService } from "src/shared/notification/notificatio
 import { BranchesService } from "../branches/branches.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { uploadService } from "src/external/uploadFile.service";
+import { ResponseBreedingTransaction } from "./dtos/response-breed-transaction.dto";
 
 @Controller("breed-transactions")
 @ApiTags("breed-transactions")
@@ -315,9 +316,12 @@ export class BreedTransactionController {
   }
 
   @Post()
-  async create(
-    @Body() body: CreateBreedTransactionDTO,
-  ): Promise<BreedingTransaction> {
+  async create(@Body() body: CreateBreedTransactionDTO): Promise<
+    | ResponseBreedingTransaction
+    | {
+        isSuccess: boolean;
+      }
+  > {
     try {
       const post = await this.postService.findById(body.postId);
       if (!post) {
@@ -331,6 +335,15 @@ export class BreedTransactionController {
       if (!petFemale) {
         throw new NotFoundException("don't have pet female");
       }
+      const checkExistedBreedingTransactionWithPostId =
+        await this.breedTransactionService.checkExistedBreedingTransactionAvailableWithPostId(
+          body.postId,
+        );
+      if (checkExistedBreedingTransactionWithPostId > 0) {
+        return {
+          isSuccess: false,
+        };
+      }
       post.status = PostEnum.WAITING_FOR_PAYMENT;
       await this.postService.update(post.id, post);
       await this.petsService.update(petMale.id, {
@@ -341,12 +354,16 @@ export class BreedTransactionController {
         ...petFemale,
         status: PetEnum.IN_BREED,
       });
-      return await this.breedTransactionService.store(
+      const breedTransactionCreated = await this.breedTransactionService.store(
         new BreedingTransaction({
           ...body,
           status: BreedingTransactionEnum.CREATED,
         }),
       );
+      return {
+        ...breedTransactionCreated,
+        isSuccess: true,
+      };
     } catch (error) {
       throw new BadRequestException(error);
     }

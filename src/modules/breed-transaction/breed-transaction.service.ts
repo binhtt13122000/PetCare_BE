@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { BaseService } from "src/base/base.service";
 import { BreedingTransaction } from "src/entities/transaction_service/breeding-transaction.entity";
 import { BreedingTransactionEnum } from "src/enum";
+import { In } from "typeorm";
 import { BreedTransactionRepository } from "./breed-transaction.repository";
 import { StatisticBreedTransactionDTO } from "./dtos/statistic-breed-transaction.dto";
 
@@ -14,6 +15,24 @@ export class BreedTransactionService extends BaseService<
     private readonly breedTransactionRepository: BreedTransactionRepository,
   ) {
     super(breedTransactionRepository);
+  }
+
+  checkExistedBreedingTransactionAvailableWithPostId(
+    postId: number,
+  ): Promise<number> {
+    return this.breedTransactionRepository.count({
+      where: {
+        postId: postId,
+        status: In([
+          BreedingTransactionEnum.CREATED,
+          BreedingTransactionEnum.SUCCESS,
+          BreedingTransactionEnum.BREEDING_REQUESTED,
+          BreedingTransactionEnum.IN_PROGRESS,
+          BreedingTransactionEnum.BREEDING_FINISHED,
+          BreedingTransactionEnum.BREEDING_SUCCESS,
+        ]),
+      },
+    });
   }
 
   getBreedTransactionsByOwnerPetFemaleId(
