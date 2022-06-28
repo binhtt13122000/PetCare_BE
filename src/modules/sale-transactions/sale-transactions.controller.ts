@@ -324,25 +324,37 @@ export class SaleTransactionsController {
             ...seller,
             point: seller.point + updateSaleTransactionDTO.point,
           });
-          const room = await this.roomService.findByBuyerAndPost(
-            saleTransaction.buyerId,
+          const roomList = await this.roomService.findAllRoomAvailableByPost(
             saleTransaction.postId,
           );
-          if (!room) {
-            throw new HttpException("not found", HttpStatus.NOT_FOUND);
+          if (roomList && roomList.length > 0) {
+            await Promise.all(
+              roomList.map(async (item) => {
+                item.status = RoomStatusEnum.CLOSED;
+                item.newestMessage = message;
+                item.newestMessageTime =
+                  updateSaleTransactionDTO.transactionTime;
+                item.isSellerMessage = true;
+                const updatedRoom = await this.roomService.updateRoom(item);
+                const createdMessage = await this.messageService.create({
+                  content:
+                    item.buyerId === saleTransaction.buyerId
+                      ? message
+                      : "We sincerely apologize. The post has made the transaction. We hope to receive your understanding and look forward to continuing to serve you in future transactions.",
+                  createdTime: updateSaleTransactionDTO.transactionTime,
+                  isSellerMessage: true,
+                  type: MessageEnum.NORMAL,
+                  room: item._id,
+                });
+                this.chatGateway.server
+                  .in(item._id.valueOf())
+                  .emit("updatedRoom", updatedRoom);
+                this.chatGateway.server
+                  .in(item._id.valueOf())
+                  .emit("chatToClient", createdMessage);
+              }),
+            );
           }
-          room.status = RoomStatusEnum.CLOSED;
-          room.newestMessage = message;
-          room.newestMessageTime = updateSaleTransactionDTO.transactionTime;
-          room.isSellerMessage = true;
-          const updatedRoom = await this.roomService.updateRoom(room);
-          const createdMessage = await this.messageService.create({
-            content: message,
-            createdTime: updateSaleTransactionDTO.transactionTime,
-            isSellerMessage: true,
-            type: MessageEnum.NORMAL,
-            room: room._id,
-          });
           this.petOwnerService.updateAllByPetId(saleTransaction.petId);
           this.petOwnerService.store(
             new PetOwner({
@@ -370,12 +382,7 @@ export class SaleTransactionsController {
             },
             accountBranchInstance.id,
           );
-          this.chatGateway.server
-            .in(room._id.valueOf())
-            .emit("updatedRoom", updatedRoom);
-          this.chatGateway.server
-            .in(room._id.valueOf())
-            .emit("chatToClient", createdMessage);
+
           if (pet.specialMarkings) {
             const fullDataPet = await this.petsService.getOne(pet.id, true);
             return this.httpService
