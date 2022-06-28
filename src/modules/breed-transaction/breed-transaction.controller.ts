@@ -175,7 +175,7 @@ export class BreedTransactionController {
         const createdMessage = await this.messageService.create({
           content: message,
           createdTime: body.paymentTime,
-          isSellerMessage: false,
+          isSellerMessage: true,
           type: MessageEnum.NORMAL,
           room: item._id,
         });
@@ -371,6 +371,10 @@ export class BreedTransactionController {
       if (!petFemale) {
         throw new NotFoundException("don't have pet female");
       }
+      const post = await this.postService.findById(breedingTransaction.postId);
+      if (!post) {
+        throw new NotFoundException("not found post");
+      }
       await this.petsService.update(petMale.id, {
         ...petMale,
         status: PetEnum.IN_POST,
@@ -378,6 +382,10 @@ export class BreedTransactionController {
       await this.petsService.update(petFemale.id, {
         ...petFemale,
         status: PetEnum.NORMAL,
+      });
+      await this.postService.update(post.id, {
+        ...post,
+        status: PostEnum.PUBLISHED,
       });
       return await this.breedTransactionService.update(breedingTransaction.id, {
         ...breedingTransaction,
@@ -421,7 +429,7 @@ export class BreedTransactionController {
       });
       await this.petsService.update(petMale.id, {
         ...petMale,
-        status: PetEnum.NORMAL,
+        status: PetEnum.IN_POST,
       });
       await this.petsService.update(petFemale.id, {
         ...petFemale,
@@ -472,6 +480,10 @@ export class BreedTransactionController {
     if (!seller) {
       throw new HttpException("not found", HttpStatus.NOT_FOUND);
     }
+    const post = await this.postService.findById(breedingTransaction.postId);
+    if (!post) {
+      throw new NotFoundException("not found post");
+    }
     const accountSellerInstance = await this.userService.findByPhoneNumber(
       seller.phoneNumber || "",
     );
@@ -486,6 +498,39 @@ export class BreedTransactionController {
       ...petFemale,
       status: PetEnum.IN_BREED,
     });
+    await this.postService.update(post.id, {
+      ...post,
+      status: PostEnum.CLOSED,
+    });
+    const roomList = await this.roomService.findAllRoomAvailableByPost(
+      breedingTransaction.postId,
+    );
+    if (roomList && roomList.length > 0) {
+      const message =
+        "We sincerely apologize. The post has made the transaction. We hope to receive your understanding and look forward to continuing to serve you in future transactions.";
+      roomList.forEach(async (item) => {
+        if (item.buyerId !== breedingTransaction.ownerPetFemaleId) {
+          item.status = RoomStatusEnum.CLOSED;
+          item.newestMessage = message;
+          item.newestMessageTime = body.realDateOfBreeding;
+          item.isSellerMessage = true;
+          const createdMessage = await this.messageService.create({
+            content: message,
+            createdTime: body.realDateOfBreeding,
+            isSellerMessage: true,
+            type: MessageEnum.NORMAL,
+            room: item._id,
+          });
+          const updatedRoom = await this.roomService.updateRoom(item);
+          this.chatGateway.server
+            .in(item._id.valueOf())
+            .emit("updatedRoom", updatedRoom);
+          this.chatGateway.server
+            .in(item._id.valueOf())
+            .emit("chatToClient", createdMessage);
+        }
+      });
+    }
     const breedTransactionUpdated = await this.breedTransactionService.update(
       breedingTransaction.id,
       {
@@ -498,7 +543,7 @@ export class BreedTransactionController {
       {
         body: "Your female pet have been progress breeding transaction. See information details now.>>>>",
         title: "In Progress Breeding Transaction.",
-        type: NotificationEnum.BREEDING_TRANSACTION_REQUESTED,
+        type: NotificationEnum.BREEDING_TRANSACTION_PROGRESSING,
         metadata: String(breedTransactionUpdated.id),
       },
       accountBuyerInstance.id,
@@ -507,7 +552,7 @@ export class BreedTransactionController {
       {
         body: "Your male pet have been progress breeding transaction. See information details now.>>>>",
         title: "In Progress Breeding Transaction.",
-        type: NotificationEnum.BREEDING_TRANSACTION_REQUESTED,
+        type: NotificationEnum.BREEDING_TRANSACTION_PROGRESSING,
         metadata: String(breedTransactionUpdated.id),
       },
       accountSellerInstance.id,
