@@ -105,8 +105,8 @@ export class BreedTransactionService extends BaseService<
       .createQueryBuilder("breed-transactions")
       .where(
         branchId
-          ? "breed-transactions.branchId = :branchId and breed-transactions.status = :status and breed-transactions.paymentForBranchTime >= :firstDate and breed-transactions.paymentForBranchTime <= :lastDate"
-          : "breed-transactions.status = :status and breed-transactions.paymentForBranchTime >= :firstDate and breed-transactions.paymentForBranchTime <= :lastDate",
+          ? "breed-transactions.branchId = :branchId and breed-transactions.status = :status and breed-transactions.paymentTime >= :firstDate and breed-transactions.paymentTime <= :lastDate"
+          : "breed-transactions.status = :status and breed-transactions.paymentTime >= :firstDate and breed-transactions.paymentTime <= :lastDate",
         branchId
           ? {
               branchId: branchId,

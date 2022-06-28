@@ -98,6 +98,7 @@ export class BranchesController {
           currentMonth.firstDate,
           currentMonth.lastDate,
         );
+
       const saleTransactionBranchInMonth =
         await this.saleTransactionService.getSaleTransactionBranchInMonth(
           branchId,
