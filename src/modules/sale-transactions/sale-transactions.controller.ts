@@ -49,6 +49,7 @@ import { BranchesService } from "../branches/branches.service";
 import { getSpecificDateAgoWithNumberDays } from "src/common/utils";
 import { HttpService } from "@nestjs/axios";
 import { map } from "rxjs";
+import { ResponseSaleTransaction } from "./dtos/response-sale-transaction.dto";
 
 @Controller("sale-transactions")
 @ApiTags("sale-transactions")
@@ -120,17 +121,35 @@ export class SaleTransactionsController {
   }
 
   @Post()
-  async create(
-    @Body() body: CreateSaleTransactionDTO,
-  ): Promise<SaleTransaction> {
+  async create(@Body() body: CreateSaleTransactionDTO): Promise<
+    | ResponseSaleTransaction
+    | {
+        isSuccess: boolean;
+      }
+  > {
     try {
       const post = await this.postService.findById(body.postId);
       if (!post) {
         throw new NotFoundException("dont have post");
       }
+      const checkExistedSaleTransactionWithPostId =
+        await this.saleTransactionsService.checkExistedSaleTransactionAvailableWithPostId(
+          body.postId,
+        );
+      if (checkExistedSaleTransactionWithPostId > 0) {
+        return {
+          isSuccess: false,
+        };
+      }
       post.status = PostEnum.WAITING_FOR_PAYMENT;
       await this.postService.update(post.id, post);
-      return this.saleTransactionsService.store(new SaleTransaction(body));
+      const createdSaleTransaction = await this.saleTransactionsService.store(
+        new SaleTransaction(body),
+      );
+      return {
+        ...createdSaleTransaction,
+        isSuccess: true,
+      };
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

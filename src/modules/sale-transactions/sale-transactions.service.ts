@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { BaseService } from "src/base/base.service";
 import { SaleTransaction } from "src/entities/transaction_service/sale-transaction.entity";
 import { SaleTransactionEnum } from "src/enum";
+import { In } from "typeorm";
 import { StatisticSaleTransactionDTO } from "./dtos/statistic-sale-transaction.dto";
 import { SaleTransactionsRepository } from "./sale-transaction.repository";
 
@@ -30,6 +31,17 @@ export class SaleTransactionsService extends BaseService<
       relations: ["buyer", "seller"],
       order: {
         createdTime: "DESC",
+      },
+    });
+  }
+
+  checkExistedSaleTransactionAvailableWithPostId(
+    postId: number,
+  ): Promise<number> {
+    return this.saleTransactionsRepository.count({
+      where: {
+        postId: postId,
+        status: In([SaleTransactionEnum.CREATED, SaleTransactionEnum.SUCCESS]),
       },
     });
   }
