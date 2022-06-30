@@ -231,6 +231,12 @@ export class OrdersController {
           instance.orderDetails.push(convertObject);
         });
       Object.assign(order, rest);
+      const totalPrice = order.orderDetails.reduce(
+        (totalPrice, total) => totalPrice + total.totalPrice,
+        0,
+      );
+      order.orderTotal = totalPrice;
+      order.provisionalTotal = totalPrice;
       return instance.save();
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
