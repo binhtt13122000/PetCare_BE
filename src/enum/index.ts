@@ -11,6 +11,12 @@ export enum BreedingTransactionEnum {
   BREEDING_SUCCESS = "BREEDING_SUCCESS",
 }
 
+export enum OrderServiceType {
+  SERVICE = "SERVICE",
+  BREEDING = "BREEDING",
+  COMBO = "COMBO",
+}
+
 export enum SaleTransactionEnum {
   CREATED = "CREATED",
   CANCELED = "CANCELED",

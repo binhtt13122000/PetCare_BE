@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { OrderServiceType } from "src/enum";
 import { CreateOrderDTO } from "./create-order.dto";
 export class UpdateOrderDTO extends CreateOrderDTO {
   @ApiProperty()
@@ -10,7 +11,10 @@ export class UpdateOrderDTO extends CreateOrderDTO {
   @ApiProperty()
   review: string;
   @ApiProperty({ required: false, isArray: true })
-  deletedIds: number[];
+  deletedIds: {
+    id: number;
+    type: OrderServiceType;
+  }[];
 }
 
 export class OrderPaymentDTO extends UpdateOrderDTO {

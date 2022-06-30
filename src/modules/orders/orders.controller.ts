@@ -25,7 +25,12 @@ import { Request } from "express";
 import { PaymentQuery } from "src/common";
 import { Cache } from "cache-manager";
 import { format } from "date-fns";
-import { ComboTypeEnum, OrderEnum, PaymentOrderMethodEnum } from "src/enum";
+import {
+  ComboTypeEnum,
+  OrderEnum,
+  OrderServiceType,
+  PaymentOrderMethodEnum,
+} from "src/enum";
 import { ResponsePayment } from "./dto/response-payment.dto";
 import { OrderOptionDto } from "./dto/order-option.dto";
 import { PageDto } from "src/common/page.dto";
@@ -43,6 +48,7 @@ import { BreedTransactionService } from "../breed-transaction/breed-transaction.
 import { PetCombosService } from "../pet-combo/pet-combo.service";
 import { PetComboServicesService } from "../pet-combo-services/pet-combo-services.service";
 import { OrderDetailDTO } from "./dto/order-detail.dto";
+import { EntityId } from "typeorm/repository/EntityId";
 
 @ApiTags("orders")
 @Controller("orders")
@@ -168,7 +174,32 @@ export class OrdersController {
         throw new BadGatewayException("Cannot update");
       }
       if (deletedIds && deletedIds.length > 0) {
-        await this.orderDetailsService.deleteItems(deletedIds);
+        const convertDeletedIds = deletedIds.map((item) => item.id);
+        const convertDeletedIdsCombo = deletedIds
+          .filter((item) => item.type === OrderServiceType.COMBO)
+          .map((item) => item.id);
+        if (convertDeletedIdsCombo && convertDeletedIdsCombo.length > 0) {
+          const petCombos = await this.petCombosService.findByIds(
+            convertDeletedIdsCombo as [EntityId],
+          );
+          if (petCombos && petCombos.length > 0) {
+            const deletedIds = petCombos.map((item) => item.id);
+            const petComboServices =
+              await this.petComboServicesService.findByIds(
+                deletedIds as [EntityId],
+              );
+            if (petComboServices && petComboServices.length > 0) {
+              const convertPetComboServiceIds = petComboServices.map(
+                (item) => item.id,
+              );
+              await this.petComboServicesService.deleteItems(
+                convertPetComboServiceIds,
+              );
+            }
+            await this.petCombosService.deleteItems(deletedIds);
+          }
+        }
+        await this.orderDetailsService.deleteItems(convertDeletedIds);
       }
       const instance = await this.ordersService.getOneWithOrderDetails(rest.id);
       instance.orderDetails;
