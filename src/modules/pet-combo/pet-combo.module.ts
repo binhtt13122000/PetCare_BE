@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { PetCombosService } from "./pet-combo.service";
 import { PetComboController } from "./pet-combo.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
@@ -12,9 +12,9 @@ import { PetOwnerModule } from "../pet-owner/pet-owner.module";
 @Module({
   imports: [
     TypeOrmModule.forFeature([PetComboRepository]),
+    forwardRef(() => PetComboServicesModule),
     CombosModule,
     ComboServiceModule,
-    PetComboServicesModule,
     CustomerModule,
     PetOwnerModule,
   ],

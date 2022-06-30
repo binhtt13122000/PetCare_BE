@@ -11,7 +11,14 @@ export class CreateOrderDTO {
   @ApiProperty({ required: false })
   description: string;
   @ApiProperty()
-  orderDetails: Partial<OrderDetail[]>;
+  orderDetails: Partial<
+    Partial<
+      OrderDetail & {
+        petId?: number;
+        registerTime?: Date;
+      }
+    >[]
+  >;
   @ApiProperty()
   branchId: number;
   @ApiProperty()

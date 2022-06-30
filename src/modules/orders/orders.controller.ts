@@ -25,7 +25,7 @@ import { Request } from "express";
 import { PaymentQuery } from "src/common";
 import { Cache } from "cache-manager";
 import { format } from "date-fns";
-import { OrderEnum, PaymentOrderMethodEnum } from "src/enum";
+import { ComboTypeEnum, OrderEnum, PaymentOrderMethodEnum } from "src/enum";
 import { ResponsePayment } from "./dto/response-payment.dto";
 import { OrderOptionDto } from "./dto/order-option.dto";
 import { PageDto } from "src/common/page.dto";
@@ -34,6 +34,15 @@ import { Order } from "src/entities/order_service/order.entity";
 import { CustomerService } from "../customer/customer.service";
 import { OrderDetail } from "src/entities/order_service/order-detail.entity";
 import { OrderDetailsService } from "../order-details/order-details.service";
+import { ComboServicesService } from "../combo-services/combo-services.service";
+import { CombosService } from "../combos/combos.service";
+import { Combo } from "src/entities/service/combo.entity";
+import { ComboService } from "src/entities/service/combo-service.entity";
+import { PetCombo } from "src/entities/pet_service/pet-combo.entity";
+import { BreedTransactionService } from "../breed-transaction/breed-transaction.service";
+import { PetCombosService } from "../pet-combo/pet-combo.service";
+import { PetComboServicesService } from "../pet-combo-services/pet-combo-services.service";
+import { OrderDetailDTO } from "./dto/order-detail.dto";
 
 @ApiTags("orders")
 @Controller("orders")
@@ -43,6 +52,11 @@ export class OrdersController {
     private readonly ordersService: OrdersService,
     private readonly customerService: CustomerService,
     private readonly orderDetailsService: OrderDetailsService,
+    private readonly comboService: ComboServicesService,
+    private readonly combos: CombosService,
+    private readonly breedTransactionService: BreedTransactionService,
+    private readonly petCombosService: PetCombosService,
+    private readonly petComboServicesService: PetComboServicesService,
   ) {}
 
   @Get(":id")
@@ -52,7 +66,90 @@ export class OrdersController {
 
   @Post()
   async create(@Body() body: CreateOrderDTO): Promise<Order> {
+    if (!body.orderDetails || body.orderDetails.length === 0) {
+      throw new HttpException("Bad request!", HttpStatus.BAD_REQUEST);
+    }
     try {
+      const convertOrderDetails = await Promise.all(
+        body.orderDetails.map(async (item) => {
+          if (item.petComboId) {
+            if (!item.registerTime) {
+              throw new HttpException(
+                "Required register time for combo!",
+                HttpStatus.BAD_REQUEST,
+              );
+            }
+            let next = 0;
+            const combo: Partial<Combo> = await this.combos.findById(
+              item.petComboId,
+            );
+            const comboService: Partial<ComboService[]> =
+              await this.comboService.findComboServiceByComboId(
+                item.petComboId,
+              );
+            const breedTransactionAvailable =
+              await this.breedTransactionService.getBreedingTransactionAvailableByPetId(
+                item.petId,
+              );
+            const breedTransaction =
+              breedTransactionAvailable && breedTransactionAvailable.length > 0
+                ? breedTransactionAvailable[0]
+                : "";
+            const petCombo: Partial<PetCombo> = {
+              registerTime: body.registerTime,
+              isCompleted: false,
+              paymentMethod: body.paymentMethod,
+              orderTotal: combo.price,
+              point: body.point,
+              petId: item.petId,
+              branchId: body.branchId,
+              comboId: item.petComboId,
+              breedingTransactionId:
+                combo.type === ComboTypeEnum.BREED && breedTransaction
+                  ? breedTransaction.id
+                  : null,
+            };
+
+            const createPetCombo = await this.petCombosService.store({
+              ...petCombo,
+              isDraft: true,
+            });
+            comboService.forEach(async (itemComboService, index) => {
+              next += itemComboService.nextEvent;
+
+              const ts = new Date(item.registerTime);
+              ts.setDate(ts.getDate() + next);
+              if (index == 0) {
+                await this.petComboServicesService.store({
+                  workingTime: item.registerTime,
+                  isCompleted: false,
+                  serviceId: itemComboService.serviceId,
+                  petComboId: createPetCombo.id,
+                  priority: itemComboService.priority,
+                  realTime: undefined,
+                });
+              } else {
+                await this.petComboServicesService.store({
+                  workingTime: ts,
+                  isCompleted: false,
+                  serviceId: itemComboService.serviceId,
+                  petComboId: createPetCombo.id,
+                  priority: itemComboService.priority,
+                  realTime: undefined,
+                });
+              }
+            });
+            return {
+              totalPrice: createPetCombo.orderTotal,
+              price: 0,
+              petComboId: createPetCombo.id,
+              quantity: 1,
+            };
+          }
+          return item;
+        }),
+      );
+      body.orderDetails = [...convertOrderDetails];
       return this.ordersService.store(body);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
