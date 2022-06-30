@@ -175,6 +175,7 @@ export class OrdersController {
       }
       if (deletedIds && deletedIds.length > 0) {
         const convertDeletedIds = deletedIds.map((item) => item.id);
+        await this.orderDetailsService.deleteItems(convertDeletedIds);
         const convertDeletedIdsCombo = deletedIds
           .filter(
             (item) => item.type === OrderServiceType.COMBO && item.petComboId,
@@ -191,7 +192,6 @@ export class OrdersController {
           }
           await this.petCombosService.deleteItems(convertDeletedIdsCombo);
         }
-        await this.orderDetailsService.deleteItems(convertDeletedIds);
       }
       const instance = await this.ordersService.getOneWithOrderDetails(rest.id);
       instance.orderDetails;
