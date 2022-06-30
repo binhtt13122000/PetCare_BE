@@ -232,7 +232,7 @@ export class OrdersController {
         });
       Object.assign(order, rest);
       const totalPrice = order.orderDetails.reduce(
-        (totalPrice, total) => totalPrice + total.totalPrice,
+        (totalPrice, item) => totalPrice + item.totalPrice,
         0,
       );
       order.orderTotal = totalPrice;
