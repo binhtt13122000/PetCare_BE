@@ -184,7 +184,7 @@ export class OrdersController {
         if (convertDeletedIdsCombo && convertDeletedIdsCombo.length > 0) {
           const petComboServiceIds =
             await this.petComboServicesService.getPetComboServicesByPetCombIds(
-              convertDeletedIds,
+              convertDeletedIdsCombo,
             );
           if (petComboServiceIds && petComboServiceIds.length > 0) {
             const deletedIds = petComboServiceIds.map((item) => item.id);
