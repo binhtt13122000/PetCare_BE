@@ -175,6 +175,8 @@ export class AppService {
     field: string,
     value: string,
     conditionField: string,
+    extraJoinFilter: string,
+    extraWhereFilter: string,
   ): Promise<
     Array<{
       key: number;
@@ -183,7 +185,9 @@ export class AppService {
     }>
   > {
     const x = await this.entityManager.query(
-      `select * from ${table} where ${table}."${field}" LIKE '%${value}%'`,
+      `select * from ${table} ${
+        extraJoinFilter || ""
+      } where ${table}."${field}" LIKE '%${value}%' ${extraWhereFilter || ""}`,
     );
     return x.map((data: Record<string, object>) => {
       return {
