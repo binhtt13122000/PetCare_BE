@@ -211,17 +211,97 @@ export class OrdersController {
           return item;
         });
       }
-      orderDetails &&
-        orderDetails.length > 0 &&
-        orderDetails.forEach((item) => {
-          const convertObject = new OrderDetail({
-            price: item.price,
-            quantity: item.quantity,
-            serviceId: item.serviceId,
-            totalPrice: item.totalPrice,
-          });
-          instance.orderDetails.push(convertObject);
-        });
+      if (orderDetails && orderDetails.length > 0) {
+        const convertOrderDetails = await Promise.all(
+          orderDetails.map(async (item) => {
+            if (item.petComboId) {
+              if (!item.registerTime) {
+                throw new HttpException(
+                  "Required register time for combo!",
+                  HttpStatus.BAD_REQUEST,
+                );
+              }
+              let next = 0;
+              const combo: Partial<Combo> = await this.combos.findById(
+                item.petComboId,
+              );
+              const comboService: Partial<ComboService[]> =
+                await this.comboService.findComboServiceByComboId(
+                  item.petComboId,
+                );
+              const breedTransactionAvailable =
+                await this.breedTransactionService.getBreedingTransactionAvailableByPetId(
+                  item.petId,
+                );
+              const breedTransaction =
+                breedTransactionAvailable &&
+                breedTransactionAvailable.length > 0
+                  ? breedTransactionAvailable[0]
+                  : "";
+              const petCombo: Partial<PetCombo> = {
+                registerTime: body.registerTime,
+                isCompleted: false,
+                paymentMethod: body.paymentMethod,
+                orderTotal: combo.price,
+                point: body.point,
+                petId: item.petId,
+                branchId: body.branchId,
+                comboId: item.petComboId,
+                breedingTransactionId:
+                  combo.type === ComboTypeEnum.BREED && breedTransaction
+                    ? breedTransaction.id
+                    : null,
+              };
+
+              const createPetCombo = await this.petCombosService.store({
+                ...petCombo,
+                isDraft: true,
+              });
+              comboService.forEach(async (itemComboService, index) => {
+                next += itemComboService.nextEvent;
+
+                const ts = new Date(item.registerTime);
+                ts.setDate(ts.getDate() + next);
+                if (index == 0) {
+                  await this.petComboServicesService.store({
+                    workingTime: item.registerTime,
+                    isCompleted: false,
+                    serviceId: itemComboService.serviceId,
+                    petComboId: createPetCombo.id,
+                    priority: itemComboService.priority,
+                    realTime: undefined,
+                  });
+                } else {
+                  await this.petComboServicesService.store({
+                    workingTime: ts,
+                    isCompleted: false,
+                    serviceId: itemComboService.serviceId,
+                    petComboId: createPetCombo.id,
+                    priority: itemComboService.priority,
+                    realTime: undefined,
+                  });
+                }
+              });
+              return new OrderDetail({
+                totalPrice: createPetCombo.orderTotal,
+                price: 0,
+                petComboId: createPetCombo.id,
+                quantity: 1,
+              });
+            }
+            const convertObject = new OrderDetail({
+              price: item.price,
+              quantity: item.quantity,
+              serviceId: item.serviceId,
+              totalPrice: item.totalPrice,
+              breedTransactionId: item.breedTransactionId,
+            });
+            return convertObject;
+          }),
+        );
+        instance.orderDetails.push(...convertOrderDetails);
+      }
+
       Object.assign(order, rest);
       const totalPrice =
         instance && instance.orderDetails
@@ -230,8 +310,8 @@ export class OrdersController {
               0,
             )
           : instance.orderTotal;
-      order.orderTotal = totalPrice;
-      order.provisionalTotal = totalPrice;
+      instance.orderTotal = totalPrice;
+      instance.provisionalTotal = totalPrice;
       return instance.save();
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
