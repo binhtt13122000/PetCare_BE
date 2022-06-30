@@ -13,6 +13,7 @@ import { PaymentOrderMethodEnum } from "src/enum";
 import { Combo } from "src/entities/service/combo.entity";
 import { PetComboService } from "./pet-combo-service.entity";
 import { BreedingTransaction } from "../transaction_service/breeding-transaction.entity";
+import { OrderDetail } from "../order_service/order-detail.entity";
 
 @Entity("pet_combo")
 export class PetCombo extends BaseEntity {
@@ -67,6 +68,9 @@ export class PetCombo extends BaseEntity {
     },
   )
   petComboServices: PetComboService[];
+
+  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.petCombo)
+  orderDetails: OrderDetail[];
 
   constructor(partial: Partial<PetCombo>) {
     super();

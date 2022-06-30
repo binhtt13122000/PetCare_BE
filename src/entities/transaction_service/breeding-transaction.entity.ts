@@ -14,6 +14,7 @@ import { Branch } from "../user_management_service/branch.entity";
 import { BreedingTransactionEnum } from "src/enum";
 import { BaseEntity } from "typeorm";
 import { PetCombo } from "../pet_service/pet-combo.entity";
+import { OrderDetail } from "../order_service/order-detail.entity";
 
 @Entity("breeding_transaction")
 export class BreedingTransaction extends BaseEntity {
@@ -164,6 +165,13 @@ export class BreedingTransaction extends BaseEntity {
 
   @OneToMany(() => PetCombo, (petCombo) => petCombo.breedingTransaction, {})
   petCombos: PetCombo[];
+
+  @OneToMany(
+    () => OrderDetail,
+    (orderDetail) => orderDetail.breedTransaction,
+    {},
+  )
+  orderDetails: OrderDetail[];
 
   constructor(partial: Partial<BreedingTransaction>) {
     super();
