@@ -90,6 +90,20 @@ export class BreedTransactionService extends BaseService<
     });
   }
 
+  getBreedingTransactionAvailableByPetId(
+    petId: number,
+  ): Promise<BreedingTransaction[]> {
+    return this.breedTransactionRepository.find({
+      where: {
+        petFemaleId: petId,
+        status: BreedingTransactionEnum.BREEDING_FINISHED,
+      },
+      order: {
+        realDateOfFinish: "DESC",
+      },
+    });
+  }
+
   getOne(id: number): Promise<BreedingTransaction> {
     return this.breedTransactionRepository.findOne({
       where: {

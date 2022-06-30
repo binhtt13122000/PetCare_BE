@@ -871,6 +871,27 @@ export class BreedTransactionController {
     }
   }
 
+  @Get("/pet/:id")
+  async getBreedingTransactionAvailableByPetId(
+    @Param("id") id: number,
+  ): Promise<BreedingTransaction> {
+    try {
+      const breedTransactionAvailable =
+        await this.breedTransactionService.getBreedingTransactionAvailableByPetId(
+          id,
+        );
+      if (breedTransactionAvailable && breedTransactionAvailable.length > 0) {
+        return breedTransactionAvailable[0];
+      }
+      throw new HttpException(
+        "Breeding transaction is not found!",
+        HttpStatus.NOT_FOUND,
+      );
+    } catch (error) {
+      throw new NotFoundException(error);
+    }
+  }
+
   @Get(":id")
   @ApiQuery({
     type: String,
