@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { BaseService } from "src/base/base.service";
 import { PetComboService } from "src/entities/pet_service/pet-combo-service.entity";
+import { In } from "typeorm";
 import { NotificationPetComboServiceDTO } from "./dtos/notification-pet-combo-service.dto";
 import { PetComboServiceRepository } from "./pet-combo-services.repository";
 
@@ -13,6 +14,16 @@ export class PetComboServicesService extends BaseService<
     private readonly petComboServiceRepository: PetComboServiceRepository,
   ) {
     super(petComboServiceRepository);
+  }
+
+  getPetComboServicesByPetCombIds(
+    petComboIds: number[],
+  ): Promise<PetComboService[]> {
+    return this.petComboServiceRepository.find({
+      where: {
+        petComboId: In(petComboIds),
+      },
+    });
   }
 
   getServiceInComboAvailableInSpecificRangeDate(

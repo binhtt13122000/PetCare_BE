@@ -176,28 +176,20 @@ export class OrdersController {
       if (deletedIds && deletedIds.length > 0) {
         const convertDeletedIds = deletedIds.map((item) => item.id);
         const convertDeletedIdsCombo = deletedIds
-          .filter((item) => item.type === OrderServiceType.COMBO)
-          .map((item) => item.id);
+          .filter(
+            (item) => item.type === OrderServiceType.COMBO && item.petComboId,
+          )
+          .map((item) => item.petComboId);
         if (convertDeletedIdsCombo && convertDeletedIdsCombo.length > 0) {
-          const petCombos = await this.petCombosService.findByIds(
-            convertDeletedIdsCombo as [EntityId],
-          );
-          if (petCombos && petCombos.length > 0) {
-            const deletedIds = petCombos.map((item) => item.id);
-            const petComboServices =
-              await this.petComboServicesService.findByIds(
-                deletedIds as [EntityId],
-              );
-            if (petComboServices && petComboServices.length > 0) {
-              const convertPetComboServiceIds = petComboServices.map(
-                (item) => item.id,
-              );
-              await this.petComboServicesService.deleteItems(
-                convertPetComboServiceIds,
-              );
-            }
-            await this.petCombosService.deleteItems(deletedIds);
+          const petComboServiceIds =
+            await this.petComboServicesService.getPetComboServicesByPetCombIds(
+              convertDeletedIds,
+            );
+          if (petComboServiceIds && petComboServiceIds.length > 0) {
+            const deletedIds = petComboServiceIds.map((item) => item.id);
+            await this.petComboServicesService.deleteItems(deletedIds);
           }
+          await this.petCombosService.deleteItems(convertDeletedIdsCombo);
         }
         await this.orderDetailsService.deleteItems(convertDeletedIds);
       }
@@ -231,10 +223,13 @@ export class OrdersController {
           instance.orderDetails.push(convertObject);
         });
       Object.assign(order, rest);
-      const totalPrice = order.orderDetails.reduce(
-        (totalPrice, item) => totalPrice + item.totalPrice,
-        0,
-      );
+      const totalPrice =
+        instance && instance.orderDetails
+          ? instance.orderDetails.reduce(
+              (totalPrice, item) => totalPrice + item.totalPrice,
+              0,
+            )
+          : instance.orderTotal;
       order.orderTotal = totalPrice;
       order.provisionalTotal = totalPrice;
       return instance.save();

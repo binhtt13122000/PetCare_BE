@@ -13,6 +13,7 @@ export class UpdateOrderDTO extends CreateOrderDTO {
   @ApiProperty({ required: false, isArray: true })
   deletedIds: {
     id: number;
+    petComboId?: number;
     type: OrderServiceType;
   }[];
 }
