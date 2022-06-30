@@ -185,7 +185,7 @@ export class AppService {
     }>
   > {
     const x = await this.entityManager.query(
-      `select * from ${table} ${
+      `select ${table}.* from ${table} ${
         extraJoinFilter || ""
       } where ${table}."${field}" LIKE '%${value}%' ${extraWhereFilter || ""}`,
     );
