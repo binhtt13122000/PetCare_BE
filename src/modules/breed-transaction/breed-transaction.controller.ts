@@ -556,6 +556,10 @@ export class BreedTransactionController {
         ...breedingTransaction,
         status: BreedingTransactionEnum.IN_PROGRESS,
         realDateOfBreeding: body.realDateOfBreeding,
+        serviceFee: body.serviceFee,
+        servicePoint: body.servicePoint,
+        transactionTotal:
+          breedingTransaction.transactionTotal + body.serviceFee,
       },
     );
     await this.notificationProducerService.sendMessage(
@@ -614,10 +618,6 @@ export class BreedTransactionController {
         status: BreedingTransactionEnum.BREEDING_FINISHED,
         timeToCheckBreeding: body.timeToCheckBreeding,
         realDateOfFinish: body.realDateOfFinish,
-        serviceFee: body.serviceFee,
-        servicePoint: body.servicePoint,
-        transactionTotal:
-          breedingTransaction.transactionTotal + body.serviceFee,
       },
     );
     await this.notificationProducerService.sendMessage(

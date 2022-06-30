@@ -68,6 +68,10 @@ export class ChangeToInProgressDTO {
   id: number;
   @ApiProperty()
   realDateOfBreeding: Date;
+  @ApiProperty()
+  serviceFee: number;
+  @ApiProperty()
+  servicePoint: number;
 }
 
 export class PickUpMaleDTO {
@@ -93,10 +97,6 @@ export class ChangeToFinishDTO {
   timeToCheckBreeding: Date;
   @ApiProperty()
   realDateOfFinish: Date;
-  @ApiProperty()
-  serviceFee: number;
-  @ApiProperty()
-  servicePoint: number;
 }
 
 export class CheckSuccessDTO {
