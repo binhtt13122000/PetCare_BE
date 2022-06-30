@@ -72,11 +72,21 @@ export class AppController {
     name: "value",
     required: false,
   })
+  @ApiQuery({
+    name: "extraWhereFilter",
+    required: false,
+  })
+  @ApiQuery({
+    name: "extraJoinFilter",
+    required: false,
+  })
   searchList(
     @Query("table") table: string,
     @Query("field") field: string,
     @Query("value") value: string,
     @Query("conditionField") conditionField: string,
+    @Query("extraJoinFilter") extraJoinFilter: string,
+    @Query("extraWhereFilter") extraWhereFilter: string,
   ): Promise<
     Array<{
       key: number;
@@ -84,6 +94,13 @@ export class AppController {
       conditionField: boolean;
     }>
   > {
-    return this.appService.getList(table, field, value || "", conditionField);
+    return this.appService.getList(
+      table,
+      field,
+      value || "",
+      conditionField,
+      extraJoinFilter || "",
+      extraWhereFilter || "",
+    );
   }
 }
