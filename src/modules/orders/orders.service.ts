@@ -48,17 +48,17 @@ export class OrdersService extends BaseService<Order, OrdersRepository> {
 
   async fetchOrders(pageOptionsDto: OrderOptionDto): Promise<PageDto<Order>> {
     const queryBuilder = await this.ordersRepository.createQueryBuilder(
-      "order",
+      "orders",
     );
 
     queryBuilder
-      .innerJoinAndSelect("order.branch", "branch")
-      .innerJoinAndSelect("order.orderDetails", "orderDetails")
-      .innerJoinAndSelect("orderDetails.service", "service")
-      .where("order.customerId = :customerId", {
+      .leftJoinAndSelect("orders.branch", "branch")
+      .leftJoinAndSelect("orders.orderDetails", "orderDetails")
+      .leftJoinAndSelect("orderDetails.service", "service")
+      .where("orders.customerId = :customerId", {
         customerId: pageOptionsDto.customerId,
       })
-      .orderBy("order.registerTime", "DESC");
+      .orderBy("orders.registerTime", "DESC");
 
     const { entities } = await queryBuilder.getRawAndEntities();
     const itemCount = await queryBuilder.getCount();
