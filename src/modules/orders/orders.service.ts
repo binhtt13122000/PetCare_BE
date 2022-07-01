@@ -36,7 +36,13 @@ export class OrdersService extends BaseService<Order, OrdersRepository> {
   getOneWithOrderDetails(id: number): Promise<Order> {
     return this.ordersRepository.findOne({
       where: { id: id },
-      relations: ["orderDetails"],
+      relations: [
+        "orderDetails",
+        "orderDetails.service",
+        "orderDetails.breedTransaction",
+        "orderDetails.petCombo",
+        "orderDetails.petCombo.combo",
+      ],
     });
   }
 

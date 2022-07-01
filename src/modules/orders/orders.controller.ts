@@ -26,6 +26,7 @@ import { PaymentQuery } from "src/common";
 import { Cache } from "cache-manager";
 import { format } from "date-fns";
 import {
+  BreedingTransactionEnum,
   ComboTypeEnum,
   OrderEnum,
   OrderServiceType,
@@ -380,7 +381,9 @@ export class OrdersController {
         const updatedOrder: OrderPaymentDTO = JSON.parse(updateOrderJSON);
         const { paymentPoint, ...rest } = updatedOrder;
         try {
-          const order = await this.ordersService.findById(rest.id);
+          const order = await this.ordersService.getOneWithOrderDetails(
+            rest.id,
+          );
           const customer = await this.customerService.findById(rest.customerId);
           if (!order) {
             throw new HttpException("not found", HttpStatus.NOT_FOUND);
@@ -391,6 +394,29 @@ export class OrdersController {
           if (order.status === OrderEnum.SUCCESS) {
             throw new HttpException("Paymented!", HttpStatus.NOT_FOUND);
           }
+          await Promise.all(
+            order.orderDetails.map(async (item) => {
+              if (item.breedTransactionId) {
+                const findBreedTransaction =
+                  await this.breedTransactionService.findById(
+                    item.breedTransactionId,
+                  );
+                if (findBreedTransaction) {
+                  findBreedTransaction.status =
+                    BreedingTransactionEnum.BREEDING_SUCCESS;
+                  await findBreedTransaction.save();
+                }
+              } else if (item.petComboId) {
+                const findPetCombo = await this.petCombosService.findById(
+                  item.petComboId,
+                );
+                if (findPetCombo) {
+                  findPetCombo.isDraft = false;
+                  findPetCombo.save();
+                }
+              }
+            }),
+          );
           this.cacheManager.del("order_id_" + id);
           await this.ordersService.update(updatedOrder.id, {
             ...order,
