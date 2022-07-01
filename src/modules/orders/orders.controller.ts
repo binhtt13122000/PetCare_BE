@@ -28,8 +28,10 @@ import { format } from "date-fns";
 import {
   BreedingTransactionEnum,
   ComboTypeEnum,
+  NotificationEnum,
   OrderEnum,
   OrderServiceType,
+  OrderTypeCreated,
   PaymentOrderMethodEnum,
 } from "src/enum";
 import { ResponsePayment } from "./dto/response-payment.dto";
@@ -50,6 +52,8 @@ import { PetCombosService } from "../pet-combo/pet-combo.service";
 import { PetComboServicesService } from "../pet-combo-services/pet-combo-services.service";
 import { OrderDetailDTO } from "./dto/order-detail.dto";
 import { EntityId } from "typeorm/repository/EntityId";
+import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
+import { UserService } from "../users/user.service";
 
 @ApiTags("orders")
 @Controller("orders")
@@ -57,6 +61,7 @@ export class OrdersController {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly ordersService: OrdersService,
+    private readonly accountService: UserService,
     private readonly customerService: CustomerService,
     private readonly orderDetailsService: OrderDetailsService,
     private readonly comboService: ComboServicesService,
@@ -64,6 +69,7 @@ export class OrdersController {
     private readonly breedTransactionService: BreedTransactionService,
     private readonly petCombosService: PetCombosService,
     private readonly petComboServicesService: PetComboServicesService,
+    private readonly notificationProducerService: NotificationProducerService,
   ) {}
 
   @Get(":id")
@@ -77,6 +83,16 @@ export class OrdersController {
       throw new HttpException("Bad request!", HttpStatus.BAD_REQUEST);
     }
     try {
+      const customerInstance = await this.customerService.findById(
+        body.customerId,
+      );
+      if (!customerInstance) {
+        throw new NotFoundException("Not found customer");
+      }
+      const accountCustomerInstance =
+        await this.accountService.findByPhoneNumber(
+          customerInstance.phoneNumber,
+        );
       const convertOrderDetails = await Promise.all(
         body.orderDetails.map(async (item) => {
           if (item.petComboId) {
@@ -157,7 +173,19 @@ export class OrdersController {
         }),
       );
       body.orderDetails = [...convertOrderDetails];
-      return this.ordersService.store(body);
+      const orderCreated = await this.ordersService.store(body);
+      if (body.type && body.type === OrderTypeCreated.BRANCH) {
+        await this.notificationProducerService.sendMessage(
+          {
+            body: "You have new order. See information details now.>>>>",
+            title: `New Order With Order ID: ${orderCreated.id}`,
+            type: NotificationEnum.NEW_ORDER,
+            metadata: String(orderCreated.id),
+          },
+          accountCustomerInstance.id,
+        );
+      }
+      return orderCreated;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -171,6 +199,16 @@ export class OrdersController {
       if (!order) {
         throw new NotFoundException("Not found");
       }
+      const customerInstance = await this.customerService.findById(
+        body.customerId,
+      );
+      if (!customerInstance) {
+        throw new NotFoundException("Not found customer");
+      }
+      const accountCustomerInstance =
+        await this.accountService.findByPhoneNumber(
+          customerInstance.phoneNumber,
+        );
       if (order.status === OrderEnum.SUCCESS) {
         throw new BadGatewayException("Cannot update");
       }
@@ -313,7 +351,19 @@ export class OrdersController {
           : instance.orderTotal;
       instance.orderTotal = totalPrice;
       instance.provisionalTotal = totalPrice;
-      return instance.save();
+      const updatedOrder = await instance.save();
+      if (body.type && body.type === OrderTypeCreated.BRANCH) {
+        await this.notificationProducerService.sendMessage(
+          {
+            body: "Your order have been updated. See information details now.>>>>",
+            title: `Updated Order With Order ID: ${updatedOrder.id}`,
+            type: NotificationEnum.UPDATE_ORDER,
+            metadata: String(updatedOrder.id),
+          },
+          accountCustomerInstance.id,
+        );
+      }
+      return updatedOrder;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

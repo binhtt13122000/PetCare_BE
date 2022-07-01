@@ -1,5 +1,6 @@
 import { forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { SharedModule } from "src/shared/shared.module";
 import { BreedTransactionModule } from "../breed-transaction/breed-transaction.module";
 import { ComboServiceModule } from "../combo-services/combo-services.module";
 import { CombosModule } from "../combos/combos.module";
@@ -7,6 +8,7 @@ import { CustomerModule } from "../customer/customer.module";
 import { OrderDetailsModule } from "../order-details/order-details.module";
 import { PetComboServicesModule } from "../pet-combo-services/pet-combo-services.module";
 import { PetComboModule } from "../pet-combo/pet-combo.module";
+import { UserModule } from "../users/user.module";
 import { OrdersController } from "./orders.controller";
 import { OrdersRepository } from "./orders.repository";
 import { OrdersService } from "./orders.service";
@@ -20,6 +22,8 @@ import { OrdersService } from "./orders.service";
     BreedTransactionModule,
     PetComboModule,
     OrderDetailsModule,
+    SharedModule,
+    UserModule,
     forwardRef(() => PetComboServicesModule),
   ],
   controllers: [OrdersController],

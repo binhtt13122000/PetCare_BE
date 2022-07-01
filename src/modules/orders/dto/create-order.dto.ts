@@ -1,6 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { OrderDetail } from "src/entities/order_service/order-detail.entity";
-import { OrderEnum, PaymentOrderMethodEnum } from "src/enum";
+import {
+  OrderEnum,
+  OrderType,
+  OrderTypeCreated,
+  PaymentOrderMethodEnum,
+} from "src/enum";
 export class CreateOrderDTO {
   @ApiProperty()
   provisionalTotal: number;
@@ -33,4 +38,6 @@ export class CreateOrderDTO {
   payment?: number;
   @ApiProperty()
   registerTime: Date;
+  @ApiProperty({ required: false, default: OrderTypeCreated.NORMAL })
+  type?: OrderTypeCreated;
 }
