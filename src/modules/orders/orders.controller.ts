@@ -382,8 +382,14 @@ export class OrdersController {
         const { paymentPoint, ...rest } = updatedOrder;
         try {
           const order = await this.ordersService.findById(rest.id);
+          const orderList = await this.ordersService.getOneWithOrderDetails(
+            rest.id,
+          );
           const customer = await this.customerService.findById(rest.customerId);
           if (!order) {
+            throw new HttpException("not found", HttpStatus.NOT_FOUND);
+          }
+          if (!orderList) {
             throw new HttpException("not found", HttpStatus.NOT_FOUND);
           }
           if (!customer) {
@@ -392,33 +398,29 @@ export class OrdersController {
           if (order.status === OrderEnum.SUCCESS) {
             throw new HttpException("Paymented!", HttpStatus.NOT_FOUND);
           }
-          const orderList = await this.ordersService.getOneWithOrderDetails(
-            rest.id,
-          );
-          orderList &&
-            (await Promise.all(
-              orderList.orderDetails.map(async (item) => {
-                if (item.breedTransactionId) {
-                  const findBreedTransaction =
-                    await this.breedTransactionService.findById(
-                      item.breedTransactionId,
-                    );
-                  if (findBreedTransaction) {
-                    findBreedTransaction.status =
-                      BreedingTransactionEnum.BREEDING_SUCCESS;
-                    await findBreedTransaction.save();
-                  }
-                } else if (item.petComboId) {
-                  const findPetCombo = await this.petCombosService.findById(
-                    item.petComboId,
+          await Promise.all(
+            orderList.orderDetails.map(async (item) => {
+              if (item.breedTransactionId) {
+                const findBreedTransaction =
+                  await this.breedTransactionService.findById(
+                    item.breedTransactionId,
                   );
-                  if (findPetCombo) {
-                    findPetCombo.isDraft = false;
-                    findPetCombo.save();
-                  }
+                if (findBreedTransaction) {
+                  findBreedTransaction.status =
+                    BreedingTransactionEnum.BREEDING_SUCCESS;
+                  await findBreedTransaction.save();
                 }
-              }),
-            ));
+              } else if (item.petComboId) {
+                const findPetCombo = await this.petCombosService.findById(
+                  item.petComboId,
+                );
+                if (findPetCombo) {
+                  findPetCombo.isDraft = false;
+                  findPetCombo.save();
+                }
+              }
+            }),
+          );
           this.cacheManager.del("order_id_" + id);
           await this.ordersService.update(updatedOrder.id, {
             ...order,
