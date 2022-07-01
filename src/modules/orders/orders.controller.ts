@@ -381,9 +381,7 @@ export class OrdersController {
         const updatedOrder: OrderPaymentDTO = JSON.parse(updateOrderJSON);
         const { paymentPoint, ...rest } = updatedOrder;
         try {
-          const order = await this.ordersService.getOneWithOrderDetails(
-            rest.id,
-          );
+          const order = await this.ordersService.findById(rest.id);
           const customer = await this.customerService.findById(rest.customerId);
           if (!order) {
             throw new HttpException("not found", HttpStatus.NOT_FOUND);
@@ -394,8 +392,9 @@ export class OrdersController {
           if (order.status === OrderEnum.SUCCESS) {
             throw new HttpException("Paymented!", HttpStatus.NOT_FOUND);
           }
+          const orderList = await this.ordersService.findById(rest.id);
           await Promise.all(
-            order.orderDetails.map(async (item) => {
+            orderList.orderDetails.map(async (item) => {
               if (item.breedTransactionId) {
                 const findBreedTransaction =
                   await this.breedTransactionService.findById(
