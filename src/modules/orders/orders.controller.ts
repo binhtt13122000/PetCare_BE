@@ -126,6 +126,25 @@ export class OrdersController {
         await this.accountService.findByPhoneNumber(
           customerInstance.phoneNumber,
         );
+      const filterOrderBreeding = body.orderDetails.filter(
+        (item) => item.breedTransactionId,
+      );
+      if (filterOrderBreeding && filterOrderBreeding.length > 0) {
+        filterOrderBreeding.map(async (item) => {
+          const breedTransactionAvailable =
+            await this.ordersService.getOrdersByBreedingTransactionId(
+              item.breedTransactionId,
+            );
+          if (
+            breedTransactionAvailable &&
+            breedTransactionAvailable.length > 0
+          ) {
+            throw new BadRequestException(
+              "Breeding Transaction have been existed another order!",
+            );
+          }
+        });
+      }
       const convertOrderDetails = await Promise.all(
         body.orderDetails.map(async (item) => {
           if (item.petComboId) {
