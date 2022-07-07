@@ -50,10 +50,9 @@ import { PetCombo } from "src/entities/pet_service/pet-combo.entity";
 import { BreedTransactionService } from "../breed-transaction/breed-transaction.service";
 import { PetCombosService } from "../pet-combo/pet-combo.service";
 import { PetComboServicesService } from "../pet-combo-services/pet-combo-services.service";
-import { OrderDetailDTO } from "./dto/order-detail.dto";
-import { EntityId } from "typeorm/repository/EntityId";
 import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
 import { UserService } from "../users/user.service";
+import { CancelDTO } from "./dto/cancel-order.dto";
 
 @ApiTags("orders")
 @Controller("orders")
@@ -75,6 +74,40 @@ export class OrdersController {
   @Get(":id")
   async getOne(@Param("id") id: number): Promise<Order> {
     return this.ordersService.getOne(id);
+  }
+
+  @Get("/breed-transaction/:id")
+  async getOrderByBreedingTransactionId(
+    @Param("id") id: number,
+  ): Promise<number> {
+    const breedTransactionExisted = await this.breedTransactionService.findById(
+      id,
+    );
+    if (!breedTransactionExisted) {
+      throw new NotFoundException("Not found breeding transaction by id!");
+    }
+    const orders = await this.ordersService.getOrdersByBreedingTransactionId(
+      id,
+    );
+    if (!orders || orders.length === 0) {
+      throw new NotFoundException(
+        "Not found order by breeding transaction id!",
+      );
+    }
+    return orders[0];
+  }
+
+  @Get("/pet-combo/:id")
+  async getOrderByPetComboId(@Param("id") id: number): Promise<number> {
+    const petComboExisted = await this.petCombosService.findById(id);
+    if (!petComboExisted) {
+      throw new NotFoundException("Not found pet combo by id!");
+    }
+    const orders = await this.ordersService.getOrdersByPetComboId(id);
+    if (!orders || orders.length === 0) {
+      throw new NotFoundException("Not found order by pet combo id!");
+    }
+    return orders[0];
   }
 
   @Post()
@@ -366,6 +399,25 @@ export class OrdersController {
       return updatedOrder;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Put("cancel")
+  async cancel(@Body() body: CancelDTO): Promise<Order> {
+    try {
+      const orderExisted = await this.ordersService.findById(body.id);
+      if (!orderExisted) {
+        throw new NotFoundException("not found order!");
+      }
+      if (orderExisted.status !== OrderEnum.WAITING) {
+        throw new BadRequestException("Can not change status order!");
+      }
+      return await this.ordersService.update(orderExisted.id, {
+        ...orderExisted,
+        status: OrderEnum.CANCELED,
+      });
+    } catch (error) {
+      throw new BadRequestException(error);
     }
   }
 

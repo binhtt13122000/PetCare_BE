@@ -46,6 +46,36 @@ export class OrdersService extends BaseService<Order, OrdersRepository> {
     });
   }
 
+  getOrdersByBreedingTransactionId(id: number): Promise<number[]> {
+    return this.ordersRepository
+      .createQueryBuilder("orders")
+      .leftJoinAndSelect("orders.orderDetails", "orderDetails")
+      .where(
+        "orderDetails.breedTransactionId = :breedTransactionId and orders.status = :status",
+        {
+          breedTransactionId: id,
+          status: OrderEnum.WAITING,
+        },
+      )
+      .select('orders.id as "id"')
+      .execute();
+  }
+
+  getOrdersByPetComboId(id: number): Promise<number[]> {
+    return this.ordersRepository
+      .createQueryBuilder("orders")
+      .leftJoinAndSelect("orders.orderDetails", "orderDetails")
+      .where(
+        "orderDetails.petComboId = :petComboId and orders.status = :status",
+        {
+          petComboId: id,
+          status: OrderEnum.WAITING,
+        },
+      )
+      .select('orders.id as "id"')
+      .execute();
+  }
+
   async fetchOrders(pageOptionsDto: OrderOptionDto): Promise<PageDto<Order>> {
     const queryBuilder = await this.ordersRepository.createQueryBuilder(
       "orders",
@@ -134,5 +164,17 @@ export class OrdersService extends BaseService<Order, OrdersRepository> {
       )
       .orderBy("count(orderDetail.serviceId)", "DESC")
       .execute();
+  }
+
+  getOrdersAvailableInSpecificDate(
+    date: string,
+    status: OrderEnum,
+  ): Promise<Order[]> {
+    return this.ordersRepository.find({
+      where: {
+        registerTime: date,
+        status: status,
+      },
+    });
   }
 }

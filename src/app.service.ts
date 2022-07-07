@@ -10,10 +10,12 @@ import {
 import {
   BreedingTransactionEnum,
   NotificationEnum,
+  OrderEnum,
   SaleTransactionEnum,
   TicketStatusEnum,
 } from "./enum";
 import { BreedTransactionService } from "./modules/breed-transaction/breed-transaction.service";
+import { OrdersService } from "./modules/orders/orders.service";
 import { PetComboServicesService } from "./modules/pet-combo-services/pet-combo-services.service";
 import { SaleTransactionsService } from "./modules/sale-transactions/sale-transactions.service";
 import { TicketsService } from "./modules/tickets/tickets.service";
@@ -28,6 +30,7 @@ export class AppService {
     private readonly saleTransactionService: SaleTransactionsService,
     private readonly breedingTransactionService: BreedTransactionService,
     private readonly petComboServicesService: PetComboServicesService,
+    private readonly orderService: OrdersService,
     private readonly userService: UserService,
     private notificationProducerService: NotificationProducerService,
   ) {}
@@ -102,8 +105,8 @@ export class AppService {
     }
   }
 
-  //Run schedule after 00:30:00am each day to check expired breeding transactions at status breeding requested 3 days ago.
-  @Cron("0 30 0 * * *", {
+  //Run schedule after 00:20:00am each day to check expired breeding transactions at status breeding requested 3 days ago.
+  @Cron("0 20 0 * * *", {
     name: "checkExpiredBreedingTransactionsAtStatusBreedingRequestedThreeDaysAgo",
     timeZone: "Asia/Ho_Chi_Minh",
   })
@@ -118,6 +121,26 @@ export class AppService {
     if (breedingTransactionList && breedingTransactionList.length > 0) {
       breedingTransactionList.forEach(async (item) => {
         item.status = BreedingTransactionEnum.BREEDING_EXPIRED;
+        await item.save();
+      });
+    }
+  }
+
+  //Run schedule after 00:25:00am each day to check expired order at status waiting 3 days ago.
+  @Cron("0 25 0 * * *", {
+    name: "checkExpiredOrderAtStatusWaitingThreeDaysAgo",
+    timeZone: "Asia/Ho_Chi_Minh",
+  })
+  async handleCronCheckExpiredOrderAtStatusWaiting(): Promise<void> {
+    const DAYS = 3;
+    const dateWithThreeDaysAgo = getSpecificDateAgoWithNumberDays(DAYS);
+    const orderList = await this.orderService.getOrdersAvailableInSpecificDate(
+      dateWithThreeDaysAgo.toDateString(),
+      OrderEnum.WAITING,
+    );
+    if (orderList && orderList.length > 0) {
+      orderList.forEach(async (item) => {
+        item.status = OrderEnum.EXPIRED;
         await item.save();
       });
     }

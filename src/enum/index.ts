@@ -28,6 +28,8 @@ export enum OrderEnum {
   SUCCESS = "SUCCESS",
   WAITING = "WAITING",
   DRAFT = "DRAFT",
+  CANCELED = "CANCELED",
+  EXPIRED = "EXPIRED",
 }
 
 export enum ComboTypeEnum {
