@@ -101,6 +101,7 @@ export class BranchesController {
           currentMonth.firstDate,
           currentMonth.lastDate,
         );
+
       const breedTransactionBranchInMonth =
         await this.breedTransactionService.getBreedTransactionBranchInMonth(
           branchId,
@@ -129,7 +130,10 @@ export class BranchesController {
 
       const revenueBreedTransactionInMonth =
         breedTransactionBranchInMonth.reduce(
-          (total, item) => total + Number(item.serviceFee || 0),
+          (total, item) =>
+            total +
+            Number(item.serviceFee || 0) +
+            Number(item.transactionFee || 0),
           0,
         );
       const numberOfBreedingPets = breedTransactionBranchInMonth.reduce(
