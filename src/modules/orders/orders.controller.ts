@@ -442,6 +442,8 @@ export class OrdersController {
       }
       return await this.ordersService.update(orderExisted.id, {
         ...orderExisted,
+        reasonCancel: body.reasonCancel,
+        cancelTime: body.cancelTime,
         status: OrderEnum.CANCELED,
       });
     } catch (error) {

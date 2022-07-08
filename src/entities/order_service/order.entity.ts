@@ -37,6 +37,13 @@ export class Order extends BaseEntity {
   star: number;
   @Column({ type: "text", nullable: true })
   review: string;
+  @Column({ type: "text", nullable: true })
+  reasonCancel: string;
+  @Column({
+    type: "timestamp without time zone",
+    nullable: true,
+  })
+  cancelTime: Date;
   //references
   @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.order, {
     cascade: true,
