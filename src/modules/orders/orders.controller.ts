@@ -216,7 +216,7 @@ export class OrdersController {
             });
             return {
               totalPrice: createPetCombo.orderTotal,
-              price: 0,
+              price: createPetCombo.orderTotal,
               petComboId: createPetCombo.id,
               quantity: 1,
             };
@@ -375,7 +375,7 @@ export class OrdersController {
               });
               return new OrderDetail({
                 totalPrice: createPetCombo.orderTotal,
-                price: 0,
+                price: createPetCombo.orderTotal,
                 petComboId: createPetCombo.id,
                 quantity: 1,
               });
