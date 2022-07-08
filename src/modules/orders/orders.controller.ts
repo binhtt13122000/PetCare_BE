@@ -126,6 +126,15 @@ export class OrdersController {
         await this.accountService.findByPhoneNumber(
           customerInstance.phoneNumber,
         );
+      const orderList = await this.ordersService.getOrdersAvailableByCustomerId(
+        customerInstance.id,
+        OrderEnum.WAITING,
+      );
+      if (orderList && orderList.length > 0) {
+        throw new NotFoundException(
+          "Can not create new order! You have an unpaid order. Please pay before ordering another.",
+        );
+      }
       const filterOrderBreeding = body.orderDetails.filter(
         (item) => item.breedTransactionId,
       );

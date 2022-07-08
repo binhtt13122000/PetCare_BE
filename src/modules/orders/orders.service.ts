@@ -177,4 +177,16 @@ export class OrdersService extends BaseService<Order, OrdersRepository> {
       },
     });
   }
+
+  getOrdersAvailableByCustomerId(
+    customerId: number,
+    status: OrderEnum,
+  ): Promise<Order[]> {
+    return this.ordersRepository.find({
+      where: {
+        customerId: customerId,
+        status: status,
+      },
+    });
+  }
 }
