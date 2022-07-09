@@ -51,10 +51,10 @@ export class OrdersService extends BaseService<Order, OrdersRepository> {
       .createQueryBuilder("orders")
       .leftJoinAndSelect("orders.orderDetails", "orderDetails")
       .where(
-        "orderDetails.breedTransactionId = :breedTransactionId and orders.status = :status",
+        "orderDetails.breedTransactionId = :breedTransactionId and orders.status IN(:...status)",
         {
           breedTransactionId: id,
-          status: OrderEnum.WAITING,
+          status: [OrderEnum.WAITING, OrderEnum.SUCCESS],
         },
       )
       .select('orders.id as "id"')
