@@ -138,17 +138,23 @@ export class BreedTransactionService extends BaseService<
       .createQueryBuilder("breed-transactions")
       .where(
         branchId
-          ? "breed-transactions.branchId = :branchId and breed-transactions.status = :status and breed-transactions.paymentTime >= :firstDate and breed-transactions.paymentTime <= :lastDate"
-          : "breed-transactions.status = :status and breed-transactions.paymentTime >= :firstDate and breed-transactions.paymentTime <= :lastDate",
+          ? "breed-transactions.branchId = :branchId and breed-transactions.status IN(:...status) and breed-transactions.paymentTime >= :firstDate and breed-transactions.paymentTime <= :lastDate"
+          : "breed-transactions.status IN(:...status) and breed-transactions.paymentTime >= :firstDate and breed-transactions.paymentTime <= :lastDate",
         branchId
           ? {
               branchId: branchId,
-              status: BreedingTransactionEnum.SUCCESS,
+              status: [
+                BreedingTransactionEnum.SUCCESS,
+                BreedingTransactionEnum.BREEDING_SUCCESS,
+              ],
               firstDate: firstDate,
               lastDate: lastDate,
             }
           : {
-              status: BreedingTransactionEnum.SUCCESS,
+              status: [
+                BreedingTransactionEnum.SUCCESS,
+                BreedingTransactionEnum.BREEDING_SUCCESS,
+              ],
               firstDate: firstDate,
               lastDate: lastDate,
             },
@@ -158,7 +164,7 @@ export class BreedTransactionService extends BaseService<
       .addGroupBy("branch.name")
       .addGroupBy("branch.representativeName")
       .select(
-        'SUM(breed-transactions.serviceFee) as "serviceFee", COUNT(breed-transactions.id) as "numberOfBreedingPets", breed-transactions.branchId, branch.name, branch.representativeName',
+        'SUM(breed-transactions.serviceFee) as "serviceFee", SUM(breed-transactions.transactionFee) as "transactionFee", COUNT(breed-transactions.id) as "numberOfBreedingPets", breed-transactions.branchId, branch.name, branch.representativeName',
       )
       .execute();
   }

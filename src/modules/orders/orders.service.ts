@@ -51,10 +51,10 @@ export class OrdersService extends BaseService<Order, OrdersRepository> {
       .createQueryBuilder("orders")
       .leftJoinAndSelect("orders.orderDetails", "orderDetails")
       .where(
-        "orderDetails.breedTransactionId = :breedTransactionId and orders.status = :status",
+        "orderDetails.breedTransactionId = :breedTransactionId and orders.status IN(:...status)",
         {
           breedTransactionId: id,
-          status: OrderEnum.WAITING,
+          status: [OrderEnum.WAITING, OrderEnum.SUCCESS],
         },
       )
       .select('orders.id as "id"')
@@ -137,10 +137,12 @@ export class OrdersService extends BaseService<Order, OrdersRepository> {
   ): Promise<ServiceRankDTO[]> {
     return this.ordersRepository
       .createQueryBuilder("orders")
+      .leftJoinAndSelect("orders.orderDetails", "orderDetail")
+      .leftJoinAndSelect("orderDetail.service", "service")
       .where(
         branchId
-          ? "orders.branchId = :branchId and orders.status = :status and orders.paymentTime >= :firstDate and orders.paymentTime <= :lastDate"
-          : "orders.status = :status and orders.paymentTime >= :firstDate and orders.paymentTime <= :lastDate",
+          ? "orders.branchId = :branchId and orders.status = :status and orders.paymentTime >= :firstDate and orders.paymentTime <= :lastDate and orderDetail.serviceId IS NOT NULL"
+          : "orders.status = :status and orders.paymentTime >= :firstDate and orders.paymentTime <= :lastDate  and orderDetail.serviceId IS NOT NULL",
         branchId
           ? {
               branchId: branchId,
@@ -154,8 +156,6 @@ export class OrdersService extends BaseService<Order, OrdersRepository> {
               lastDate: lastDate,
             },
       )
-      .leftJoinAndSelect("orders.orderDetails", "orderDetail")
-      .leftJoinAndSelect("orderDetail.service", "service")
       .groupBy("orderDetail.serviceId")
       .groupBy("service.name")
       .addGroupBy("orderDetail.serviceId")
@@ -173,6 +173,18 @@ export class OrdersService extends BaseService<Order, OrdersRepository> {
     return this.ordersRepository.find({
       where: {
         registerTime: date,
+        status: status,
+      },
+    });
+  }
+
+  getOrdersAvailableByCustomerId(
+    customerId: number,
+    status: OrderEnum,
+  ): Promise<Order[]> {
+    return this.ordersRepository.find({
+      where: {
+        customerId: customerId,
         status: status,
       },
     });
