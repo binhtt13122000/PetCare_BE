@@ -437,15 +437,35 @@ export class OrdersController {
       if (!orderExisted) {
         throw new NotFoundException("not found order!");
       }
+      const customerInstance = await this.customerService.findById(
+        orderExisted.customerId,
+      );
+      if (!customerInstance) {
+        throw new NotFoundException("Not found customer");
+      }
+      const accountCustomerInstance =
+        await this.accountService.findByPhoneNumber(
+          customerInstance.phoneNumber,
+        );
       if (orderExisted.status !== OrderEnum.WAITING) {
         throw new BadRequestException("Can not change status order!");
       }
-      return await this.ordersService.update(orderExisted.id, {
+      const updatedOrder = await this.ordersService.update(orderExisted.id, {
         ...orderExisted,
         reasonCancel: body.reasonCancel,
         cancelTime: body.cancelTime,
         status: OrderEnum.CANCELED,
       });
+      await this.notificationProducerService.sendMessage(
+        {
+          body: "Your order have been canceled!. See information details now.>>>>",
+          title: `Canceled Order With Order ID: ${updatedOrder.id}`,
+          type: NotificationEnum.CANCELED_ORDER,
+          metadata: String(updatedOrder.id),
+        },
+        accountCustomerInstance.id,
+      );
+      return updatedOrder;
     } catch (error) {
       throw new BadRequestException(error);
     }
