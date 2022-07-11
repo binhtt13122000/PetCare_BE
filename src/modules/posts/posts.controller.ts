@@ -192,38 +192,3 @@ export class PostsController {
     }
   }
 }
-
-// @Post("deposit/:id")
-// deposit(
-//   @Res() res: Response,
-//   @Req() req: Request,
-//   @Body() body: Partial<PostEntity>,
-//   @Query() query: { locale?: "vn" | "en"; paymentMethod?: "vnpay" | "momo" },
-// ): void {
-//   if (!query.paymentMethod) {
-//     query.paymentMethod = "vnpay";
-//   }
-//   switch (query.paymentMethod) {
-//     case "vnpay":
-//       const ipAddr: string = req.socket.remoteAddress;
-//       const returnUrl = configService.getApiRootURL() + "/posts/vnpay_return";
-//       const url = vnpayService.generatePaymentUrl(
-//         "9999",
-//         returnUrl,
-//         body.refund || 0,
-//         ipAddr.split(":").pop() || "127.0.0.1",
-//         JSON.stringify(body),
-//         query.locale,
-//         undefined,
-//         undefined,
-//       );
-//       if (url) {
-//         return res.redirect(url);
-//       }
-//       break;
-//     case "momo":
-//       break;
-//     default:
-//       break;
-//   }
-// }

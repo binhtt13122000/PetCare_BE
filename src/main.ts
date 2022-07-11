@@ -15,10 +15,8 @@ import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 async function bootstrap(): Promise<void> {
   //get config value
   const API_PORT = configService.getPort();
-  const API_ROOT_URL = configService.getApiRootURL();
   const WEB_ADMIN_ROOT_URL = configService.getWebAdminRootURL();
   const BRANCH_ROOT_URL = configService.getBranchRootUrl();
-  const HASURA_ROOT_URL = configService.getHasuraUrl();
   const BUCKET = configService.getBucket();
   const API_PREFIX = configService.getPrefix();
 
@@ -75,13 +73,10 @@ async function bootstrap(): Promise<void> {
     });
   }
 
-  //first log
-  Logger.log(`Server running on ${API_ROOT_URL}, port: ${API_PORT}`, "Main");
   Logger.log(
     `Accepting requests from web admin: ${WEB_ADMIN_ROOT_URL}`,
     "Main",
   );
-  Logger.log(`Hasura API: ${HASURA_ROOT_URL}`, "Main");
   await app.listen(API_PORT);
 }
 bootstrap();
