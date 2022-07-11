@@ -223,7 +223,7 @@ export class SaleTransactionsController {
         await this.notificationProducerService.sendMessage(
           {
             body: "Buyer have been canceled your sale transaction. See information details now.>>>>",
-            title: `Sale Transaction #${updatedSaleTransaction.id}  Canceled`,
+            title: `Sale Transaction #${updatedSaleTransaction.id} Canceled`,
             type: NotificationEnum.CANCELED_SALE_TRANSACTION,
             metadata: String(updatedSaleTransaction.id),
           },
