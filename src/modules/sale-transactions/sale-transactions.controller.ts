@@ -166,6 +166,15 @@ export class SaleTransactionsController {
         throw new NotFoundException("Cannot found");
       }
       const { message, ...rest } = body;
+      const customerInstance = await this.customerService.findById(
+        currentSaleTransaction.sellerId,
+      );
+      if (!customerInstance) {
+        throw new NotFoundException("Not found customer");
+      }
+      const accountCustomerInstance = await this.userService.findByPhoneNumber(
+        customerInstance.phoneNumber,
+      );
       if (message) {
         const post = await this.postService.findById(
           currentSaleTransaction.postId,
@@ -203,10 +212,25 @@ export class SaleTransactionsController {
           .in(room._id.valueOf())
           .emit("chatToClient", createdMessage);
       }
-      return this.saleTransactionsService.update(body.id, {
-        ...currentSaleTransaction,
-        ...rest,
-      });
+      const updatedSaleTransaction = await this.saleTransactionsService.update(
+        body.id,
+        {
+          ...currentSaleTransaction,
+          ...rest,
+        },
+      );
+      if (rest.status && rest.status === SaleTransactionEnum.CANCELED) {
+        await this.notificationProducerService.sendMessage(
+          {
+            body: "Buyer have been canceled your sale transaction. See information details now.>>>>",
+            title: `Sale Transaction #${updatedSaleTransaction.id}  Canceled`,
+            type: NotificationEnum.CANCELED_SALE_TRANSACTION,
+            metadata: String(updatedSaleTransaction.id),
+          },
+          accountCustomerInstance.id,
+        );
+      }
+      return updatedSaleTransaction;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

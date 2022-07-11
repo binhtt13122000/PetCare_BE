@@ -427,7 +427,7 @@ export class BreedTransactionController {
       await this.notificationProducerService.sendMessage(
         {
           body: "Buyer have been canceled your breeding transaction. See information details now.>>>>",
-          title: "Breeding Transaction Canceled",
+          title: `Breeding Transaction #${updatedBreedTransaction.id} Canceled`,
           type: NotificationEnum.CANCELED_BREEDING_TRANSACTION,
           metadata: String(updatedBreedTransaction.id),
         },
@@ -448,6 +448,15 @@ export class BreedTransactionController {
       if (!breedingTransaction) {
         throw new NotFoundException("not found breeding transaction");
       }
+      const customerInstance = await this.customerService.findById(
+        breedingTransaction.ownerPetMaleId,
+      );
+      if (!customerInstance) {
+        throw new NotFoundException("Not found customer");
+      }
+      const accountCustomerInstance = await this.userService.findByPhoneNumber(
+        customerInstance.phoneNumber,
+      );
       const petMale = await this.petsService.findById(
         breedingTransaction.petMaleId,
       );
@@ -476,12 +485,25 @@ export class BreedTransactionController {
         ...petFemale,
         status: PetEnum.NORMAL,
       });
-      return await this.breedTransactionService.update(breedingTransaction.id, {
-        ...breedingTransaction,
-        status: BreedingTransactionEnum.BREEDING_CANCELED,
-        reasonCancel: body.reasonCancel,
-        cancelTime: body.cancelTime,
-      });
+      const updatedBreedTransaction = await this.breedTransactionService.update(
+        breedingTransaction.id,
+        {
+          ...breedingTransaction,
+          status: BreedingTransactionEnum.BREEDING_CANCELED,
+          reasonCancel: body.reasonCancel,
+          cancelTime: body.cancelTime,
+        },
+      );
+      await this.notificationProducerService.sendMessage(
+        {
+          body: "Buyer have been canceled your breeding transaction. See information details now.>>>>",
+          title: `Breeding Transaction #${updatedBreedTransaction.id} Canceled`,
+          type: NotificationEnum.CANCELED_BREEDING_TRANSACTION,
+          metadata: String(updatedBreedTransaction.id),
+        },
+        accountCustomerInstance.id,
+      );
+      return updatedBreedTransaction;
     } catch (error) {
       throw new BadRequestException(error);
     }
