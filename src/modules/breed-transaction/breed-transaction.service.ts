@@ -137,9 +137,11 @@ export class BreedTransactionService extends BaseService<
   ): Promise<StatisticBreedTransactionDTO[]> {
     return this.breedTransactionRepository
       .createQueryBuilder("breed-transactions")
+      .leftJoinAndSelect("breed-transactions.post", "post")
+      .leftJoinAndSelect("post.branch", "branch")
       .where(
         branchId
-          ? "breed-transactions.branchId = :branchId and breed-transactions.status IN(:...status) and breed-transactions.paymentTime >= :firstDate and breed-transactions.paymentTime <= :lastDate"
+          ? "post.branchId = :branchId and breed-transactions.status IN(:...status) and breed-transactions.paymentTime >= :firstDate and breed-transactions.paymentTime <= :lastDate"
           : "breed-transactions.status IN(:...status) and breed-transactions.paymentTime >= :firstDate and breed-transactions.paymentTime <= :lastDate",
         branchId
           ? {
@@ -160,12 +162,12 @@ export class BreedTransactionService extends BaseService<
               lastDate: lastDate,
             },
       )
-      .leftJoinAndSelect("breed-transactions.branch", "branch")
-      .groupBy("breed-transactions.branchId")
+      .groupBy("breed-transactions.postId")
+      .groupBy("post.branchId")
       .addGroupBy("branch.name")
       .addGroupBy("branch.representativeName")
       .select(
-        'SUM(breed-transactions.serviceFee) as "serviceFee", SUM(breed-transactions.transactionFee) as "transactionFee", COUNT(breed-transactions.id) as "numberOfBreedingPets", breed-transactions.branchId, branch.name, branch.representativeName',
+        'SUM(breed-transactions.serviceFee) as "serviceFee", SUM(post.shopFee) as "transactionFee", COUNT(breed-transactions.id) as "numberOfBreedingPets", post.branchId, branch.name, branch.representativeName',
       )
       .execute();
   }
