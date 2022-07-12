@@ -9,13 +9,7 @@ export class CreateBreedTransactionDTO {
   @ApiProperty()
   meetingTime: Date;
   @ApiProperty()
-  sellerReceive: number;
-  @ApiProperty()
-  transactionTotal: number;
-  @ApiProperty()
   point: number;
-  @ApiProperty()
-  description: string;
   @ApiProperty()
   status: BreedingTransactionEnum;
   @ApiProperty()
@@ -29,9 +23,7 @@ export class CreateBreedTransactionDTO {
   @ApiProperty()
   postId: number;
   @ApiProperty()
-  branchId: number;
-  @ApiProperty()
-  transactionFee: number;
+  breedingBranchId: number;
 }
 
 export class PaymentForPetMaleOwnerDTO {

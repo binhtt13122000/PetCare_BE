@@ -331,7 +331,6 @@ export class SaleTransactionsController {
             throw new HttpException("not found post", HttpStatus.BAD_REQUEST);
           }
           this.cacheManager.del("sale_transaction_id_" + id);
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const {
             message,
             transactionTotal,

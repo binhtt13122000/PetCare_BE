@@ -9,25 +9,15 @@ export class UpdateBreedTransactionDTO {
   @ApiProperty()
   dateOfBreeding: Date;
   @ApiProperty()
-  sellerReceive: number;
-  @ApiProperty()
   serviceFee: number;
-  @ApiProperty()
-  transactionTotal: number;
   @ApiProperty()
   point: number;
   @ApiProperty()
   pickupMalePetTime: Date;
   @ApiProperty()
-  pickupFemalePetTime: Date;
-  @ApiProperty()
   cancelTime: Date;
   @ApiProperty()
   evidence: string;
-  @ApiProperty()
-  description: string;
-  @ApiProperty()
-  paymentMethod: string;
   @ApiProperty()
   star: number;
   @ApiProperty()
