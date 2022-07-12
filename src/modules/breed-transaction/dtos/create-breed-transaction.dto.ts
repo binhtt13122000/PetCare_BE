@@ -32,8 +32,6 @@ export class CreateBreedTransactionDTO {
   branchId: number;
   @ApiProperty()
   transactionFee: number;
-  @ApiProperty()
-  self: boolean;
 }
 
 export class PaymentForPetMaleOwnerDTO {

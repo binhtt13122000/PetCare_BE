@@ -70,7 +70,6 @@ export class BreedTransactionService extends BaseService<
     return this.breedTransactionRepository.find({
       where: {
         ownerPetMaleId: ownerPetMaleId,
-        self: false,
       },
       take: limit,
       skip: (page - 1) * limit,
