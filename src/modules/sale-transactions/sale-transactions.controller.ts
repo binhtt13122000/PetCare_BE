@@ -331,8 +331,13 @@ export class SaleTransactionsController {
             throw new HttpException("not found post", HttpStatus.BAD_REQUEST);
           }
           this.cacheManager.del("sale_transaction_id_" + id);
-          const { message, ...updateSaleTransaction } =
-            updateSaleTransactionDTO;
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const {
+            message,
+            transactionTotal,
+            paymentMethod,
+            ...updateSaleTransaction
+          } = updateSaleTransactionDTO;
           await this.saleTransactionsService.update(
             updateSaleTransactionDTO.id,
             {
