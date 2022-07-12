@@ -40,12 +40,7 @@ export class BreedingTransaction extends BaseEntity {
     type: "timestamp without time zone",
     nullable: true,
   })
-  realDateOfBreeding: Date;
-  @Column({
-    type: "timestamp without time zone",
-    nullable: true,
-  })
-  realDateOfFinish: Date;
+  dateOfFinish: Date;
   @Column({
     type: "timestamp without time zone",
     nullable: true,
@@ -55,17 +50,7 @@ export class BreedingTransaction extends BaseEntity {
     type: "timestamp without time zone",
     nullable: true,
   })
-  realTimeToCheckBreeding: Date;
-  @Column({
-    type: "timestamp without time zone",
-    nullable: true,
-  })
   pickupMalePetTime: Date;
-  @Column({
-    type: "timestamp without time zone",
-    nullable: true,
-  })
-  pickupFemalePetTime: Date;
   @Column({
     type: "timestamp without time zone",
     nullable: true,
@@ -77,23 +62,13 @@ export class BreedingTransaction extends BaseEntity {
   })
   paymentTime: Date;
   //fee
-  @Column({ type: "int", nullable: false })
-  sellerReceive: number;
   @Column({ type: "int", nullable: true })
   serviceFee: number;
   @Column({ type: "int", nullable: true })
-  transactionFee: number;
-  @Column({ type: "int", nullable: false })
-  transactionTotal: number;
-  @Column({ type: "int", nullable: true })
   point: number;
-  @Column({ type: "int", nullable: true })
-  servicePoint: number;
   @Column({ type: "bool", nullable: true })
   isSuccess: boolean;
   //state
-  @Column({ type: "boolean", nullable: true, default: false })
-  self: boolean;
   @Column({ type: "enum", enum: BreedingTransactionEnum })
   status: BreedingTransactionEnum;
   //extra
@@ -104,19 +79,11 @@ export class BreedingTransaction extends BaseEntity {
   placeMeeting: string;
   @Column({ type: "text", nullable: true })
   evidence: string;
-  @Column({ type: "text", nullable: true })
-  description: string;
-  @Column({ type: "text", nullable: true })
-  paymentMethod: string;
   //review
   @Column({ type: "int", nullable: true })
   star: number;
   @Column({ type: "text", nullable: true })
   review: string;
-  @Column({ type: "int", nullable: true })
-  starBranch: number;
-  @Column({ type: "text", nullable: true })
-  reviewBranch: string;
   @Column({ type: "text", nullable: true })
   reasonCancel: string;
 
@@ -150,12 +117,6 @@ export class BreedingTransaction extends BaseEntity {
   @ManyToOne(() => Post, (post) => post.breedingTransactions, {})
   @JoinColumn({ name: "postId", referencedColumnName: "id" })
   post: Post;
-
-  @Column({ name: "branchId" })
-  branchId: number;
-  @ManyToOne(() => Branch, (branch) => branch.breedingTransactions, {})
-  @JoinColumn({ name: "branchId", referencedColumnName: "id" })
-  branch: Branch;
 
   @Column({ name: "breedingBranchId", nullable: true })
   breedingBranchId: number;

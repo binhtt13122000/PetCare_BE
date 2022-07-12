@@ -1,12 +1,4 @@
-import {
-  IsNumber,
-  Max,
-  Min,
-  IsPhoneNumber,
-  IsString,
-  IsEmail,
-  IsBoolean,
-} from "class-validator";
+import { IsPhoneNumber, IsString, IsEmail, IsBoolean } from "class-validator";
 import {
   Column,
   Entity,
@@ -21,8 +13,6 @@ import { HealthPetRecord } from "src/entities/pet_service/health-pet-record.enti
 import { Ticket } from "../service/ticket.entity";
 import { Promotion } from "../service/promotion.entity";
 
-import { Type } from "class-transformer";
-import { SaleTransaction } from "../transaction_service/sale-transaction.entity";
 import { PetCombo } from "../pet_service/pet-combo.entity";
 @Entity("branch")
 export class Branch extends BaseEntity {
@@ -51,16 +41,6 @@ export class Branch extends BaseEntity {
   image: string;
   @Column({ type: "text", nullable: true })
   description: string;
-  @Column({ type: "float", nullable: false, default: 0 })
-  @Min(0)
-  @Max(5)
-  @IsNumber()
-  @Type(() => Number)
-  star: number;
-  @Column({ type: "int", nullable: true, default: 0 })
-  @Min(0)
-  @Type(() => Number)
-  numberReviewers: number;
   @Column({ type: "bool", default: true })
   @IsBoolean()
   isActive: boolean;
@@ -85,18 +65,9 @@ export class Branch extends BaseEntity {
 
   @OneToMany(
     () => BreedingTransaction,
-    (breedingTransaction) => breedingTransaction.branch,
-  )
-  breedingTransactions: BreedingTransaction[];
-
-  @OneToMany(
-    () => BreedingTransaction,
     (breedingTransaction) => breedingTransaction.breedingBranch,
   )
   breedTransactions: BreedingTransaction[];
-
-  @OneToMany(() => SaleTransaction, (saleTransaction) => saleTransaction.branch)
-  saleTransactions: SaleTransaction[];
 
   @OneToMany(() => PetCombo, (petCombo) => petCombo.branch, {})
   petCombos: PetCombo[];

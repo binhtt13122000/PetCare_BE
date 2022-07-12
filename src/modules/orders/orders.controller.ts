@@ -182,9 +182,6 @@ export class OrdersController {
             const petCombo: Partial<PetCombo> = {
               registerTime: body.registerTime,
               isCompleted: false,
-              paymentMethod: body.paymentMethod,
-              orderTotal: combo.price,
-              point: body.point,
               petId: item.petId,
               branchId: body.branchId,
               comboId: item.petComboId,
@@ -224,8 +221,8 @@ export class OrdersController {
               }
             });
             return {
-              totalPrice: createPetCombo.orderTotal,
-              price: createPetCombo.orderTotal,
+              totalPrice: combo.price,
+              price: combo.price,
               petComboId: createPetCombo.id,
               quantity: 1,
             };
@@ -341,9 +338,6 @@ export class OrdersController {
               const petCombo: Partial<PetCombo> = {
                 registerTime: body.registerTime,
                 isCompleted: false,
-                paymentMethod: body.paymentMethod,
-                orderTotal: combo.price,
-                point: body.point,
                 petId: item.petId,
                 branchId: body.branchId,
                 comboId: item.petComboId,
@@ -383,8 +377,8 @@ export class OrdersController {
                 }
               });
               return new OrderDetail({
-                totalPrice: createPetCombo.orderTotal,
-                price: createPetCombo.orderTotal,
+                totalPrice: combo.price,
+                price: combo.price,
                 petComboId: createPetCombo.id,
                 quantity: 1,
               });

@@ -9,11 +9,8 @@ import { IsString, Max, Min } from "class-validator";
 import { Customer } from "../user_management_service/customer.entity";
 import { Pet } from "../pet_service/pet.entity";
 import { Post } from "./post.entity";
-// import { Promotion } from "../service/promotion.entity";
 import { BaseEntity } from "typeorm";
 import { SaleTransactionEnum } from "src/enum";
-import { Type } from "class-transformer";
-import { Branch } from "../user_management_service/branch.entity";
 
 @Entity("sale_transaction")
 export class SaleTransaction extends BaseEntity {
@@ -41,24 +38,8 @@ export class SaleTransaction extends BaseEntity {
     nullable: true,
   })
   cancelTime: Date;
-  @Column({ type: "int", nullable: false })
-  @Type(() => Number)
-  @Min(0)
-  sellerReceive: number;
-  @Column({ type: "int", nullable: true })
-  @Min(0)
-  transactionFee: number;
-  @Column({ type: "int", nullable: true })
-  @Min(0)
-  transactionTotal: number;
   @Column({ type: "int", nullable: true })
   point: number;
-  @Column({ type: "text", nullable: true })
-  @IsString()
-  description: string;
-  @Column({ type: "text", nullable: true })
-  @IsString()
-  paymentMethod: string;
   @Column({ type: "int", nullable: true })
   @Min(0)
   @Max(5)
@@ -93,16 +74,6 @@ export class SaleTransaction extends BaseEntity {
   @ManyToOne(() => Post, (post) => post.saleTransactions, {})
   @JoinColumn({ name: "postId", referencedColumnName: "id" })
   post: Post;
-  @Column({ name: "branchId", nullable: true })
-  branchId: number;
-  @ManyToOne(() => Branch, (branch) => branch.saleTransactions, {})
-  @JoinColumn({ name: "branchId", referencedColumnName: "id" })
-  branch: Branch;
-  // @Column({ name: "promotionId", nullable: true })
-  // promotionId: number;
-  // @ManyToOne(() => Promotion, (promotion) => promotion.saleTransactions, {})
-  // @JoinColumn({ name: "promotionId", referencedColumnName: "id" })
-  // promotion: Promotion;
 
   constructor(partial: Partial<SaleTransaction>) {
     super();

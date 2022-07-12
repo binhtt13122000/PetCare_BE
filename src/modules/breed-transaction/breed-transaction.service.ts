@@ -99,7 +99,7 @@ export class BreedTransactionService extends BaseService<
         status: BreedingTransactionEnum.BREEDING_FINISHED,
       },
       order: {
-        realDateOfFinish: "DESC",
+        dateOfFinish: "DESC",
       },
     });
   }

@@ -311,9 +311,6 @@ export class SaleTransactionsController {
           const seller = await this.customerService.findById(
             saleTransaction.sellerId,
           );
-          const branchInstance = await this.branchService.findById(
-            saleTransaction.branchId,
-          );
           const pet = await this.petsService.findById(saleTransaction.petId);
           const post = await this.postService.findById(saleTransaction.postId);
           if (!buyer) {
@@ -322,15 +319,8 @@ export class SaleTransactionsController {
           if (!seller) {
             throw new HttpException("not found", HttpStatus.NOT_FOUND);
           }
-          if (!branchInstance) {
-            throw new HttpException("not found", HttpStatus.NOT_FOUND);
-          }
           const accountSellerInstance =
             await this.userService.findByPhoneNumber(seller.phoneNumber || "");
-          const accountBranchInstance =
-            await this.userService.findByPhoneNumber(
-              branchInstance.phoneNumber || "",
-            );
           if (saleTransaction.status !== SaleTransactionEnum.CREATED) {
             throw new HttpException("status error", HttpStatus.BAD_REQUEST);
           }
@@ -418,15 +408,6 @@ export class SaleTransactionsController {
               metadata: String(saleTransaction.id),
             },
             accountSellerInstance.id,
-          );
-          await this.notificationProducerService.sendMessage(
-            {
-              body: `Transaction number: ${saleTransaction.id} have been paid. See information details now.`,
-              title: "Successful Sale Transaction.",
-              type: NotificationEnum.SUCCESS_SALE_TRANSACTION,
-              metadata: String(saleTransaction.id),
-            },
-            accountBranchInstance.id,
           );
 
           if (pet.specialMarkings) {
