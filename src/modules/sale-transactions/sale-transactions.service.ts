@@ -28,7 +28,7 @@ export class SaleTransactionsService extends BaseService<
       },
       take: limit,
       skip: (page - 1) * limit,
-      relations: ["buyer", "seller"],
+      relations: ["buyer", "seller", "post"],
       order: {
         createdTime: "DESC",
       },
@@ -57,7 +57,7 @@ export class SaleTransactionsService extends BaseService<
       },
       take: limit,
       skip: (page - 1) * limit,
-      relations: ["buyer", "seller"],
+      relations: ["buyer", "seller", "post"],
       order: {
         createdTime: "DESC",
       },
