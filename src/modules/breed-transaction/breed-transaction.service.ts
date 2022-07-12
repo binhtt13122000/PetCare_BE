@@ -99,6 +99,7 @@ export class BreedTransactionService extends BaseService<
         petFemaleId: petId,
         status: BreedingTransactionEnum.BREEDING_FINISHED,
       },
+      relations: ["post"],
       order: {
         dateOfFinish: "DESC",
       },
