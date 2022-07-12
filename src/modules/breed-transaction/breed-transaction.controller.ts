@@ -622,7 +622,7 @@ export class BreedTransactionController {
         ...breedingTransaction,
         status: BreedingTransactionEnum.BREEDING_FINISHED,
         timeToCheckBreeding: body.timeToCheckBreeding,
-        dateOfBreeding: body.dateOfBreeding,
+        dateOfFinish: body.dateOfFinish,
       },
     );
     await this.notificationProducerService.sendMessage(

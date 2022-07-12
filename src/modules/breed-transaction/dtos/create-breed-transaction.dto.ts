@@ -84,7 +84,7 @@ export class ChangeToFinishDTO {
   @ApiProperty()
   timeToCheckBreeding: Date;
   @ApiProperty()
-  dateOfBreeding: Date;
+  dateOfFinish: Date;
 }
 
 export class CheckSuccessDTO {
