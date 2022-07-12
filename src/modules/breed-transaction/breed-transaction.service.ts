@@ -116,7 +116,6 @@ export class BreedTransactionService extends BaseService<
         "petFemale",
         "post",
         "post.medias",
-        "branch",
         "petFemale.breed",
         "petFemale.breed.species",
         "petMale.breed",

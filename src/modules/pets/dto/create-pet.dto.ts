@@ -39,10 +39,6 @@ export class CreatePetDTO {
   @Type(() => Number)
   ownerId: number;
 
-  @ApiProperty()
-  @IsString()
-  vaccineDescription: string;
-
   @ApiProperty({ type: "string", format: "binary" })
   file: Express.Multer.File;
 }

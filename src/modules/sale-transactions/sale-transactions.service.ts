@@ -74,7 +74,6 @@ export class SaleTransactionsService extends BaseService<
         "buyer",
         "pet",
         "post",
-        "branch",
         "post.medias",
         "pet.breed",
         "pet.breed.species",
