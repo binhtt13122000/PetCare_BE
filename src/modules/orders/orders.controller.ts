@@ -53,6 +53,7 @@ import { PetComboServicesService } from "../pet-combo-services/pet-combo-service
 import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
 import { UserService } from "../users/user.service";
 import { CancelDTO } from "./dto/cancel-order.dto";
+import { ReviewDTO } from "./dto/review-order.dto";
 
 @ApiTags("orders")
 @Controller("orders")
@@ -422,6 +423,17 @@ export class OrdersController {
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
+  }
+
+  @Put("review")
+  async review(@Body() body: ReviewDTO): Promise<Order> {
+    const orderInstance = await this.ordersService.findById(body.id);
+    if (!orderInstance) {
+      throw new NotFoundException("Not found order by id!");
+    }
+    orderInstance.star = body.star;
+    orderInstance.review = body.review || "";
+    return orderInstance.save();
   }
 
   @Put("cancel")
