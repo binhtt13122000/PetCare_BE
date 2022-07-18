@@ -115,9 +115,24 @@ export enum TicketStatusEnum {
   EXPIRED = "EXPIRED",
 }
 
+export enum TicketTypeEnum {
+  SERVICE = "SERVICE",
+  COMBO = "COMBO",
+  POST = "POST",
+}
+
 export enum OrderType {
   DESC = "DESC",
   ASC = "ASC",
+}
+
+export enum ServiceType {
+  VACCINE = "VACCINE",
+  HELMINTHIC = "HELMINTHIC",
+  TICKS = "TICKS",
+  MICROCHIP = "MICROCHIP",
+  NORMAL = "NORMAL",
+  BREED = "BREED",
 }
 
 export enum PostOrderName {

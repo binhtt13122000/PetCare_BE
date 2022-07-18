@@ -1,4 +1,4 @@
-import { TicketStatusEnum } from "src/enum";
+import { TicketStatusEnum, TicketTypeEnum } from "src/enum";
 import {
   BaseEntity,
   Column,
@@ -32,12 +32,12 @@ export class Ticket extends BaseEntity {
   reasonCancel: string;
   @Column({ type: "integer", nullable: true })
   endTime: number;
+
   @Column({ name: "branchId" })
   branchId: number;
   @ManyToOne(() => Branch, (branch) => branch.tickets, {})
   @JoinColumn({ name: "branchId", referencedColumnName: "id" })
   branch: Branch;
-
   @Column({ name: "customerId" })
   customerId: number;
   @ManyToOne(() => Customer, (customer) => customer.tickets, {})
@@ -51,6 +51,9 @@ export class Ticket extends BaseEntity {
 
   @Column({ type: "enum", enum: TicketStatusEnum })
   status: TicketStatusEnum;
+
+  @Column({ type: "enum", enum: TicketTypeEnum, nullable: true })
+  type: TicketTypeEnum;
 
   constructor(partial: Partial<Ticket>) {
     super();

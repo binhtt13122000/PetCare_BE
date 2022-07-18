@@ -2,6 +2,8 @@ import {
   BaseEntity,
   Column,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -11,6 +13,8 @@ import { ServiceFee } from "./service-fee.entity";
 import { ServiceTicket } from "./service-ticket.entity";
 import { ComboService } from "./combo-service.entity";
 import { PetComboService } from "../pet_service/pet-combo-service.entity";
+import { ServiceType } from "src/enum/index";
+import { Vaccine } from "../pet_service/vaccine.entity";
 
 @Entity("service")
 export class Service extends BaseEntity {
@@ -29,6 +33,9 @@ export class Service extends BaseEntity {
   @Column({ type: "integer", nullable: true })
   estimatedTime: number;
 
+  @Column({ type: "enum", enum: ServiceType, nullable: true })
+  type: ServiceType;
+
   @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.service)
   orderDetails: OrderDetail[];
 
@@ -42,6 +49,13 @@ export class Service extends BaseEntity {
 
   @OneToMany(() => ServiceTicket, (serviceTicket) => serviceTicket.service)
   serviceTickets: ServiceTicket[];
+
+  @Column({ name: "vaccineId", nullable: true })
+  vaccineId: number;
+
+  @ManyToOne(() => Vaccine, (vaccine) => vaccine.services)
+  @JoinColumn({ name: "vaccineId", referencedColumnName: "id" })
+  vaccine: Vaccine;
 
   @OneToMany(
     () => PetComboService,
