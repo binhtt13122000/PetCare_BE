@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsString, IsBoolean } from "class-validator";
 import { Type } from "class-transformer";
+import { ServiceType } from "src/enum";
 export class CreateServiceDTO {
   @ApiProperty()
   @IsString()
@@ -20,4 +21,8 @@ export class CreateServiceDTO {
   unit: string;
   @ApiProperty()
   estimatedTime: number;
+  @ApiProperty()
+  type: ServiceType;
+  @ApiProperty()
+  vaccineId?: number;
 }
