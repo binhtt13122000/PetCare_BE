@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { ServiceTicket } from "src/entities/service/service-ticket.entity";
-import { TicketStatusEnum } from "src/enum";
+import { TicketStatusEnum, TicketTypeEnum } from "src/enum";
 
 export class CreateTicketDTO {
   @ApiProperty()
@@ -19,4 +19,6 @@ export class CreateTicketDTO {
   serviceTickets: Partial<ServiceTicket>[];
   @ApiProperty()
   status: TicketStatusEnum;
+  @ApiProperty()
+  type: TicketTypeEnum;
 }
