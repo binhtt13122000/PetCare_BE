@@ -1,6 +1,4 @@
 import {
-  IsNumber,
-  Max,
   Min,
   IsString,
   IsEmail,
@@ -15,7 +13,6 @@ import {
   BaseEntity,
 } from "typeorm";
 import { PetOwner } from "../pet_service/pet-owner.entity";
-import { Report } from "./report.entity";
 import { Order } from "../order_service/order.entity";
 import { Post } from "../transaction_service/post.entity";
 import { SaleTransaction } from "../transaction_service/sale-transaction.entity";
@@ -47,19 +44,10 @@ export class Customer extends BaseEntity {
   gender: GenderEnum;
   @Column({ type: "text", nullable: true })
   avatar: string;
-  @Column({ type: "float", nullable: false, default: 0 })
-  @Min(0)
-  @Max(5)
-  @IsNumber()
-  star: number;
   @Column({ type: "int", nullable: true, default: 0 })
   @Min(0)
   @Type(() => Number)
   point: number;
-  @Column({ type: "int", nullable: true, default: 0 })
-  @Min(0)
-  @Type(() => Number)
-  numberReviewers: number;
   @Column({ type: "text", nullable: true })
   @IsString()
   bankName: string;
@@ -72,12 +60,6 @@ export class Customer extends BaseEntity {
   @Column({ type: "bool", default: true })
   @IsBoolean()
   isActive: boolean;
-
-  @OneToMany(() => Report, (report) => report.reporter)
-  reporters: Report[];
-
-  @OneToMany(() => Report, (report) => report.reportedUser)
-  reporteds: Report[];
 
   @OneToMany(() => PetOwner, (petOwner) => petOwner.customer)
   petOwners: PetOwner[];

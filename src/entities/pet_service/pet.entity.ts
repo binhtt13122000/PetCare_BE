@@ -44,9 +44,6 @@ export class Pet extends BaseEntity {
   @Column({ type: "text", nullable: true })
   @IsString()
   specialMarkings: string;
-  @Column({ type: "text", nullable: true })
-  @IsString()
-  vaccineDescription: string;
 
   @Column({ name: "breedId" })
   breedId: number;

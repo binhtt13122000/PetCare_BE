@@ -9,13 +9,7 @@ export class CreateBreedTransactionDTO {
   @ApiProperty()
   meetingTime: Date;
   @ApiProperty()
-  sellerReceive: number;
-  @ApiProperty()
-  transactionTotal: number;
-  @ApiProperty()
   point: number;
-  @ApiProperty()
-  description: string;
   @ApiProperty()
   status: BreedingTransactionEnum;
   @ApiProperty()
@@ -29,11 +23,7 @@ export class CreateBreedTransactionDTO {
   @ApiProperty()
   postId: number;
   @ApiProperty()
-  branchId: number;
-  @ApiProperty()
-  transactionFee: number;
-  @ApiProperty()
-  self: boolean;
+  breedingBranchId: number;
 }
 
 export class PaymentForPetMaleOwnerDTO {
@@ -67,11 +57,11 @@ export class ChangeToInProgressDTO {
   @ApiProperty()
   id: number;
   @ApiProperty()
-  realDateOfBreeding: Date;
+  dateOfBreeding: Date;
   @ApiProperty()
   serviceFee: number;
   @ApiProperty()
-  servicePoint: number;
+  point: number;
 }
 
 export class PickUpMaleDTO {
@@ -85,8 +75,6 @@ export class PickUpFemaleDTO {
   @ApiProperty()
   id: number;
   @ApiProperty()
-  pickupFemalePetTime: Date;
-  @ApiProperty()
   paymentTime: Date;
 }
 
@@ -96,7 +84,7 @@ export class ChangeToFinishDTO {
   @ApiProperty()
   timeToCheckBreeding: Date;
   @ApiProperty()
-  realDateOfFinish: Date;
+  dateOfFinish: Date;
 }
 
 export class CheckSuccessDTO {
@@ -107,7 +95,7 @@ export class CheckSuccessDTO {
   @ApiProperty()
   isSuccess: boolean;
   @ApiProperty()
-  realTimeToCheckBreeding: Date;
+  timeToCheckBreeding: Date;
 }
 
 export class ReviewDTO {

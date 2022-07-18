@@ -28,7 +28,7 @@ export class SaleTransactionsService extends BaseService<
       },
       take: limit,
       skip: (page - 1) * limit,
-      relations: ["buyer", "seller"],
+      relations: ["buyer", "seller", "post"],
       order: {
         createdTime: "DESC",
       },
@@ -57,7 +57,7 @@ export class SaleTransactionsService extends BaseService<
       },
       take: limit,
       skip: (page - 1) * limit,
-      relations: ["buyer", "seller"],
+      relations: ["buyer", "seller", "post"],
       order: {
         createdTime: "DESC",
       },
@@ -74,7 +74,6 @@ export class SaleTransactionsService extends BaseService<
         "buyer",
         "pet",
         "post",
-        "branch",
         "post.medias",
         "pet.breed",
         "pet.breed.species",
@@ -89,9 +88,11 @@ export class SaleTransactionsService extends BaseService<
   ): Promise<StatisticSaleTransactionDTO[]> {
     return this.saleTransactionsRepository
       .createQueryBuilder("sale-transactions")
+      .leftJoinAndSelect("sale-transactions.post", "post")
+      .leftJoinAndSelect("post.branch", "branch")
       .where(
         branchId
-          ? "sale-transactions.branchId = :branchId and sale-transactions.status = :status and sale-transactions.transactionTime >= :firstDate and sale-transactions.transactionTime <= :lastDate"
+          ? "post.branchId = :branchId and sale-transactions.status = :status and sale-transactions.transactionTime >= :firstDate and sale-transactions.transactionTime <= :lastDate"
           : "sale-transactions.status = :status and sale-transactions.transactionTime >= :firstDate and sale-transactions.transactionTime <= :lastDate",
         branchId
           ? {
@@ -106,12 +107,12 @@ export class SaleTransactionsService extends BaseService<
               lastDate: lastDate,
             },
       )
-      .leftJoinAndSelect("sale-transactions.branch", "branch")
-      .groupBy("sale-transactions.branchId")
+      .groupBy("sale-transactions.postId")
+      .groupBy("post.branchId")
       .addGroupBy("branch.name")
       .addGroupBy("branch.representativeName")
       .select(
-        'SUM(sale-transactions.transactionFee) as "transactionFee", COUNT(sale-transactions.id) as "numberOfSoldPets", sale-transactions.branchId, branch.name, branch.representativeName',
+        'SUM(post.shopFee) as "transactionFee", COUNT(sale-transactions.id) as "numberOfSoldPets", post.branchId, branch.name, branch.representativeName',
       )
       .execute();
   }

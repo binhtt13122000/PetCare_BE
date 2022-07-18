@@ -26,7 +26,7 @@ export class Post extends BaseEntity {
   @Column({ type: "integer", nullable: false })
   shopFee: number;
   @Column({ type: "integer", nullable: false })
-  provisionalTotal: number;
+  transactionTotal: number;
   @Column({
     type: "timestamp without time zone",
     nullable: false,
@@ -38,17 +38,7 @@ export class Post extends BaseEntity {
     type: "timestamp without time zone",
     nullable: true,
   })
-  approveTime: Date;
-  @Column({
-    type: "timestamp without time zone",
-    nullable: true,
-  })
   cancelTime: Date;
-  @Column({
-    type: "timestamp without time zone",
-    nullable: true,
-  })
-  rejectTime: Date;
   @Column({ type: "enum", enum: ServiceEnum })
   type: ServiceEnum;
   @Column({ type: "text", nullable: true })
@@ -59,8 +49,6 @@ export class Post extends BaseEntity {
   reasonCancel: string;
   @Column({ type: "text", nullable: true })
   reasonReject: string;
-  @Column({ type: "bool", default: false })
-  isVaccineInject: boolean;
 
   //references
   @Column({ name: "petId" })

@@ -25,12 +25,6 @@ export class PetCombo extends BaseEntity {
   isCompleted: boolean;
   @Column({ type: "boolean", nullable: true, default: true })
   isDraft: boolean;
-  @Column({ type: "enum", enum: PaymentOrderMethodEnum, nullable: true })
-  paymentMethod: PaymentOrderMethodEnum;
-  @Column({ type: "integer", nullable: false })
-  orderTotal: number;
-  @Column({ type: "integer", nullable: true })
-  point: number;
 
   @Column({ name: "petId" })
   petId: number;

@@ -166,6 +166,15 @@ export class SaleTransactionsController {
         throw new NotFoundException("Cannot found");
       }
       const { message, ...rest } = body;
+      const customerInstance = await this.customerService.findById(
+        currentSaleTransaction.sellerId,
+      );
+      if (!customerInstance) {
+        throw new NotFoundException("Not found customer");
+      }
+      const accountCustomerInstance = await this.userService.findByPhoneNumber(
+        customerInstance.phoneNumber,
+      );
       if (message) {
         const post = await this.postService.findById(
           currentSaleTransaction.postId,
@@ -203,10 +212,25 @@ export class SaleTransactionsController {
           .in(room._id.valueOf())
           .emit("chatToClient", createdMessage);
       }
-      return this.saleTransactionsService.update(body.id, {
-        ...currentSaleTransaction,
-        ...rest,
-      });
+      const updatedSaleTransaction = await this.saleTransactionsService.update(
+        body.id,
+        {
+          ...currentSaleTransaction,
+          ...rest,
+        },
+      );
+      if (rest.status && rest.status === SaleTransactionEnum.CANCELED) {
+        await this.notificationProducerService.sendMessage(
+          {
+            body: "Buyer have been canceled your sale transaction. See information details now.>>>>",
+            title: `Sale Transaction #${updatedSaleTransaction.id} Canceled`,
+            type: NotificationEnum.CANCELED_SALE_TRANSACTION,
+            metadata: String(updatedSaleTransaction.id),
+          },
+          accountCustomerInstance.id,
+        );
+      }
+      return updatedSaleTransaction;
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -287,9 +311,6 @@ export class SaleTransactionsController {
           const seller = await this.customerService.findById(
             saleTransaction.sellerId,
           );
-          const branchInstance = await this.branchService.findById(
-            saleTransaction.branchId,
-          );
           const pet = await this.petsService.findById(saleTransaction.petId);
           const post = await this.postService.findById(saleTransaction.postId);
           if (!buyer) {
@@ -298,15 +319,8 @@ export class SaleTransactionsController {
           if (!seller) {
             throw new HttpException("not found", HttpStatus.NOT_FOUND);
           }
-          if (!branchInstance) {
-            throw new HttpException("not found", HttpStatus.NOT_FOUND);
-          }
           const accountSellerInstance =
             await this.userService.findByPhoneNumber(seller.phoneNumber || "");
-          const accountBranchInstance =
-            await this.userService.findByPhoneNumber(
-              branchInstance.phoneNumber || "",
-            );
           if (saleTransaction.status !== SaleTransactionEnum.CREATED) {
             throw new HttpException("status error", HttpStatus.BAD_REQUEST);
           }
@@ -317,8 +331,12 @@ export class SaleTransactionsController {
             throw new HttpException("not found post", HttpStatus.BAD_REQUEST);
           }
           this.cacheManager.del("sale_transaction_id_" + id);
-          const { message, ...updateSaleTransaction } =
-            updateSaleTransactionDTO;
+          const {
+            message,
+            transactionTotal,
+            paymentMethod,
+            ...updateSaleTransaction
+          } = updateSaleTransactionDTO;
           await this.saleTransactionsService.update(
             updateSaleTransactionDTO.id,
             {
@@ -394,15 +412,6 @@ export class SaleTransactionsController {
               metadata: String(saleTransaction.id),
             },
             accountSellerInstance.id,
-          );
-          await this.notificationProducerService.sendMessage(
-            {
-              body: `Transaction number: ${saleTransaction.id} have been paid. See information details now.`,
-              title: "Successful Sale Transaction.",
-              type: NotificationEnum.SUCCESS_SALE_TRANSACTION,
-              metadata: String(saleTransaction.id),
-            },
-            accountBranchInstance.id,
           );
 
           if (pet.specialMarkings) {

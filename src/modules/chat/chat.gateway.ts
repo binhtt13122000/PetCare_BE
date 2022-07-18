@@ -151,7 +151,7 @@ export class ChatGateway {
 
       await this.notificationProducerService.sendMessage(
         {
-          body: `${postInstance.title} - ${postInstance.provisionalTotal}`,
+          body: `${postInstance.title} - ${postInstance.transactionTotal}`,
           title: "A New Message",
           type: NotificationEnum.NEW_ROOM_CREATED,
           metadata: String(createdRoom._id),

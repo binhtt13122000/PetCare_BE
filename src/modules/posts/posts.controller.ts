@@ -140,7 +140,6 @@ export class PostsController {
       throw new NotFoundException("Can not found user!");
     }
     instance.status = body.status;
-    instance.isVaccineInject = body.isVaccineInject;
     let bodyNotification = "",
       titleNotification = "",
       typeNotification = "";
@@ -154,7 +153,6 @@ export class PostsController {
         "Your post have been rejected. See information details now.>>>>";
       titleNotification = "Rejected your post!";
       instance.reasonReject = body.reasonReject;
-      instance.rejectTime = body.rejectTime;
       typeNotification = NotificationEnum.REJECT_POST;
     }
     const postChanged = await instance.save();

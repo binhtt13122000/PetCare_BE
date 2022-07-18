@@ -13,7 +13,4 @@ export class ChangeStatusPostDTO {
 
   @ApiProperty({ required: false })
   rejectTime?: Date;
-
-  @ApiProperty({ required: false })
-  isVaccineInject?: boolean;
 }

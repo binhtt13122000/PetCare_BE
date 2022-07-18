@@ -11,12 +11,6 @@ export class UpdateSaleTransactionDTO {
   @ApiProperty()
   transactionTime: Date;
   @ApiProperty()
-  transactionTotal: number;
-  @ApiProperty()
-  description: string;
-  @ApiProperty()
-  paymentMethod: string;
-  @ApiProperty()
   star: number;
   @ApiProperty()
   review: string;

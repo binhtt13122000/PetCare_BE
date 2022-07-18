@@ -101,7 +101,6 @@ export class BranchesController {
           currentMonth.firstDate,
           currentMonth.lastDate,
         );
-
       const breedTransactionBranchInMonth =
         await this.breedTransactionService.getBreedTransactionBranchInMonth(
           branchId,

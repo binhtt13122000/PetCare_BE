@@ -144,17 +144,8 @@ export class BreedTransactionController {
     if (!seller) {
       throw new NotFoundException("not found seller");
     }
-    const branchInstance = await this.branchService.findById(
-      breedTransaction.branchId,
-    );
-    if (!branchInstance) {
-      throw new HttpException("not found branch", HttpStatus.NOT_FOUND);
-    }
     const accountSellerInstance = await this.userService.findByPhoneNumber(
       seller.phoneNumber || "",
-    );
-    const accountBranchInstance = await this.userService.findByPhoneNumber(
-      branchInstance.phoneNumber || "",
     );
     const post = await this.postService.findById(breedTransaction.postId);
     if (!post) {
@@ -213,7 +204,6 @@ export class BreedTransactionController {
     });
     const updatedBreedTransaction = new BreedingTransaction({
       ...breedTransaction,
-      paymentMethod: "VNPAY",
       paymentTime: body.paymentTime,
       status: BreedingTransactionEnum.SUCCESS,
     });
@@ -229,15 +219,6 @@ export class BreedTransactionController {
         metadata: String(breedingTransactionUpdated.id),
       },
       accountSellerInstance.id,
-    );
-    await this.notificationProducerService.sendMessage(
-      {
-        body: `Transaction number: ${breedingTransactionUpdated.id} have been paid. See information details now.`,
-        title: "Successful Breeding Transaction.",
-        type: NotificationEnum.BREEDING_TRANSACTION_SUCCESS,
-        metadata: String(breedingTransactionUpdated.id),
-      },
-      accountBranchInstance.id,
     );
     return breedingTransactionUpdated;
   }
@@ -274,15 +255,6 @@ export class BreedTransactionController {
     if (!seller) {
       throw new NotFoundException("not found seller");
     }
-    const branchInstance = await this.branchService.findById(
-      breedTransaction.branchId,
-    );
-    if (!branchInstance) {
-      throw new HttpException("not found branch", HttpStatus.NOT_FOUND);
-    }
-    const accountBranchInstance = await this.userService.findByPhoneNumber(
-      branchInstance.phoneNumber || "",
-    );
     await this.petsService.update(petMale.id, {
       ...petMale,
       status: PetEnum.IN_BREED,
@@ -302,15 +274,6 @@ export class BreedTransactionController {
       {
         ...updatedBreedTransaction,
       },
-    );
-    await this.notificationProducerService.sendMessage(
-      {
-        body: `Request breeding transaction with number: ${breedTransactionUpdated.id}. See information details now.`,
-        title: "New Request breeding transaction.",
-        type: NotificationEnum.SUCCESS_SALE_TRANSACTION,
-        metadata: String(breedTransactionUpdated.id),
-      },
-      accountBranchInstance.id,
     );
     return breedTransactionUpdated;
   }
@@ -378,6 +341,15 @@ export class BreedTransactionController {
       if (!breedingTransaction) {
         throw new NotFoundException("not found breeding transaction");
       }
+      const customerInstance = await this.customerService.findById(
+        breedingTransaction.ownerPetMaleId,
+      );
+      if (!customerInstance) {
+        throw new NotFoundException("Not found customer");
+      }
+      const accountCustomerInstance = await this.userService.findByPhoneNumber(
+        customerInstance.phoneNumber,
+      );
       const petMale = await this.petsService.findById(
         breedingTransaction.petMaleId,
       );
@@ -406,12 +378,25 @@ export class BreedTransactionController {
         ...post,
         status: PostEnum.PUBLISHED,
       });
-      return await this.breedTransactionService.update(breedingTransaction.id, {
-        ...breedingTransaction,
-        status: BreedingTransactionEnum.CANCELED,
-        reasonCancel: body.reasonCancel,
-        cancelTime: body.cancelTime,
-      });
+      const updatedBreedTransaction = await this.breedTransactionService.update(
+        breedingTransaction.id,
+        {
+          ...breedingTransaction,
+          status: BreedingTransactionEnum.CANCELED,
+          reasonCancel: body.reasonCancel,
+          cancelTime: body.cancelTime,
+        },
+      );
+      await this.notificationProducerService.sendMessage(
+        {
+          body: "Buyer have been canceled your breeding transaction. See information details now.>>>>",
+          title: `Breeding Transaction #${updatedBreedTransaction.id} Canceled`,
+          type: NotificationEnum.CANCELED_BREEDING_TRANSACTION,
+          metadata: String(updatedBreedTransaction.id),
+        },
+        accountCustomerInstance.id,
+      );
+      return updatedBreedTransaction;
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -426,6 +411,15 @@ export class BreedTransactionController {
       if (!breedingTransaction) {
         throw new NotFoundException("not found breeding transaction");
       }
+      const customerInstance = await this.customerService.findById(
+        breedingTransaction.ownerPetMaleId,
+      );
+      if (!customerInstance) {
+        throw new NotFoundException("Not found customer");
+      }
+      const accountCustomerInstance = await this.userService.findByPhoneNumber(
+        customerInstance.phoneNumber,
+      );
       const petMale = await this.petsService.findById(
         breedingTransaction.petMaleId,
       );
@@ -454,12 +448,25 @@ export class BreedTransactionController {
         ...petFemale,
         status: PetEnum.NORMAL,
       });
-      return await this.breedTransactionService.update(breedingTransaction.id, {
-        ...breedingTransaction,
-        status: BreedingTransactionEnum.BREEDING_CANCELED,
-        reasonCancel: body.reasonCancel,
-        cancelTime: body.cancelTime,
-      });
+      const updatedBreedTransaction = await this.breedTransactionService.update(
+        breedingTransaction.id,
+        {
+          ...breedingTransaction,
+          status: BreedingTransactionEnum.BREEDING_CANCELED,
+          reasonCancel: body.reasonCancel,
+          cancelTime: body.cancelTime,
+        },
+      );
+      await this.notificationProducerService.sendMessage(
+        {
+          body: "Buyer have been canceled your breeding transaction. See information details now.>>>>",
+          title: `Breeding Transaction #${updatedBreedTransaction.id} Canceled`,
+          type: NotificationEnum.CANCELED_BREEDING_TRANSACTION,
+          metadata: String(updatedBreedTransaction.id),
+        },
+        accountCustomerInstance.id,
+      );
+      return updatedBreedTransaction;
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -531,11 +538,11 @@ export class BreedTransactionController {
         if (item.buyerId !== breedingTransaction.ownerPetFemaleId) {
           item.status = RoomStatusEnum.CLOSED;
           item.newestMessage = message;
-          item.newestMessageTime = body.realDateOfBreeding;
+          item.newestMessageTime = body.dateOfBreeding;
           item.isSellerMessage = true;
           const createdMessage = await this.messageService.create({
             content: message,
-            createdTime: body.realDateOfBreeding,
+            createdTime: body.dateOfBreeding,
             isSellerMessage: true,
             type: MessageEnum.NORMAL,
             room: item._id,
@@ -555,11 +562,9 @@ export class BreedTransactionController {
       {
         ...breedingTransaction,
         status: BreedingTransactionEnum.IN_PROGRESS,
-        realDateOfBreeding: body.realDateOfBreeding,
+        dateOfBreeding: body.dateOfBreeding,
         serviceFee: body.serviceFee,
-        servicePoint: body.servicePoint,
-        transactionTotal:
-          breedingTransaction.transactionTotal + body.serviceFee,
+        point: body.point,
       },
     );
     await this.notificationProducerService.sendMessage(
@@ -617,7 +622,7 @@ export class BreedTransactionController {
         ...breedingTransaction,
         status: BreedingTransactionEnum.BREEDING_FINISHED,
         timeToCheckBreeding: body.timeToCheckBreeding,
-        realDateOfFinish: body.realDateOfFinish,
+        dateOfFinish: body.dateOfFinish,
       },
     );
     await this.notificationProducerService.sendMessage(
@@ -705,11 +710,11 @@ export class BreedTransactionController {
     });
     await this.customerService.update(seller.id, {
       ...seller,
-      point: seller.point + breedingTransaction.servicePoint,
+      point: seller.point + breedingTransaction.point,
     });
     await this.customerService.update(buyer.id, {
       ...buyer,
-      point: buyer.point + breedingTransaction.servicePoint,
+      point: buyer.point + breedingTransaction.point,
     });
     await this.petsService.update(petFemale.id, {
       ...petFemale,
@@ -719,7 +724,6 @@ export class BreedTransactionController {
       breedingTransaction.id,
       {
         ...breedingTransaction,
-        pickupFemalePetTime: body.pickupFemalePetTime,
         status: BreedingTransactionEnum.BREEDING_SUCCESS,
         paymentTime: body.paymentTime,
       },
@@ -752,7 +756,7 @@ export class BreedTransactionController {
     if (String(body.isSuccess) === "false") {
       await this.customerService.update(buyer.id, {
         ...buyer,
-        point: buyer.point + breedingTransaction.servicePoint,
+        point: buyer.point + breedingTransaction.point,
       });
     }
     let evidence = null;
@@ -766,7 +770,7 @@ export class BreedTransactionController {
         ...breedingTransaction,
         isSuccess: body.isSuccess,
         evidence: evidence,
-        realTimeToCheckBreeding: body.realTimeToCheckBreeding,
+        timeToCheckBreeding: body.timeToCheckBreeding,
       },
     );
     await this.notificationProducerService.sendMessage(
@@ -796,21 +800,6 @@ export class BreedTransactionController {
       ...breedingTransaction,
       star: body.star,
       review: body.review,
-    });
-  }
-
-  @Put("review-branch")
-  async reviewBranch(@Body() body: ReviewDTO): Promise<BreedingTransaction> {
-    const breedingTransaction = await this.breedTransactionService.findById(
-      body.id,
-    );
-    if (!breedingTransaction) {
-      throw new NotFoundException("not found breeding transaction");
-    }
-    return await this.breedTransactionService.update(body.id, {
-      ...breedingTransaction,
-      starBranch: body.star,
-      reviewBranch: body.review,
     });
   }
 
@@ -993,19 +982,9 @@ export class BreedTransactionController {
           if (!ownerPetFemale) {
             throw new HttpException("not found", HttpStatus.NOT_FOUND);
           }
-          const branchInstance = await this.branchService.findById(
-            breedTransaction.branchId,
-          );
-          if (!branchInstance) {
-            throw new HttpException("not found", HttpStatus.NOT_FOUND);
-          }
           const accountOwnerPetMaleInstance =
             await this.userService.findByPhoneNumber(
               ownerPetMale.phoneNumber || "",
-            );
-          const accountBranchInstance =
-            await this.userService.findByPhoneNumber(
-              branchInstance.phoneNumber || "",
             );
           if (breedTransaction.status !== BreedingTransactionEnum.CREATED) {
             throw new HttpException("status error", HttpStatus.BAD_REQUEST);
@@ -1056,15 +1035,6 @@ export class BreedTransactionController {
               metadata: String(breedTransaction.id),
             },
             accountOwnerPetMaleInstance.id,
-          );
-          await this.notificationProducerService.sendMessage(
-            {
-              body: `Transaction number: ${breedTransaction.id} have been paid. See information details now.`,
-              title: "Successful Breeding Transaction.",
-              type: NotificationEnum.SUCCESS_BREEDING_TRANSACTION,
-              metadata: String(breedTransaction.id),
-            },
-            accountBranchInstance.id,
           );
           this.chatGateway.server
             .in(room._id.valueOf())

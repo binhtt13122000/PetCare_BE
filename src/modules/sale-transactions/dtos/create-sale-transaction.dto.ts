@@ -8,14 +8,6 @@ export class CreateSaleTransactionDTO {
   meetingTime: Date;
   @ApiProperty()
   placeMeeting: string;
-  @ApiProperty()
-  sellerReceive: number;
-  @ApiProperty()
-  transactionFee: number;
-  @ApiProperty()
-  transactionTotal: number;
-  @ApiProperty()
-  description: string;
   @ApiProperty({ type: "enum", enum: SaleTransactionEnum })
   status: SaleTransactionEnum;
   @ApiProperty()

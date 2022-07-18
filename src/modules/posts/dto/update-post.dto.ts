@@ -6,13 +6,7 @@ export class UpdatePostDTO extends CreatePostDTO {
   id: number;
 
   @ApiProperty({ required: false })
-  approveTime: Date;
-
-  @ApiProperty({ required: false })
   cancelTime: Date;
-
-  @ApiProperty({ required: false })
-  rejectTime: Date;
 
   @ApiProperty()
   type: ServiceEnum;

@@ -157,11 +157,11 @@ export class PostsService extends BaseService<Post, PostsRepository> {
       });
     }
 
-    // Sort createTime, provisionalTotal
+    // Sort createTime, transactionTotal
     if (checkOrderName == "createTime") {
       queryBuilder.orderBy("post.createTime", pageOptionsDto.orderType);
     } else {
-      queryBuilder.orderBy("post.provisionalTotal", pageOptionsDto.orderType);
+      queryBuilder.orderBy("post.transactionTotal", pageOptionsDto.orderType);
     }
 
     // queryBuilder

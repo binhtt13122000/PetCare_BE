@@ -12,16 +12,6 @@ export class TransactionFee extends BaseEntity {
   @Column({ type: "int", nullable: false })
   price: number;
   @Column({
-    type: "timestamp without time zone",
-    nullable: false,
-  })
-  startDate: Date;
-  @Column({
-    type: "timestamp without time zone",
-    nullable: false,
-  })
-  endDate: Date;
-  @Column({
     type: "enum",
     nullable: true,
     enum: ServiceEnum,
