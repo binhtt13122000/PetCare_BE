@@ -51,7 +51,7 @@ export class ServicesController {
   @Get(":id")
   async getOne(@Param() params: IdParams): Promise<Service> {
     try {
-      return await this.shopService.findById(params.id);
+      return await this.shopService.getOne(params.id);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

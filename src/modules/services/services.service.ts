@@ -11,7 +11,16 @@ export class ShopService extends BaseService<Service, ServiceRepository> {
 
   getAll(): Promise<Service[]> {
     return this.serviceRepository.find({
-      relations: ["serviceFees"],
+      relations: ["serviceFees", "vaccine"],
+    });
+  }
+
+  getOne(id: number): Promise<Service> {
+    return this.serviceRepository.findOne({
+      where: {
+        id,
+      },
+      relations: ["vaccine"],
     });
   }
 }
