@@ -316,6 +316,7 @@ export class OrdersController {
             item.quantity = orderDetails[findIndex].quantity;
             item.serviceId = orderDetails[findIndex].serviceId;
             item.totalPrice = orderDetails[findIndex].totalPrice;
+            item.petId = orderDetails[findIndex].petId;
             orderDetails.splice(findIndex, 1);
           }
           return item;
