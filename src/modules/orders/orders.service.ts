@@ -24,6 +24,7 @@ export class OrdersService extends BaseService<Order, OrdersRepository> {
         "branch",
         "orderDetails",
         "orderDetails.service",
+        "orderDetails.service.vaccine",
         "orderDetails.breedTransaction",
         "orderDetails.petCombo",
         "orderDetails.petCombo.combo",
