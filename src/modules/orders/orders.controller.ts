@@ -607,9 +607,9 @@ export class OrdersController {
                       if (healthPetRecordType) {
                         const healthPetRecord = {
                           type: healthPetRecordType,
-                          dateOfInjection: updatedOrder.registerTime,
+                          dateOfInjection: order.registerTime,
                           petId: petInstance.id,
-                          branchId: updatedOrder.branchId,
+                          branchId: order.branchId,
                         };
                         if (findService.type === ServiceType.VACCINE) {
                           await this.healthPetRecordsService.store(
