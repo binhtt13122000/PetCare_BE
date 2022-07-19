@@ -28,11 +28,13 @@ import { format } from "date-fns";
 import {
   BreedingTransactionEnum,
   ComboTypeEnum,
+  HealthPetRecordEnum,
   NotificationEnum,
   OrderEnum,
   OrderServiceType,
   OrderTypeCreated,
   PaymentOrderMethodEnum,
+  ServiceType,
 } from "src/enum";
 import { ResponsePayment } from "./dto/response-payment.dto";
 import { OrderOptionDto } from "./dto/order-option.dto";
@@ -54,6 +56,12 @@ import { NotificationProducerService } from "src/shared/notification/notificatio
 import { UserService } from "../users/user.service";
 import { CancelDTO } from "./dto/cancel-order.dto";
 import { ReviewDTO } from "./dto/review-order.dto";
+import { ShopService } from "../services/services.service";
+import { PetsService } from "../pets/pets.service";
+import { HealthPetRecordsService } from "../health-pet-records/health-pet-records.service";
+import { HttpService } from "@nestjs/axios";
+import { HealthPetRecord } from "src/entities/pet_service/health-pet-record.entity";
+import { map } from "rxjs";
 
 @ApiTags("orders")
 @Controller("orders")
@@ -68,8 +76,12 @@ export class OrdersController {
     private readonly combos: CombosService,
     private readonly breedTransactionService: BreedTransactionService,
     private readonly petCombosService: PetCombosService,
+    private readonly shopService: ShopService,
+    private readonly petService: PetsService,
     private readonly petComboServicesService: PetComboServicesService,
     private readonly notificationProducerService: NotificationProducerService,
+    private readonly healthPetRecordsService: HealthPetRecordsService,
+    private readonly httpService: HttpService,
   ) {}
 
   @Get(":id")
@@ -555,6 +567,93 @@ export class OrdersController {
                 if (findPetCombo) {
                   findPetCombo.isDraft = false;
                   findPetCombo.save();
+                }
+              } else if (item.petId) {
+                const findService = await this.shopService.findById(
+                  item.serviceId,
+                );
+                if (findService && findService.type !== ServiceType.NORMAL) {
+                  let petInstance;
+                  if (findService.type === ServiceType.MICROCHIP) {
+                    petInstance = await this.petService.findById(item.petId);
+                  } else {
+                    petInstance = await this.petService.getOne(
+                      item.petId,
+                      true,
+                    );
+                  }
+                  if (petInstance) {
+                    if (
+                      findService.type === ServiceType.MICROCHIP &&
+                      item.microchip
+                    ) {
+                      petInstance.specialMarkings = item.microchip;
+                      petInstance.save();
+                    } else {
+                      let healthPetRecordType;
+                      switch (findService.type) {
+                        case ServiceType.VACCINE:
+                          healthPetRecordType = HealthPetRecordEnum.VACCINE;
+                          break;
+                        case ServiceType.HELMINTHIC:
+                          healthPetRecordType = HealthPetRecordEnum.HELMINTHIC;
+                          break;
+                        case ServiceType.TICKS:
+                          healthPetRecordType = HealthPetRecordEnum.TICKS;
+                          break;
+                        default:
+                          break;
+                      }
+                      if (healthPetRecordType) {
+                        const healthPetRecord = {
+                          type: healthPetRecordType,
+                          dateOfInjection: updatedOrder.registerTime,
+                          petId: petInstance.id,
+                          branchId: updatedOrder.branchId,
+                        };
+                        if (findService.type === ServiceType.VACCINE) {
+                          await this.healthPetRecordsService.store(
+                            new HealthPetRecord({
+                              ...healthPetRecord,
+                              vaccineType: findService.name,
+                              vaccineId: findService.vaccineId,
+                            }),
+                          );
+                        } else {
+                          await this.healthPetRecordsService.store(
+                            new HealthPetRecord({
+                              ...healthPetRecord,
+                            }),
+                          );
+                        }
+
+                        if (petInstance.specialMarkings) {
+                          let script = "";
+                          if (findService.type === ServiceType.VACCINE) {
+                            script = "The dog has been given a new vaccine";
+                          } else if (
+                            findService.type === ServiceType.HELMINTHIC
+                          ) {
+                            script = "The dog has been given a new deworming";
+                          } else if (findService.type === ServiceType.TICKS) {
+                            script =
+                              "The dog has been given a new tick treatment";
+                          }
+                          await this.httpService
+                            .post("/api/setData", {
+                              no: petInstance.specialMarkings,
+                              content: {
+                                current: petInstance,
+                                write: script,
+                              },
+                              type: "UPDATE",
+                              date: updatedOrder.registerTime,
+                            })
+                            .pipe(map((response) => response.data));
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }),

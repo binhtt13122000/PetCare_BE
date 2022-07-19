@@ -20,7 +20,9 @@ export class CreateOrderDTO {
     Partial<
       OrderDetail & {
         petId?: number;
+        microchip?: string;
         registerTime?: Date;
+        serviceType?: string;
       }
     >[]
   >;

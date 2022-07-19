@@ -10,6 +10,7 @@ import { Order } from "./order.entity";
 import { Service } from "../service/service.entity";
 import { PetCombo } from "../pet_service/pet-combo.entity";
 import { BreedingTransaction } from "../transaction_service/breeding-transaction.entity";
+import { Pet } from "../pet_service/pet.entity";
 
 @Entity("order_detail")
 export class OrderDetail extends BaseEntity {
@@ -23,6 +24,8 @@ export class OrderDetail extends BaseEntity {
   totalPrice: number;
   @Column({ type: "text", nullable: true })
   description: string;
+  @Column({ type: "text", nullable: true })
+  microchip: string;
 
   @Column({ name: "orderId" })
   orderId: number;
@@ -50,6 +53,12 @@ export class OrderDetail extends BaseEntity {
   )
   @JoinColumn({ name: "breedTransactionId", referencedColumnName: "id" })
   breedTransaction: BreedingTransaction;
+
+  @Column({ name: "petId", nullable: true })
+  petId: number;
+  @ManyToOne(() => Pet, (pet) => pet.orderDetails, {})
+  @JoinColumn({ name: "petId", referencedColumnName: "id" })
+  pet: Pet;
 
   constructor(partial: Partial<OrderDetail>) {
     super();
