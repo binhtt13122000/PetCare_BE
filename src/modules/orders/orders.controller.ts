@@ -648,7 +648,7 @@ export class OrdersController {
                                 write: script,
                               },
                               type: "UPDATE",
-                              date: updatedOrder.registerTime,
+                              date: order.registerTime,
                             })
                             .pipe(map((response) => response.data));
                         }
