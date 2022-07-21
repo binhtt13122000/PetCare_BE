@@ -627,31 +627,6 @@ export class OrdersController {
                             }),
                           );
                         }
-
-                        if (petInstance.specialMarkings) {
-                          let script = "";
-                          if (findService.type === ServiceType.VACCINE) {
-                            script = "The dog has been given a new vaccine";
-                          } else if (
-                            findService.type === ServiceType.HELMINTHIC
-                          ) {
-                            script = "The dog has been given a new deworming";
-                          } else if (findService.type === ServiceType.TICKS) {
-                            script =
-                              "The dog has been given a new tick treatment";
-                          }
-                          await this.httpService
-                            .post("/api/setData", {
-                              no: petInstance.specialMarkings,
-                              content: {
-                                current: petInstance,
-                                write: script,
-                              },
-                              type: "UPDATE",
-                              date: order.registerTime,
-                            })
-                            .pipe(map((response) => response.data));
-                        }
                       }
                     }
                   }
