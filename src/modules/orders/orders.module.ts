@@ -1,7 +1,5 @@
-import { HttpModule } from "@nestjs/axios";
 import { forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { configService } from "src/config/config.service";
 import { SharedModule } from "src/shared/shared.module";
 import { BreedTransactionModule } from "../breed-transaction/breed-transaction.module";
 import { ComboServiceModule } from "../combo-services/combo-services.module";
@@ -18,7 +16,6 @@ import { OrdersController } from "./orders.controller";
 import { OrdersRepository } from "./orders.repository";
 import { OrdersService } from "./orders.service";
 
-const blockchainServer = configService.getBlockchainServer();
 @Module({
   imports: [
     TypeOrmModule.forFeature([OrdersRepository]),
@@ -34,12 +31,6 @@ const blockchainServer = configService.getBlockchainServer();
     PetsModule,
     HealthPetRecordsModule,
     forwardRef(() => PetComboServicesModule),
-    HttpModule.register({
-      baseURL: blockchainServer,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }),
   ],
   controllers: [OrdersController],
   providers: [OrdersService],

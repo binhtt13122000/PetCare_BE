@@ -59,9 +59,7 @@ import { ReviewDTO } from "./dto/review-order.dto";
 import { ShopService } from "../services/services.service";
 import { PetsService } from "../pets/pets.service";
 import { HealthPetRecordsService } from "../health-pet-records/health-pet-records.service";
-import { HttpService } from "@nestjs/axios";
 import { HealthPetRecord } from "src/entities/pet_service/health-pet-record.entity";
-import { map } from "rxjs";
 
 @ApiTags("orders")
 @Controller("orders")
@@ -81,7 +79,6 @@ export class OrdersController {
     private readonly petComboServicesService: PetComboServicesService,
     private readonly notificationProducerService: NotificationProducerService,
     private readonly healthPetRecordsService: HealthPetRecordsService,
-    private readonly httpService: HttpService,
   ) {}
 
   @Get(":id")
