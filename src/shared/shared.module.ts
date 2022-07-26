@@ -5,9 +5,15 @@ import { FileProducerService } from "./file/file.producer.service";
 import { NotificationProducerService } from "./notification/notification.producer.service";
 import { NotificationConsumer } from "./notification/notification.consumer";
 import { FileConsumer } from "./file/file.consumer";
+import { HttpModule } from "@nestjs/axios";
+import { AxiosService } from "./axios/axios.service";
 
+const blockchainServer = configService.getBlockchainServer();
 @Module({
   imports: [
+    HttpModule.register({
+      baseURL: blockchainServer,
+    }),
     BullModule.forRoot({
       redis: {
         host: configService.getRedisServer(),
@@ -28,12 +34,14 @@ import { FileConsumer } from "./file/file.consumer";
     FileConsumer,
     NotificationProducerService,
     NotificationConsumer,
+    AxiosService,
   ],
   exports: [
     FileProducerService,
     FileConsumer,
     NotificationProducerService,
     NotificationConsumer,
+    AxiosService,
   ],
 })
 export class SharedModule {}

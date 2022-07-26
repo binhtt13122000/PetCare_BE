@@ -11,8 +11,6 @@ import {
   UseInterceptors,
   Param,
   Query,
-  NotFoundException,
-  BadRequestException,
   Inject,
   CACHE_MANAGER,
 } from "@nestjs/common";
@@ -27,8 +25,6 @@ import { PetEnum } from "src/enum";
 import { PetOwner } from "src/entities/pet_service/pet-owner.entity";
 import { FileProducerService } from "src/shared/file/file.producer.service";
 import { ChainData } from "src/common";
-import { map, Observable } from "rxjs";
-import { HttpService } from "@nestjs/axios";
 import { CreateChainDTO } from "./dto/create-chain.dto";
 import { Cache } from "cache-manager";
 
@@ -38,7 +34,6 @@ export class PetsController {
   constructor(
     private readonly petsService: PetsService,
     private readonly fileProducerService: FileProducerService,
-    private readonly httpService: HttpService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
@@ -68,64 +63,20 @@ export class PetsController {
   @Get("chain/:id")
   async getChain(
     @Param("id") id: number,
-  ): Promise<Observable<Array<ChainData>>> {
-    const pet = await this.petsService.findById(id);
-    if (!pet) {
-      throw new NotFoundException("not found");
-    }
-    if (!pet.specialMarkings) {
-      throw new NotFoundException("not found microchip");
-    }
-    return this.httpService
-      .get("/api/getHistory/" + pet.specialMarkings)
-      .pipe(map((response) => response.data));
+  ): Promise<{ key: string; value: ChainData[] }> {
+    return this.petsService.getChain(id);
   }
 
   @Get("chain/hash/:uuid")
   async getChainByUUID(
     @Param("uuid") uuid: string,
-  ): Promise<Observable<Array<ChainData>>> {
-    const data: number = await this.cacheManager.get(uuid);
-    const id = data ? Number(data) : 0;
-    const pet = await this.petsService.findById(id);
-    if (!pet) {
-      throw new NotFoundException("not found");
-    }
-    if (!pet.specialMarkings) {
-      throw new NotFoundException("not found microchip");
-    }
-    return this.httpService
-      .get("/api/getHistory/" + pet.specialMarkings)
-      .pipe(map((response) => response.data));
+  ): Promise<{ key: string; value: ChainData[] }> {
+    return this.petsService.getChainByUUID(uuid);
   }
 
   @Put("create-chain")
-  async createChain(@Body() body: CreateChainDTO): Promise<unknown> {
-    const pet = await this.petsService.findById(body.id);
-    if (!pet) {
-      throw new NotFoundException("not found");
-    }
-    if (pet.specialMarkings) {
-      throw new BadRequestException("had microchip");
-    }
-    await this.petsService.update(body.id, {
-      ...pet,
-      specialMarkings: body.specialMarkings,
-    });
-    const fullDataPet = await this.petsService.getOne(body.id, true);
-    return this.httpService
-      .post("/api/setData", {
-        no: fullDataPet.specialMarkings,
-        content: {
-          current: fullDataPet,
-          write:
-            "The data of pet is init with adding microchip:" +
-            fullDataPet.specialMarkings,
-        },
-        type: "CREATE",
-        date: body.initDate,
-      })
-      .pipe(map((response) => response.data));
+  async createChain(@Body() body: CreateChainDTO): Promise<string> {
+    return this.petsService.createChain(body);
   }
 
   @Get("fetch-pet")
@@ -201,7 +152,7 @@ export class PetsController {
   async update(
     @UploadedFile() file: Express.Multer.File,
     @Body() body: UpdatePetDTO,
-  ): Promise<unknown> {
+  ): Promise<string | Pet> {
     try {
       let avatar = null;
       if (file) {
@@ -213,23 +164,7 @@ export class PetsController {
         ...body,
         avatar: file ? avatar : body.avatar,
       };
-      const updatePet = await this.petsService.update(pet.id, pet);
-      if (updatePet.specialMarkings) {
-        const fullDataPet = await this.petsService.getOne(body.id, true);
-        return this.httpService
-          .post("/api/setData", {
-            no: fullDataPet.specialMarkings,
-            content: {
-              current: fullDataPet,
-              write: "Customer updated data of pet",
-            },
-            type: "UPDATE",
-            date: new Date(new Date().getTime() + 7 * 60 * 60 * 1000),
-          })
-          .pipe(map((response) => response.data));
-      } else {
-        return updatePet;
-      }
+      return this.petsService.updatePet(pet);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
@@ -237,36 +172,6 @@ export class PetsController {
 
   @Delete(":id")
   async delete(@Param("id") id: number): Promise<unknown> {
-    try {
-      const pet = await this.petsService.findById(id);
-      if (!pet) {
-        throw new NotFoundException("not found");
-      }
-      if (pet.status === PetEnum.IN_POST || pet.status === PetEnum.DELETED) {
-        throw Error("Cannot delete this pet");
-      }
-      const deletedPet = await this.petsService.update(id, {
-        ...pet,
-        status: PetEnum.DELETED,
-      });
-      if (deletedPet.specialMarkings) {
-        const fullDataPet = await this.petsService.getOne(id, true);
-        return this.httpService
-          .post("/api/setData", {
-            no: fullDataPet.specialMarkings,
-            content: {
-              current: fullDataPet,
-              write: "Customer deleted the pet.",
-            },
-            type: "DELETE_PET",
-            date: new Date(new Date().getTime() + 7 * 60 * 60 * 1000),
-          })
-          .pipe(map((response) => response.data));
-      } else {
-        return deletedPet;
-      }
-    } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
-    }
+    return this.petsService.deletePet(id);
   }
 }
