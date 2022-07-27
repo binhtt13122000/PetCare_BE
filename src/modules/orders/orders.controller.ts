@@ -586,10 +586,15 @@ export class OrdersController {
                   item.serviceId,
                 );
                 if (findService && findService.type !== ServiceType.NORMAL) {
-                  const petInstance: Pet = await this.petService.getOne(
-                    item.petId,
-                    true,
-                  );
+                  let petInstance: Pet;
+                  if (findService.type === ServiceType.MICROCHIP) {
+                    petInstance = await this.petService.findById(item.petId);
+                  } else {
+                    petInstance = await this.petService.getOne(
+                      item.petId,
+                      true,
+                    );
+                  }
                   if (petInstance) {
                     if (
                       findService.type === ServiceType.MICROCHIP &&
