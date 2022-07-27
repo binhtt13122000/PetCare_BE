@@ -60,6 +60,8 @@ import { ShopService } from "../services/services.service";
 import { PetsService } from "../pets/pets.service";
 import { HealthPetRecordsService } from "../health-pet-records/health-pet-records.service";
 import { HealthPetRecord } from "src/entities/pet_service/health-pet-record.entity";
+import { AxiosService } from "src/shared/axios/axios.service";
+import { Pet } from "src/entities/pet_service/pet.entity";
 
 @ApiTags("orders")
 @Controller("orders")
@@ -79,6 +81,7 @@ export class OrdersController {
     private readonly petComboServicesService: PetComboServicesService,
     private readonly notificationProducerService: NotificationProducerService,
     private readonly healthPetRecordsService: HealthPetRecordsService,
+    private readonly axiosService: AxiosService,
   ) {}
 
   @Get(":id")
@@ -557,6 +560,18 @@ export class OrdersController {
                   findBreedTransaction.status =
                     BreedingTransactionEnum.BREEDING_SUCCESS;
                   await findBreedTransaction.save();
+                  const fullPet = await this.petService.getOne(
+                    findBreedTransaction.petFemaleId,
+                    true,
+                  );
+                  if (fullPet.specialMarkings) {
+                    await this.axiosService.setData(
+                      fullPet,
+                      "BREED",
+                      "Pet has been bred.",
+                      fullPet.specialMarkings,
+                    );
+                  }
                 }
               } else if (item.petComboId) {
                 const findPetCombo = await this.petCombosService.findById(
@@ -571,15 +586,10 @@ export class OrdersController {
                   item.serviceId,
                 );
                 if (findService && findService.type !== ServiceType.NORMAL) {
-                  let petInstance;
-                  if (findService.type === ServiceType.MICROCHIP) {
-                    petInstance = await this.petService.findById(item.petId);
-                  } else {
-                    petInstance = await this.petService.getOne(
-                      item.petId,
-                      true,
-                    );
-                  }
+                  const petInstance: Pet = await this.petService.getOne(
+                    item.petId,
+                    true,
+                  );
                   if (petInstance) {
                     if (
                       findService.type === ServiceType.MICROCHIP &&
@@ -587,16 +597,28 @@ export class OrdersController {
                     ) {
                       petInstance.specialMarkings = item.microchip;
                       petInstance.save();
+                      await this.axiosService.setData(
+                        petInstance,
+                        "CREATE",
+                        "The data of pet is init with adding microchip:" +
+                          petInstance.specialMarkings,
+                        petInstance.specialMarkings,
+                      );
                     } else {
-                      let healthPetRecordType;
+                      let script = "";
+                      let healthPetRecordType: HealthPetRecordEnum | null;
                       switch (findService.type) {
                         case ServiceType.VACCINE:
+                          script = "The dog has been given a new vaccine";
                           healthPetRecordType = HealthPetRecordEnum.VACCINE;
                           break;
                         case ServiceType.HELMINTHIC:
+                          script = "The dog has been given a new deworming";
                           healthPetRecordType = HealthPetRecordEnum.HELMINTHIC;
                           break;
                         case ServiceType.TICKS:
+                          script =
+                            "The dog has been given a new tick treatment";
                           healthPetRecordType = HealthPetRecordEnum.TICKS;
                           break;
                         default:
@@ -622,6 +644,14 @@ export class OrdersController {
                             new HealthPetRecord({
                               ...healthPetRecord,
                             }),
+                          );
+                        }
+                        if (petInstance.specialMarkings) {
+                          await this.axiosService.setData(
+                            petInstance,
+                            "UPDATE",
+                            script,
+                            petInstance.specialMarkings,
                           );
                         }
                       }

@@ -50,6 +50,7 @@ import { getSpecificDateAgoWithNumberDays } from "src/common/utils";
 import { HttpService } from "@nestjs/axios";
 import { map } from "rxjs";
 import { ResponseSaleTransaction } from "./dtos/response-sale-transaction.dto";
+import { AxiosService } from "src/shared/axios/axios.service";
 
 @Controller("sale-transactions")
 @ApiTags("sale-transactions")
@@ -66,7 +67,8 @@ export class SaleTransactionsController {
     private readonly petsService: PetsService,
     private readonly userService: UserService,
     private readonly branchService: BranchesService,
-    private notificationProducerService: NotificationProducerService,
+    private readonly notificationProducerService: NotificationProducerService,
+    private readonly axiosService: AxiosService,
     private httpService: HttpService,
   ) {}
 
@@ -416,17 +418,12 @@ export class SaleTransactionsController {
 
           if (pet.specialMarkings) {
             const fullDataPet = await this.petsService.getOne(pet.id, true);
-            return this.httpService
-              .post("/api/setData", {
-                no: fullDataPet.specialMarkings,
-                content: {
-                  current: fullDataPet,
-                  write: "The pet has new owner.",
-                },
-                type: "CHANGE_OWNER",
-                date: new Date(new Date().getTime() + 7 * 60 * 60 * 1000),
-              })
-              .pipe(map((response) => response.data));
+            await this.axiosService.setData(
+              fullDataPet,
+              "CHANGE_OWNER",
+              "The pet has new owner.",
+              pet.specialMarkings,
+            );
           }
         } catch (error) {
           throw new HttpException(error, HttpStatus.BAD_REQUEST);
