@@ -6,6 +6,9 @@ import { PetComboServicesController } from "./pet-combo-services.controller";
 import { PetComboServiceRepository } from "./pet-combo-services.repository";
 import { PetComboServicesService } from "./pet-combo-services.service";
 import { PetComboModule } from "../pet-combo/pet-combo.module";
+import { ServicesModule } from "../services/services.module";
+import { HealthPetRecordsModule } from "../health-pet-records/health-pet-records.module";
+import { PetsModule } from "../pets/pets.module";
 
 @Module({
   imports: [
@@ -13,6 +16,9 @@ import { PetComboModule } from "../pet-combo/pet-combo.module";
     forwardRef(() => PetComboModule),
     UserModule,
     SharedModule,
+    ServicesModule,
+    HealthPetRecordsModule,
+    PetsModule,
   ],
   controllers: [PetComboServicesController],
   providers: [PetComboServicesService],

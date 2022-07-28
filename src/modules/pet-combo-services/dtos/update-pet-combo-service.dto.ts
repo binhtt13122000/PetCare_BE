@@ -13,6 +13,8 @@ export class UpdatePetComboServiceDTO {
   review: number;
   @ApiProperty({ required: false })
   isAllCompleted: boolean;
+  @ApiProperty({ required: false })
+  microchip: string;
   @ApiProperty()
   workingTime: Date;
   @ApiProperty({ type: "string", format: "binary" })

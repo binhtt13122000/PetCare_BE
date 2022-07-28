@@ -19,6 +19,12 @@ import { NotificationPetComboServiceDTO } from "./dtos/notification-pet-combo-se
 import { PetCombosService } from "../pet-combo/pet-combo.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { uploadService } from "src/external/uploadFile.service";
+import { ShopService } from "../services/services.service";
+import { HealthPetRecordEnum, ServiceType } from "src/enum";
+import { HealthPetRecordsService } from "../health-pet-records/health-pet-records.service";
+import { HealthPetRecord } from "../../entities/pet_service/health-pet-record.entity";
+import { AxiosService } from "src/shared/axios/axios.service";
+import { PetsService } from "../pets/pets.service";
 
 @Controller("pet-combo-services")
 @ApiTags("pet-combo-services")
@@ -26,6 +32,10 @@ export class PetComboServicesController {
   constructor(
     private readonly petComboServicesService: PetComboServicesService,
     private readonly petCombosService: PetCombosService,
+    private readonly shopService: ShopService,
+    private readonly healthPetRecordsService: HealthPetRecordsService,
+    private readonly axiosService: AxiosService,
+    private readonly petService: PetsService,
   ) {}
 
   @Get()
@@ -46,7 +56,7 @@ export class PetComboServicesController {
     @UploadedFile() file: Express.Multer.File,
     @Body() body: UpdatePetComboServiceDTO,
   ): Promise<PetComboService> {
-    const { isAllCompleted, ...rest } = body;
+    const { isAllCompleted, microchip, ...rest } = body;
     const petComboService = await this.petComboServicesService.findById(
       body.id,
     );
@@ -77,6 +87,83 @@ export class PetComboServicesController {
         ...petCombo,
         isCompleted: true,
       });
+    }
+    if (updatePetComboService.isCompleted) {
+      const service = await this.shopService.findById(
+        updatePetComboService.serviceId,
+      );
+      if (service) {
+        const pet = await this.petService.getOne(petCombo.petId, true);
+        switch (service.type) {
+          case ServiceType.VACCINE:
+            await this.healthPetRecordsService.store(
+              new HealthPetRecord({
+                type: HealthPetRecordEnum.VACCINE,
+                dateOfInjection: updatePetComboService.realTime,
+                petId: petCombo.petId,
+                branchId: petCombo.branchId,
+                vaccineType: service.name,
+                vaccineId: service.vaccineId,
+              }),
+            );
+            if (pet.specialMarkings) {
+              await this.axiosService.setData(
+                pet,
+                "UPDATE",
+                "The dog has been given a new vaccine",
+                pet.specialMarkings,
+              );
+            }
+            break;
+          case ServiceType.HELMINTHIC:
+            await this.healthPetRecordsService.store(
+              new HealthPetRecord({
+                type: HealthPetRecordEnum.HELMINTHIC,
+                dateOfInjection: updatePetComboService.realTime,
+                petId: petCombo.petId,
+                branchId: petCombo.branchId,
+              }),
+            );
+            if (pet.specialMarkings) {
+              await this.axiosService.setData(
+                pet,
+                "UPDATE",
+                "The dog has been given a new deworming",
+                pet.specialMarkings,
+              );
+            }
+            break;
+          case ServiceType.TICKS:
+            await this.healthPetRecordsService.store(
+              new HealthPetRecord({
+                type: HealthPetRecordEnum.TICKS,
+                dateOfInjection: updatePetComboService.realTime,
+                petId: petCombo.petId,
+                branchId: petCombo.branchId,
+              }),
+            );
+            if (pet.specialMarkings) {
+              await this.axiosService.setData(
+                pet,
+                "UPDATE",
+                "The dog has been given a new tick treatment",
+                pet.specialMarkings,
+              );
+            }
+            break;
+          case ServiceType.MICROCHIP:
+            if (microchip) {
+              this.petService.createChain({
+                id: petCombo.petId,
+                specialMarkings: microchip,
+                initDate: updatePetComboService.realTime,
+              });
+            }
+            break;
+          default:
+            break;
+        }
+      }
     }
     return updatePetComboService;
   }
