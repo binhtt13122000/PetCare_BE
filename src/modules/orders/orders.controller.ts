@@ -550,121 +550,128 @@ export class OrdersController {
             throw new HttpException("Paymented!", HttpStatus.NOT_FOUND);
           }
           await Promise.all(
-            orderList.orderDetails.map(async (item) => {
-              if (item.breedTransactionId) {
-                const findBreedTransaction =
-                  await this.breedTransactionService.findById(
-                    item.breedTransactionId,
-                  );
-                if (findBreedTransaction) {
-                  findBreedTransaction.status =
-                    BreedingTransactionEnum.BREEDING_SUCCESS;
-                  await findBreedTransaction.save();
-                  const fullPet = await this.petService.getOne(
-                    findBreedTransaction.petFemaleId,
-                    true,
-                  );
-                  if (fullPet.specialMarkings) {
-                    await this.axiosService.setData(
-                      fullPet,
-                      "BREED",
-                      "Pet has been bred.",
-                      fullPet.specialMarkings,
+            orderList.orderDetails
+              .sort((a, b) => a.id - b.id)
+              .map(async (item) => {
+                if (item.breedTransactionId) {
+                  const findBreedTransaction =
+                    await this.breedTransactionService.findById(
+                      item.breedTransactionId,
                     );
-                  }
-                }
-              } else if (item.petComboId) {
-                const findPetCombo = await this.petCombosService.findById(
-                  item.petComboId,
-                );
-                if (findPetCombo) {
-                  findPetCombo.isDraft = false;
-                  findPetCombo.save();
-                }
-              } else if (item.petId) {
-                const findService = await this.shopService.findById(
-                  item.serviceId,
-                );
-                if (findService && findService.type !== ServiceType.NORMAL) {
-                  let petInstance: Pet;
-                  if (findService.type === ServiceType.MICROCHIP) {
-                    petInstance = await this.petService.findById(item.petId);
-                  } else {
-                    petInstance = await this.petService.getOne(
-                      item.petId,
+                  if (findBreedTransaction) {
+                    findBreedTransaction.status =
+                      BreedingTransactionEnum.BREEDING_SUCCESS;
+                    await findBreedTransaction.save();
+                    const fullPet = await this.petService.getOne(
+                      findBreedTransaction.petFemaleId,
                       true,
                     );
-                  }
-                  if (petInstance) {
-                    if (
-                      findService.type === ServiceType.MICROCHIP &&
-                      item.microchip
-                    ) {
-                      petInstance.specialMarkings = item.microchip;
-                      petInstance.save();
+                    if (fullPet.specialMarkings) {
                       await this.axiosService.setData(
-                        petInstance,
-                        "CREATE",
-                        "The data of pet is init with adding microchip:" +
-                          petInstance.specialMarkings,
-                        petInstance.specialMarkings,
+                        fullPet,
+                        "BREED",
+                        "Pet has been bred.",
+                        fullPet.specialMarkings,
                       );
+                    }
+                  }
+                } else if (item.petComboId) {
+                  const findPetCombo = await this.petCombosService.findById(
+                    item.petComboId,
+                  );
+                  if (findPetCombo) {
+                    findPetCombo.isDraft = false;
+                    await findPetCombo.save();
+                  }
+                } else if (item.petId) {
+                  const findService = await this.shopService.findById(
+                    item.serviceId,
+                  );
+                  if (findService && findService.type !== ServiceType.NORMAL) {
+                    let petInstance: Pet;
+                    if (findService.type === ServiceType.MICROCHIP) {
+                      petInstance = await this.petService.findById(item.petId);
                     } else {
-                      let script = "";
-                      let healthPetRecordType: HealthPetRecordEnum | null;
-                      switch (findService.type) {
-                        case ServiceType.VACCINE:
-                          script = "The dog has been given a new vaccine";
-                          healthPetRecordType = HealthPetRecordEnum.VACCINE;
-                          break;
-                        case ServiceType.HELMINTHIC:
-                          script = "The dog has been given a new deworming";
-                          healthPetRecordType = HealthPetRecordEnum.HELMINTHIC;
-                          break;
-                        case ServiceType.TICKS:
-                          script =
-                            "The dog has been given a new tick treatment";
-                          healthPetRecordType = HealthPetRecordEnum.TICKS;
-                          break;
-                        default:
-                          break;
-                      }
-                      if (healthPetRecordType) {
-                        const healthPetRecord = {
-                          type: healthPetRecordType,
-                          dateOfInjection: order.registerTime,
-                          petId: petInstance.id,
-                          branchId: order.branchId,
-                        };
-                        if (findService.type === ServiceType.VACCINE) {
-                          await this.healthPetRecordsService.store(
-                            new HealthPetRecord({
-                              ...healthPetRecord,
-                              vaccineType: findService.name,
-                              vaccineId: findService.vaccineId,
-                            }),
-                          );
-                        } else {
-                          await this.healthPetRecordsService.store(
-                            new HealthPetRecord({
-                              ...healthPetRecord,
-                            }),
-                          );
-                        }
-                        if (petInstance.specialMarkings) {
-                          await this.axiosService.setData(
-                            petInstance,
-                            "UPDATE",
-                            script,
+                      petInstance = await this.petService.getOne(
+                        item.petId,
+                        true,
+                      );
+                    }
+                    if (petInstance) {
+                      if (
+                        findService.type === ServiceType.MICROCHIP &&
+                        item.microchip
+                      ) {
+                        petInstance.specialMarkings = item.microchip;
+                        await petInstance.save();
+                        petInstance = await this.petService.getOne(
+                          item.petId,
+                          true,
+                        );
+                        await this.axiosService.setData(
+                          petInstance,
+                          "CREATE",
+                          "The data of pet is init with adding microchip:" +
                             petInstance.specialMarkings,
-                          );
+                          petInstance.specialMarkings,
+                        );
+                      } else {
+                        let script = "";
+                        let healthPetRecordType: HealthPetRecordEnum | null;
+                        switch (findService.type) {
+                          case ServiceType.VACCINE:
+                            script = "The dog has been given a new vaccine";
+                            healthPetRecordType = HealthPetRecordEnum.VACCINE;
+                            break;
+                          case ServiceType.HELMINTHIC:
+                            script = "The dog has been given a new deworming";
+                            healthPetRecordType =
+                              HealthPetRecordEnum.HELMINTHIC;
+                            break;
+                          case ServiceType.TICKS:
+                            script =
+                              "The dog has been given a new tick treatment";
+                            healthPetRecordType = HealthPetRecordEnum.TICKS;
+                            break;
+                          default:
+                            break;
+                        }
+                        if (healthPetRecordType) {
+                          const healthPetRecord = {
+                            type: healthPetRecordType,
+                            dateOfInjection: order.registerTime,
+                            petId: petInstance.id,
+                            branchId: order.branchId,
+                          };
+                          if (findService.type === ServiceType.VACCINE) {
+                            await this.healthPetRecordsService.store(
+                              new HealthPetRecord({
+                                ...healthPetRecord,
+                                vaccineType: findService.name,
+                                vaccineId: findService.vaccineId,
+                              }),
+                            );
+                          } else {
+                            await this.healthPetRecordsService.store(
+                              new HealthPetRecord({
+                                ...healthPetRecord,
+                              }),
+                            );
+                          }
+                          if (petInstance.specialMarkings) {
+                            await this.axiosService.setData(
+                              petInstance,
+                              "UPDATE",
+                              script,
+                              petInstance.specialMarkings,
+                            );
+                          }
                         }
                       }
                     }
                   }
                 }
-              }
-            }),
+              }),
           );
           this.cacheManager.del("order_id_" + id);
           await this.ordersService.update(updatedOrder.id, {
