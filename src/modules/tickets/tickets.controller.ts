@@ -11,11 +11,14 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { Ticket } from "src/entities/service/ticket.entity";
 import { NotificationEnum, TicketStatusEnum } from "src/enum";
 import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../auth/guards/roles.guard";
 import { BranchesService } from "../branches/branches.service";
 import { CustomerService } from "../customer/customer.service";
 import { UserService } from "../users/user.service";
@@ -55,11 +58,13 @@ export class TicketsController {
     return this.ticketsService.getTicketsByBranchId(id, date);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get("customers/:id")
   async getByCustomerId(@Param("id") id: number): Promise<Ticket> {
     return this.ticketsService.getTicketsByUserId(id);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   async create(@Body() body: CreateTicketDTO): Promise<Ticket> {
     try {
@@ -95,6 +100,7 @@ export class TicketsController {
     }
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Put()
   async update(@Body() body: CreateTicketDTO): Promise<Ticket> {
     try {
@@ -104,6 +110,7 @@ export class TicketsController {
     }
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch()
   async changeStatusTicket(
     @Body() body: ChangeStatusTicketDTO,

@@ -15,6 +15,7 @@ import {
   BadGatewayException,
   Param,
   BadRequestException,
+  UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { OrdersService } from "./orders.service";
@@ -62,9 +63,12 @@ import { HealthPetRecordsService } from "../health-pet-records/health-pet-record
 import { HealthPetRecord } from "src/entities/pet_service/health-pet-record.entity";
 import { AxiosService } from "src/shared/axios/axios.service";
 import { Pet } from "src/entities/pet_service/pet.entity";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../auth/guards/roles.guard";
 
 @ApiTags("orders")
 @Controller("orders")
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class OrdersController {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,

@@ -1,14 +1,15 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { PetsService } from "./pets.service";
 import { PetsController } from "./pets.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { PetsRepository } from "./pets.repository";
 import { SharedModule } from "src/shared/shared.module";
+import { AuthModule } from "../auth/auth.module";
 
 @Module({
   imports: [
+    forwardRef(() => AuthModule),
     TypeOrmModule.forFeature([PetsRepository]),
-    SharedModule,
     SharedModule,
   ],
   controllers: [PetsController],

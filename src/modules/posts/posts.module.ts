@@ -8,10 +8,12 @@ import { SharedModule } from "src/shared/shared.module";
 import { MediasModule } from "../medias/medias.module";
 import { UserModule } from "../users/user.module";
 import { BranchesModule } from "../branches/branches.module";
+import { AuthModule } from "../auth/auth.module";
 
 @Module({
   imports: [
     forwardRef(() => BranchesModule),
+    forwardRef(() => AuthModule),
     TypeOrmModule.forFeature([PostsRepository]),
     PetsModule,
     SharedModule,

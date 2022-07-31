@@ -10,6 +10,7 @@ import {
   Post,
   Put,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -25,6 +26,8 @@ import { CreateCustomerDTO } from "./dto/create-customer.dto";
 import { UpdateCustomerDTO } from "./dto/update-customer.dto";
 import * as bcrypt from "bcrypt";
 import { FileProducerService } from "src/shared/file/file.producer.service";
+import { RolesGuard } from "../auth/guards/roles.guard";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
 @Controller("customers")
 @ApiTags("customers")
@@ -53,6 +56,7 @@ export class CustomerController {
     }
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Put()
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(FileInterceptor("file"))
@@ -84,6 +88,7 @@ export class CustomerController {
     }
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch("change-status/:id")
   async changeStatus(@Param("id") id: string): Promise<Customer> {
     try {
@@ -110,6 +115,7 @@ export class CustomerController {
     }
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(":id")
   async delete(@Param("id") id: string): Promise<Customer> {
     try {
@@ -142,6 +148,7 @@ export class CustomerController {
     }
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   async create(@Body() body: CreateCustomerDTO): Promise<Customer> {
     try {

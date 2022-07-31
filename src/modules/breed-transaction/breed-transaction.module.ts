@@ -12,10 +12,12 @@ import { PetsModule } from "../pets/pets.module";
 import { UserModule } from "../users/user.module";
 import { SharedModule } from "src/shared/shared.module";
 import { BranchesModule } from "../branches/branches.module";
+import { AuthModule } from "../auth/auth.module";
 
 @Module({
   imports: [
     forwardRef(() => BranchesModule),
+    forwardRef(() => AuthModule),
     TypeOrmModule.forFeature([BreedTransactionRepository]),
     CustomerModule,
     PostsModule,

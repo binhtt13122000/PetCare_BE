@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Put,
+  UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { ShopService } from "./services.service";
@@ -20,6 +21,10 @@ import { ServiceFeesService } from "../service-fees/service-fees.service";
 import { ServiceFee } from "../../entities/service/service-fee.entity";
 import { Ticket } from "src/entities/service/ticket.entity";
 import { TicketsService } from "../tickets/tickets.service";
+import { RolesGuard } from "../auth/guards/roles.guard";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { hasRoles } from "../auth/decorator/roles.decorator";
+import { RoleEnum } from "src/enum";
 
 @Controller("services")
 @ApiTags("services")
@@ -57,6 +62,8 @@ export class ServicesController {
     }
   }
 
+  @hasRoles(RoleEnum.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   async create(@Body() body: CreateServiceDTO): Promise<Service> {
     try {
@@ -76,6 +83,8 @@ export class ServicesController {
     }
   }
 
+  @hasRoles(RoleEnum.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Put()
   async update(@Body() body: UpdateServiceDTO): Promise<Service> {
     try {
@@ -85,6 +94,8 @@ export class ServicesController {
     }
   }
 
+  @hasRoles(RoleEnum.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(":id")
   async delete(@Param("id") id: string): Promise<Service> {
     try {
@@ -95,6 +106,8 @@ export class ServicesController {
     }
   }
 
+  @hasRoles(RoleEnum.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch("change-status/:id")
   async changeStatus(@Param("id") id: string): Promise<Service> {
     try {

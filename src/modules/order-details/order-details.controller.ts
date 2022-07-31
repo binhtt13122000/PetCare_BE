@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Query,
+  UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { IdParams } from "src/common";
@@ -16,9 +17,12 @@ import { OrderDetailOptionDto } from "./dto/order-detail-option.dto";
 import { OrderDetailsService } from "./order-details.service";
 import { NotFoundException } from "@nestjs/common";
 import { DeleteResult } from "typeorm";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../auth/guards/roles.guard";
 
 @Controller("order-details")
 @ApiTags("order-details")
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class OrderDetailsController {
   constructor(
     private readonly orderDetailsService: OrderDetailsService,

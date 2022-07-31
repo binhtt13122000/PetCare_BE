@@ -15,11 +15,13 @@ import { SharedModule } from "src/shared/shared.module";
 import { BranchesModule } from "../branches/branches.module";
 import { HttpModule } from "@nestjs/axios";
 import { configService } from "src/config/config.service";
+import { AuthModule } from "../auth/auth.module";
 
 const blockchainServer = configService.getBlockchainServer();
 @Module({
   imports: [
     forwardRef(() => BranchesModule),
+    forwardRef(() => AuthModule),
     TypeOrmModule.forFeature([SaleTransactionsRepository]),
     CustomerModule,
     PostsModule,

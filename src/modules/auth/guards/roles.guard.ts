@@ -21,6 +21,7 @@ export class RolesGuard implements CanActivate {
     const findUserByPhone = await this.authService.validateUser(
       user.phoneNumber,
     );
+
     if (!findUserByPhone) {
       return false;
     }

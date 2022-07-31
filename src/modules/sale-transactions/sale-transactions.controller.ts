@@ -13,6 +13,7 @@ import {
   Get,
   Param,
   BadRequestException,
+  UseGuards,
 } from "@nestjs/common";
 import { ApiQuery, ApiTags } from "@nestjs/swagger";
 import { SaleTransaction } from "src/entities/transaction_service/sale-transaction.entity";
@@ -48,9 +49,10 @@ import { NotificationProducerService } from "src/shared/notification/notificatio
 import { BranchesService } from "../branches/branches.service";
 import { getSpecificDateAgoWithNumberDays } from "src/common/utils";
 import { HttpService } from "@nestjs/axios";
-import { map } from "rxjs";
 import { ResponseSaleTransaction } from "./dtos/response-sale-transaction.dto";
 import { AxiosService } from "src/shared/axios/axios.service";
+import { RolesGuard } from "../auth/guards/roles.guard";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
 @Controller("sale-transactions")
 @ApiTags("sale-transactions")
@@ -117,11 +119,13 @@ export class SaleTransactionsController {
     return saleTransactionList;
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get(":id")
   async getOne(@Param("id") id: number): Promise<SaleTransaction> {
     return await this.saleTransactionsService.getOne(id);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   async create(@Body() body: CreateSaleTransactionDTO): Promise<
     | ResponseSaleTransaction
@@ -157,6 +161,7 @@ export class SaleTransactionsController {
     }
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Put()
   async update(
     @Body() body: UpdateSaleTransactionDTO,
@@ -238,6 +243,7 @@ export class SaleTransactionsController {
     }
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post("payment")
   async deposit(
     @Req() req: Request,

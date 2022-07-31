@@ -1,6 +1,7 @@
 import { forwardRef, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { SharedModule } from "src/shared/shared.module";
+import { AuthModule } from "../auth/auth.module";
 import { BreedTransactionModule } from "../breed-transaction/breed-transaction.module";
 import { ComboServiceModule } from "../combo-services/combo-services.module";
 import { CombosModule } from "../combos/combos.module";
@@ -31,6 +32,7 @@ import { OrdersService } from "./orders.service";
     PetsModule,
     HealthPetRecordsModule,
     forwardRef(() => PetComboServicesModule),
+    forwardRef(() => AuthModule),
   ],
   controllers: [OrdersController],
   providers: [OrdersService],
