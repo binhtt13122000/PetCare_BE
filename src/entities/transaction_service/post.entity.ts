@@ -14,6 +14,7 @@ import { SaleTransaction } from "./sale-transaction.entity";
 import { Branch } from "../user_management_service/branch.entity";
 import { Customer } from "../user_management_service/customer.entity";
 import { PostEnum, ServiceEnum } from "src/enum";
+import { TransactionFee } from "../service/transaction-fee.entity";
 
 @Entity("post")
 export class Post extends BaseEntity {
@@ -68,6 +69,12 @@ export class Post extends BaseEntity {
   @ManyToOne(() => Customer, (customer) => customer.posts, {})
   @JoinColumn({ name: "customerId", referencedColumnName: "id" })
   customer: Customer;
+
+  @Column({ name: "transactionFeeId", nullable: true })
+  transactionFeeId: number;
+  @ManyToOne(() => TransactionFee, (transactionFee) => transactionFee.posts, {})
+  @JoinColumn({ name: "transactionFeeId", referencedColumnName: "id" })
+  transactionFee: TransactionFee;
 
   @OneToMany(() => Media, (media) => media.post, {
     cascade: true,

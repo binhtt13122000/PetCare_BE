@@ -1,5 +1,12 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { ServiceEnum } from "src/enum/index";
+import { Post } from "../transaction_service/post.entity";
 
 @Entity("transaction_fee")
 export class TransactionFee extends BaseEntity {
@@ -28,6 +35,9 @@ export class TransactionFee extends BaseEntity {
     nullable: true,
   })
   endTime: Date;
+
+  @OneToMany(() => Post, (post) => post.transactionFee)
+  posts: Post[];
   constructor(partial: Partial<TransactionFee>) {
     super();
     Object.assign(this, partial);

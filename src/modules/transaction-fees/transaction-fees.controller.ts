@@ -77,6 +77,7 @@ export class TransactionFeesController {
           id: null,
           endTime: null,
           startTime: body.date,
+          price: body.newPrice,
         }),
       );
     } catch (error) {
