@@ -17,6 +17,17 @@ export class TransactionFee extends BaseEntity {
     enum: ServiceEnum,
   })
   type: ServiceEnum;
+
+  @Column({
+    type: "timestamp without time zone",
+    nullable: true,
+  })
+  startTime: Date;
+  @Column({
+    type: "timestamp without time zone",
+    nullable: true,
+  })
+  endTime: Date;
   constructor(partial: Partial<TransactionFee>) {
     super();
     Object.assign(this, partial);
