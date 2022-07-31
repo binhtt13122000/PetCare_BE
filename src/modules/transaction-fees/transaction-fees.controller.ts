@@ -64,7 +64,21 @@ export class TransactionFeesController {
   @Put()
   async update(@Body() body: UpdateTransactionFeeDTO): Promise<TransactionFee> {
     try {
-      return await this.transactionFeesServices.update(body.id, body);
+      const updatedTransactionFee = await this.transactionFeesServices.findById(
+        body.id,
+      );
+      await this.transactionFeesServices.update(body.id, {
+        ...updatedTransactionFee,
+        endTime: body.date,
+      });
+      return await this.transactionFeesServices.store(
+        new TransactionFee({
+          ...updatedTransactionFee,
+          id: null,
+          endTime: null,
+          startTime: body.date,
+        }),
+      );
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
