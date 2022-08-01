@@ -12,6 +12,7 @@ import { PetComboServicesModule } from "../pet-combo-services/pet-combo-services
 import { PetComboModule } from "../pet-combo/pet-combo.module";
 import { PetsModule } from "../pets/pets.module";
 import { ServicesModule } from "../services/services.module";
+import { TicketsModule } from "../tickets/tickets.module";
 import { UserModule } from "../users/user.module";
 import { OrdersController } from "./orders.controller";
 import { OrdersRepository } from "./orders.repository";
@@ -33,6 +34,7 @@ import { OrdersService } from "./orders.service";
     HealthPetRecordsModule,
     forwardRef(() => PetComboServicesModule),
     forwardRef(() => AuthModule),
+    forwardRef(() => TicketsModule),
   ],
   controllers: [OrdersController],
   providers: [OrdersService],

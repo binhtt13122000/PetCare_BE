@@ -1,11 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { OrderDetail } from "src/entities/order_service/order-detail.entity";
-import {
-  OrderEnum,
-  OrderType,
-  OrderTypeCreated,
-  PaymentOrderMethodEnum,
-} from "src/enum";
+import { OrderEnum, OrderTypeCreated, PaymentOrderMethodEnum } from "src/enum";
 export class CreateOrderDTO {
   @ApiProperty()
   provisionalTotal: number;
@@ -30,6 +25,8 @@ export class CreateOrderDTO {
   branchId: number;
   @ApiProperty()
   customerId: number;
+  @ApiProperty({ required: false })
+  ticketId: number;
   @ApiProperty()
   point: number;
   @ApiProperty({ required: false })

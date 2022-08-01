@@ -36,6 +36,7 @@ import {
   OrderTypeCreated,
   PaymentOrderMethodEnum,
   ServiceType,
+  TicketStatusEnum,
 } from "src/enum";
 import { ResponsePayment } from "./dto/response-payment.dto";
 import { OrderOptionDto } from "./dto/order-option.dto";
@@ -65,6 +66,7 @@ import { AxiosService } from "src/shared/axios/axios.service";
 import { Pet } from "src/entities/pet_service/pet.entity";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
+import { TicketsService } from "../tickets/tickets.service";
 
 @ApiTags("orders")
 @Controller("orders")
@@ -85,6 +87,7 @@ export class OrdersController {
     private readonly petComboServicesService: PetComboServicesService,
     private readonly notificationProducerService: NotificationProducerService,
     private readonly healthPetRecordsService: HealthPetRecordsService,
+    private readonly ticketService: TicketsService,
     private readonly axiosService: AxiosService,
   ) {}
 
@@ -171,15 +174,16 @@ export class OrdersController {
           }
         });
       }
+      if (body.ticketId) {
+        const ticketInstance = await this.ticketService.findById(body.ticketId);
+        if (ticketInstance) {
+          ticketInstance.status = TicketStatusEnum.SUCCESS;
+          ticketInstance.save();
+        }
+      }
       const convertOrderDetails = await Promise.all(
         body.orderDetails.map(async (item) => {
           if (item.petComboId) {
-            if (!item.registerTime) {
-              throw new HttpException(
-                "Required register time for combo!",
-                HttpStatus.BAD_REQUEST,
-              );
-            }
             let next = 0;
             const combo: Partial<Combo> = await this.combos.findById(
               item.petComboId,
