@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { BaseService } from "src/base/base.service";
 import { Species } from "src/entities/pet_service/species.entity";
-import { SpeciesRepository } from "./speices.repository";
+import { SpeciesRepository } from "./species.repository";
 
 @Injectable()
 export class SpeciesService extends BaseService<Species, SpeciesRepository> {

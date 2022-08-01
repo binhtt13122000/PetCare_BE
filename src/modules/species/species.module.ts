@@ -3,7 +3,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { AuthModule } from "../auth/auth.module";
 import { SpeciesController } from "./species.controller";
 import { SpeciesService } from "./species.service";
-import { SpeciesRepository } from "./speices.repository";
+import { SpeciesRepository } from "./species.repository";
 
 @Module({
   imports: [AuthModule, TypeOrmModule.forFeature([SpeciesRepository])],
