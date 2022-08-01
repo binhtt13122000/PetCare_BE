@@ -9,10 +9,15 @@ import {
   Patch,
   Post,
   Put,
+  UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { IdParams } from "src/common";
 import { Breed } from "src/entities/pet_service/breed.entity";
+import { RoleEnum } from "src/enum";
+import { hasRoles } from "../auth/decorator/roles.decorator";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../auth/guards/roles.guard";
 import { BreedsService } from "./breeds.service";
 import { CreateBreedsDTO } from "./dto/create-breeds.dto";
 import { UpdateBreedsDTO } from "./dto/update-breeds.dto";
@@ -49,6 +54,8 @@ export class BreedsController {
     }
   }
 
+  @hasRoles(RoleEnum.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   async create(@Body() body: CreateBreedsDTO): Promise<Breed> {
     try {
@@ -58,6 +65,8 @@ export class BreedsController {
     }
   }
 
+  @hasRoles(RoleEnum.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Put()
   async update(@Body() body: UpdateBreedsDTO): Promise<Breed> {
     try {
@@ -77,6 +86,8 @@ export class BreedsController {
     }
   }
 
+  @hasRoles(RoleEnum.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch("change-status/:id")
   async changeStatus(@Param() params: IdParams): Promise<Breed> {
     try {
@@ -93,6 +104,8 @@ export class BreedsController {
     }
   }
 
+  @hasRoles(RoleEnum.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(":id")
   async delete(@Param() params: IdParams): Promise<Breed> {
     try {

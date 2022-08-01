@@ -6,6 +6,7 @@ import {
   Get,
   UseInterceptors,
   UploadedFile,
+  UseGuards,
 } from "@nestjs/common";
 import { PetComboService } from "src/entities/pet_service/pet-combo-service.entity";
 import { PetComboServicesService } from "./pet-combo-services.service";
@@ -25,9 +26,12 @@ import { HealthPetRecordsService } from "../health-pet-records/health-pet-record
 import { HealthPetRecord } from "../../entities/pet_service/health-pet-record.entity";
 import { AxiosService } from "src/shared/axios/axios.service";
 import { PetsService } from "../pets/pets.service";
+import { RolesGuard } from "../auth/guards/roles.guard";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
 @Controller("pet-combo-services")
 @ApiTags("pet-combo-services")
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class PetComboServicesController {
   constructor(
     private readonly petComboServicesService: PetComboServicesService,

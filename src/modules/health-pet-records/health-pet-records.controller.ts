@@ -9,6 +9,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { IdParams } from "src/common";
@@ -21,9 +22,12 @@ import { HttpService } from "@nestjs/axios";
 import { PetsService } from "../pets/pets.service";
 import { map } from "rxjs";
 import { HealthPetRecordEnum } from "src/enum";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../auth/guards/roles.guard";
 
 @Controller("health-pet-records")
 @ApiTags("health-pet-records")
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class HealthPetRecordsController {
   constructor(
     private readonly healthPetRecordsService: HealthPetRecordsService,

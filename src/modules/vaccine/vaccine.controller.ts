@@ -8,6 +8,7 @@ import {
   Delete,
   Patch,
   Param,
+  UseGuards,
 } from "@nestjs/common";
 import { VaccineService } from "./vaccine.service";
 import { ApiTags } from "@nestjs/swagger";
@@ -15,12 +16,18 @@ import { CreateVaccineDTO } from "./dto/create-vaccine.dto";
 import { UpdateVaccineDTO } from "./dto/update-vaccine.dto";
 import { Vaccine } from "src/entities/pet_service/vaccine.entity";
 import { IdParams } from "src/common";
+import { RolesGuard } from "../auth/guards/roles.guard";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { hasRoles } from "../auth/decorator/roles.decorator";
+import { RoleEnum } from "src/enum";
 
 @ApiTags("vaccine")
 @Controller("vaccine")
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class VaccineController {
   constructor(private readonly vaccineService: VaccineService) {}
 
+  @hasRoles(RoleEnum.ADMIN)
   @Post()
   async create(@Body() body: CreateVaccineDTO): Promise<Vaccine> {
     try {
@@ -30,6 +37,7 @@ export class VaccineController {
     }
   }
 
+  @hasRoles(RoleEnum.ADMIN)
   @Put()
   async update(@Body() body: UpdateVaccineDTO): Promise<Vaccine> {
     try {
@@ -39,6 +47,7 @@ export class VaccineController {
     }
   }
 
+  @hasRoles(RoleEnum.ADMIN)
   @Patch("change-status/:id")
   async changeStatus(@Param() param: IdParams): Promise<Vaccine> {
     try {
@@ -52,6 +61,7 @@ export class VaccineController {
     }
   }
 
+  @hasRoles(RoleEnum.ADMIN)
   @Delete(":id")
   async delete(@Param() params: IdParams): Promise<Vaccine> {
     try {

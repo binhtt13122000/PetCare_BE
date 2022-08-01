@@ -8,11 +8,13 @@ import { ComboServiceModule } from "../combo-services/combo-services.module";
 import { PetComboServicesModule } from "../pet-combo-services/pet-combo-services.module";
 import { CustomerModule } from "../customer/customer.module";
 import { PetOwnerModule } from "../pet-owner/pet-owner.module";
+import { AuthModule } from "../auth/auth.module";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([PetComboRepository]),
     forwardRef(() => PetComboServicesModule),
+    forwardRef(() => AuthModule),
     CombosModule,
     ComboServiceModule,
     CustomerModule,

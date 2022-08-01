@@ -13,6 +13,7 @@ import {
   UseInterceptors,
   NotFoundException,
   Patch,
+  UseGuards,
 } from "@nestjs/common";
 import { PostsService } from "./posts.service";
 import { PetsService } from "../pets/pets.service";
@@ -33,6 +34,8 @@ import { ChangeStatusPostDTO } from "./dto/change-status-post.dto";
 import { UserService } from "../users/user.service";
 import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
 import { BranchesService } from "../branches/branches.service";
+import { RolesGuard } from "../auth/guards/roles.guard";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 @ApiTags("posts")
 @Controller("posts")
 export class PostsController {
@@ -46,6 +49,7 @@ export class PostsController {
     private notificationProducerService: NotificationProducerService,
   ) {}
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(FilesInterceptor("files"))
@@ -89,6 +93,7 @@ export class PostsController {
     return postCreated;
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Put()
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(FilesInterceptor("files"))
@@ -125,6 +130,7 @@ export class PostsController {
     return instance.save();
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch()
   async changeStatusPost(
     @Body() body: ChangeStatusPostDTO,

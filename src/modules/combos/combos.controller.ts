@@ -10,12 +10,16 @@ import {
   Put,
   HttpException,
   Delete,
+  UseGuards,
 } from "@nestjs/common";
 import { ApiParam, ApiTags } from "@nestjs/swagger";
 import { IdParams } from "src/common";
 import { ComboService } from "src/entities/service/combo-service.entity";
 import { Combo } from "src/entities/service/combo.entity";
-import { ComboTypeEnum } from "src/enum";
+import { ComboTypeEnum, RoleEnum } from "src/enum";
+import { hasRoles } from "../auth/decorator/roles.decorator";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../auth/guards/roles.guard";
 import { CombosService } from "./combos.service";
 import { CreateComboDTO } from "./dtos/create-combo.dto";
 import { UpdateComboDTO } from "./dtos/update-combo.dto";
@@ -54,6 +58,8 @@ export class CombosController {
     return combosService;
   }
 
+  @hasRoles(RoleEnum.ADMIN, RoleEnum.BRANCH_MANAGER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   async create(@Body() body: CreateComboDTO): Promise<Combo> {
     try {
@@ -63,6 +69,8 @@ export class CombosController {
     }
   }
 
+  @hasRoles(RoleEnum.ADMIN, RoleEnum.BRANCH_MANAGER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Put()
   async update(@Body() body: UpdateComboDTO): Promise<Combo> {
     try {
@@ -110,6 +118,8 @@ export class CombosController {
     }
   }
 
+  @hasRoles(RoleEnum.ADMIN, RoleEnum.BRANCH_MANAGER)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(":id")
   async delete(@Param() params: IdParams): Promise<Combo> {
     try {

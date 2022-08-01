@@ -9,11 +9,16 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from "@nestjs/common";
 import { ApiQuery, ApiTags } from "@nestjs/swagger";
 import { IdParams } from "src/common";
 import { ServiceFee } from "src/entities/service/service-fee.entity";
+import { RoleEnum } from "src/enum";
 import { DeleteResult } from "typeorm";
+import { hasRoles } from "../auth/decorator/roles.decorator";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../auth/guards/roles.guard";
 import { CreateServiceFeeDTO } from "./dto/create-service-fee.dto";
 import { UpdateServiceFeeDTO } from "./dto/update-service-fee.dto";
 import { ServiceFeesService } from "./service-fees.service";
@@ -49,6 +54,8 @@ export class ServiceFeesController {
     }
   }
 
+  @hasRoles(RoleEnum.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(":id")
   async delete(@Param() params: IdParams): Promise<DeleteResult> {
     try {
@@ -58,6 +65,8 @@ export class ServiceFeesController {
     }
   }
 
+  @hasRoles(RoleEnum.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   async create(@Body() body: CreateServiceFeeDTO): Promise<ServiceFee> {
     try {
@@ -67,6 +76,8 @@ export class ServiceFeesController {
     }
   }
 
+  @hasRoles(RoleEnum.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Put()
   async update(@Body() body: UpdateServiceFeeDTO): Promise<ServiceFee> {
     try {

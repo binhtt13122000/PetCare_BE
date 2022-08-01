@@ -9,12 +9,16 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from "@nestjs/common";
 import { ApiQuery, ApiTags } from "@nestjs/swagger";
 import { IdParams } from "src/common";
 import { TransactionFee } from "src/entities/service/transaction-fee.entity";
-import { ServiceEnum } from "src/enum";
+import { RoleEnum, ServiceEnum } from "src/enum";
 import { DeleteResult } from "typeorm";
+import { hasRoles } from "../auth/decorator/roles.decorator";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../auth/guards/roles.guard";
 import { CreateTransactionFeeDTO } from "./dto/create-transaction-fee.dto";
 import { UpdateTransactionFeeDTO } from "./dto/update-transaction-fee.dto";
 import { TransactionFeesService } from "./transaction-fees.service";
@@ -52,6 +56,8 @@ export class TransactionFeesController {
     }
   }
 
+  @hasRoles(RoleEnum.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   async create(@Body() body: CreateTransactionFeeDTO): Promise<TransactionFee> {
     try {
@@ -61,6 +67,8 @@ export class TransactionFeesController {
     }
   }
 
+  @hasRoles(RoleEnum.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Put()
   async update(@Body() body: UpdateTransactionFeeDTO): Promise<TransactionFee> {
     try {
@@ -85,6 +93,8 @@ export class TransactionFeesController {
     }
   }
 
+  @hasRoles(RoleEnum.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(":id")
   async delete(@Param() params: IdParams): Promise<DeleteResult> {
     try {

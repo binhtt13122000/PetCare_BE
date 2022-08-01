@@ -15,6 +15,7 @@ import {
   Put,
   UseInterceptors,
   UploadedFile,
+  UseGuards,
 } from "@nestjs/common";
 import { ApiConsumes, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { Request } from "express";
@@ -60,9 +61,12 @@ import { BranchesService } from "../branches/branches.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { uploadService } from "src/external/uploadFile.service";
 import { ResponseBreedingTransaction } from "./dtos/response-breed-transaction.dto";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RolesGuard } from "../auth/guards/roles.guard";
 
 @Controller("breed-transactions")
 @ApiTags("breed-transactions")
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class BreedTransactionController {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
@@ -1048,9 +1052,6 @@ export class BreedTransactionController {
       },
       () => {
         throw new BadRequestException("USER_CANCEL_REQUEST");
-        // eslint-disable-next-line no-console
-        console.log("Payment Failed");
-        // this.cacheManager.del("order_id_" + id);
       },
     );
   }

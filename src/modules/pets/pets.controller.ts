@@ -13,6 +13,7 @@ import {
   Query,
   Inject,
   CACHE_MANAGER,
+  UseGuards,
 } from "@nestjs/common";
 import { PetsService } from "./pets.service";
 import { CreatePetDTO } from "./dto/create-pet.dto";
@@ -27,6 +28,8 @@ import { FileProducerService } from "src/shared/file/file.producer.service";
 import { ChainData } from "src/common";
 import { CreateChainDTO } from "./dto/create-chain.dto";
 import { Cache } from "cache-manager";
+import { RolesGuard } from "../auth/guards/roles.guard";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
 @Controller("pets")
 @ApiTags("pets")
@@ -116,6 +119,7 @@ export class PetsController {
     return await this.petsService.getOne(id, currentOwner);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiConsumes("multipart/form-data")
   @Post()
   @UseInterceptors(FileInterceptor("file"))
@@ -146,6 +150,7 @@ export class PetsController {
     }
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiConsumes("multipart/form-data")
   @Put()
   @UseInterceptors(FileInterceptor("file"))
@@ -170,6 +175,7 @@ export class PetsController {
     }
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(":id")
   async delete(@Param("id") id: number): Promise<unknown> {
     return this.petsService.deletePet(id);
