@@ -61,12 +61,9 @@ import { BranchesService } from "../branches/branches.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { uploadService } from "src/external/uploadFile.service";
 import { ResponseBreedingTransaction } from "./dtos/response-breed-transaction.dto";
-import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
-import { RolesGuard } from "../auth/guards/roles.guard";
 
 @Controller("breed-transactions")
 @ApiTags("breed-transactions")
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class BreedTransactionController {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
