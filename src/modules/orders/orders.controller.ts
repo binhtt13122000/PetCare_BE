@@ -70,7 +70,6 @@ import { TicketsService } from "../tickets/tickets.service";
 
 @ApiTags("orders")
 @Controller("orders")
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class OrdersController {
   constructor(
     @Inject(CACHE_MANAGER) private cacheManager: Cache,

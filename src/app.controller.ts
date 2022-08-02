@@ -47,6 +47,7 @@ export class AppController {
     if (!pet) {
       throw new NotFoundException("not found");
     }
+
     const uuidKey = v4();
     this.cacheManager.set(uuidKey, id, {
       ttl: 60,
