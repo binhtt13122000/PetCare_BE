@@ -13,6 +13,7 @@ import { UserModule } from "../users/user.module";
 import { SharedModule } from "src/shared/shared.module";
 import { BranchesModule } from "../branches/branches.module";
 import { AuthModule } from "../auth/auth.module";
+import { TicketsModule } from "../tickets/tickets.module";
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AuthModule } from "../auth/auth.module";
     PetsModule,
     UserModule,
     SharedModule,
+    TicketsModule,
   ],
   providers: [BreedTransactionService],
   controllers: [BreedTransactionController],
