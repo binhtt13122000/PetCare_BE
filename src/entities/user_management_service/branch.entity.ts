@@ -5,6 +5,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   BaseEntity,
+  ManyToOne,
+  JoinColumn,
 } from "typeorm";
 import { Order } from "../order_service/order.entity";
 import { Post } from "../transaction_service/post.entity";
@@ -14,6 +16,7 @@ import { Ticket } from "../service/ticket.entity";
 import { Promotion } from "../service/promotion.entity";
 
 import { PetCombo } from "../pet_service/pet-combo.entity";
+import { Account } from "../authenticate_service/account.entity";
 @Entity("branch")
 export class Branch extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
@@ -44,6 +47,13 @@ export class Branch extends BaseEntity {
   @Column({ type: "bool", default: true })
   @IsBoolean()
   isActive: boolean;
+
+  @Column({ name: "accountId", nullable: true })
+  accountId: number;
+
+  @ManyToOne(() => Account, (account) => account.branches)
+  @JoinColumn({ name: "accountId", referencedColumnName: "id" })
+  account: Account;
 
   @OneToMany(() => Promotion, (promotion) => promotion.branch)
   promotions: Promotion[];

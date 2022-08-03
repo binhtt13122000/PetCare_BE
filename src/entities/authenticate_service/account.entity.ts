@@ -5,9 +5,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Role } from "./role.entity";
+import { Customer } from "../user_management_service/customer.entity";
+import { Branch } from "../user_management_service/branch.entity";
 
 @Entity("account")
 export class Account extends BaseEntity {
@@ -37,6 +40,12 @@ export class Account extends BaseEntity {
   })
   @JoinColumn({ name: "roleId", referencedColumnName: "id" })
   role: Role;
+
+  @OneToMany(() => Customer, (customer) => customer.account)
+  customers: Customer[];
+
+  @OneToMany(() => Branch, (branch) => branch.account)
+  branches: Branch[];
 
   @Column({
     nullable: true,

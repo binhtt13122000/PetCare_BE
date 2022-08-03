@@ -172,6 +172,7 @@ export class AuthController {
           avatar,
           isActive: true,
           phoneNumber: phoneNumber,
+          accountId: createdAccount.id,
         }),
       );
       createdAccount.password = null;

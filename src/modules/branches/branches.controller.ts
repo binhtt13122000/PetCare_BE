@@ -200,7 +200,12 @@ export class BranchesController {
         }),
       );
       const createdBranch = await this.branchService.store(
-        new Branch({ ...body, isActive: true, image: null }),
+        new Branch({
+          ...body,
+          isActive: true,
+          image: null,
+          accountId: createdAccount.id,
+        }),
       );
       return {
         account: createdAccount,

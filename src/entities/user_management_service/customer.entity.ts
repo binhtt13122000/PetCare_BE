@@ -11,6 +11,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   BaseEntity,
+  ManyToOne,
+  JoinColumn,
 } from "typeorm";
 import { PetOwner } from "../pet_service/pet-owner.entity";
 import { Order } from "../order_service/order.entity";
@@ -20,6 +22,7 @@ import { BreedingTransaction } from "../transaction_service/breeding-transaction
 import { GenderEnum } from "src/enum";
 import { Ticket } from "../service/ticket.entity";
 import { Type } from "class-transformer";
+import { Account } from "../authenticate_service/account.entity";
 
 @Entity("customer")
 export class Customer extends BaseEntity {
@@ -60,6 +63,13 @@ export class Customer extends BaseEntity {
   @Column({ type: "bool", default: true })
   @IsBoolean()
   isActive: boolean;
+
+  @Column({ name: "accountId", nullable: true })
+  accountId: number;
+
+  @ManyToOne(() => Account, (account) => account.customers)
+  @JoinColumn({ name: "accountId", referencedColumnName: "id" })
+  account: Account;
 
   @OneToMany(() => PetOwner, (petOwner) => petOwner.customer)
   petOwners: PetOwner[];
