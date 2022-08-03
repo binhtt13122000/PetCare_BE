@@ -38,7 +38,7 @@ export class ServicesController {
   @Get()
   async getService(): Promise<Service[]> {
     try {
-      return await this.shopService.getAllExceptBreed();
+      return await this.shopService.getAll();
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

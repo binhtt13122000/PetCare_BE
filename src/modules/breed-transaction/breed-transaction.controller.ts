@@ -43,6 +43,7 @@ import {
   PetEnum,
   PostEnum,
   RoomStatusEnum,
+  TicketStatusEnum,
 } from "src/enum/index";
 import { vnpayService } from "src/external/vnpay.service";
 import { format } from "date-fns";
@@ -61,6 +62,7 @@ import { BranchesService } from "../branches/branches.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { uploadService } from "src/external/uploadFile.service";
 import { ResponseBreedingTransaction } from "./dtos/response-breed-transaction.dto";
+import { TicketsService } from "../tickets/tickets.service";
 
 @Controller("breed-transactions")
 @ApiTags("breed-transactions")
@@ -75,8 +77,8 @@ export class BreedTransactionController {
     private readonly messageService: MessagesService,
     private readonly petsService: PetsService,
     private readonly userService: UserService,
-    private readonly branchService: BranchesService,
     private readonly notificationProducerService: NotificationProducerService,
+    private readonly ticketService: TicketsService,
   ) {}
 
   @Get()
@@ -437,6 +439,13 @@ export class BreedTransactionController {
       if (!post) {
         throw new NotFoundException("not found post");
       }
+      const ticketBuyer = await this.ticketService.getTicketsByUserId(
+        breedingTransaction.ownerPetFemaleId,
+      );
+      if (ticketBuyer) {
+        ticketBuyer.status = TicketStatusEnum.CANCELED;
+        ticketBuyer.save();
+      }
       await this.postService.update(post.id, {
         ...post,
         status: PostEnum.PUBLISHED,
@@ -517,6 +526,11 @@ export class BreedTransactionController {
     const accountBuyerInstance = await this.userService.findByPhoneNumber(
       buyer.phoneNumber || "",
     );
+    const ticketBuyer = await this.ticketService.getTicketsByUserId(buyer.id);
+    if (ticketBuyer) {
+      ticketBuyer.status = TicketStatusEnum.SUCCESS;
+      ticketBuyer.save();
+    }
     await this.petsService.update(petMale.id, {
       ...petMale,
       status: PetEnum.IN_BREED,
