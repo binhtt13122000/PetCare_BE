@@ -15,7 +15,6 @@ import {
   Put,
   UseInterceptors,
   UploadedFile,
-  UseGuards,
 } from "@nestjs/common";
 import { ApiConsumes, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { Request } from "express";
@@ -58,7 +57,6 @@ import { UpdateBreedTransactionDTO } from "./dtos/update-breed-transaction.dto";
 import { PetsService } from "../pets/pets.service";
 import { UserService } from "../users/user.service";
 import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
-import { BranchesService } from "../branches/branches.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { uploadService } from "src/external/uploadFile.service";
 import { ResponseBreedingTransaction } from "./dtos/response-breed-transaction.dto";

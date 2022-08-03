@@ -119,6 +119,7 @@ export enum TicketTypeEnum {
   SERVICE = "SERVICE",
   COMBO = "COMBO",
   POST = "POST",
+  BREED = "BREED",
 }
 
 export enum OrderType {
