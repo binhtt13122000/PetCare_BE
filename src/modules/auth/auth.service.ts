@@ -34,7 +34,7 @@ export class AuthService {
     if (!role) {
       return user;
     }
-    if (user.roleId === role) {
+    if (user.roleId === Number(RoleIndexEnum[role])) {
       return user;
     }
     return null;
