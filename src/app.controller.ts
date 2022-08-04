@@ -58,7 +58,7 @@ export class AppController {
         {
           dynamicLinkInfo: {
             domainUriPrefix: "https://tpcs.page.link",
-            link: `https://binhtt.tech/guest/${uuidKey}?petId=${uuidKey}`,
+            link: `https://pet-care-admin-fe.vercel.app/guest/${uuidKey}?petId=${uuidKey}`,
             androidInfo: {
               androidPackageName: "com.example.pet_app_mobile",
             },
