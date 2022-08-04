@@ -15,6 +15,7 @@ import { Branch } from "../user_management_service/branch.entity";
 import { Customer } from "../user_management_service/customer.entity";
 import { PostEnum, ServiceEnum } from "src/enum";
 import { TransactionFee } from "../service/transaction-fee.entity";
+import { Room } from "../chatting/room.entity";
 
 @Entity("post")
 export class Post extends BaseEntity {
@@ -80,6 +81,9 @@ export class Post extends BaseEntity {
     cascade: true,
   })
   medias: Media[];
+
+  @OneToMany(() => Room, (room) => room.post)
+  rooms: Room[];
 
   @OneToMany(
     () => BreedingTransaction,

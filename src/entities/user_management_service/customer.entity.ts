@@ -23,6 +23,7 @@ import { GenderEnum } from "src/enum";
 import { Ticket } from "../service/ticket.entity";
 import { Type } from "class-transformer";
 import { Account } from "../authenticate_service/account.entity";
+import { Room } from "../chatting/room.entity";
 
 @Entity("customer")
 export class Customer extends BaseEntity {
@@ -73,6 +74,9 @@ export class Customer extends BaseEntity {
 
   @OneToMany(() => PetOwner, (petOwner) => petOwner.customer)
   petOwners: PetOwner[];
+
+  @OneToMany(() => Room, (room) => room.buyer)
+  rooms: Room[];
 
   @OneToMany(() => Order, (order) => order.customer)
   orders: Order[];
