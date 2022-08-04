@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 import { Room } from "./room.entity";
 
-@Entity("room")
+@Entity("message")
 export class Message extends BaseEntity {
   @PrimaryGeneratedColumn("increment")
   id: number;
