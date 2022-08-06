@@ -119,7 +119,6 @@ export class SaleTransactionsController {
     return saleTransactionList;
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get(":id")
   async getOne(@Param("id") id: number): Promise<SaleTransaction> {
     return await this.saleTransactionsService.getOne(id);

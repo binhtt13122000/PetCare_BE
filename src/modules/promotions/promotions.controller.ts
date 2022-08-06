@@ -9,21 +9,17 @@ import {
   Patch,
   Post,
   Put,
-  UseGuards,
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { IdParams } from "src/common";
 import { Promotion } from "src/entities/service/promotion.entity";
 import { DeleteResult } from "typeorm";
-import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
-import { RolesGuard } from "../auth/guards/roles.guard";
 import { CreatePromotionDTO } from "./dto/create-promotion.dto";
 import { UpdatePromotionDTO } from "./dto/update-promotion.dto";
 import { PromotionsService } from "./promotions.service";
 
 @Controller("promotions")
 @ApiTags("promotions")
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class PromotionsController {
   constructor(private readonly promotionsService: PromotionsService) {}
 
