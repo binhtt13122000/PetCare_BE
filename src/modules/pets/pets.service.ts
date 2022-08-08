@@ -15,6 +15,7 @@ import { PetsRepository } from "./pets.repository";
 import { Cache } from "cache-manager";
 import { CreateChainDTO } from "./dto/create-chain.dto";
 import { AxiosService } from "src/shared/axios/axios.service";
+import { Raw } from "typeorm";
 
 @Injectable()
 export class PetsService extends BaseService<Pet, PetsRepository> {
@@ -24,6 +25,25 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {
     super(petsRepository);
+  }
+
+  async checkIsExistPetNameWithCustomerId(
+    name: string,
+    customerId: number,
+  ): Promise<boolean> {
+    const result = await this.petsRepository
+      .createQueryBuilder("pet")
+      .where(
+        " pet_owners.customerId = :customerId and pet_owners.isCurrentOwner = true and LOWER(pet.name) = LOWER(:name)",
+        {
+          customerId,
+          name,
+        },
+      )
+      .orderBy("pet.id", "DESC")
+      .innerJoin("pet.petOwners", "pet_owners")
+      .getMany();
+    return result.length > 0 ? true : false;
   }
 
   async getChain(id: number): Promise<{ key: string; value: ChainData[] }> {
@@ -161,11 +181,12 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
       .getMany();
   }
 
-  getPetListWithoutBreedToCreatePostByCustomerIdAndSpeciesId(
+  getPetListWithoutBreedToCreatePostByCustomerIdAndSpeciesIdAndBreedId(
     customerId: number,
     type: "BREED" | "SALE",
     gender?: "MALE" | "FEMALE",
     speciesId?: number,
+    breedId?: number,
   ): Promise<Pet[]> {
     let whereString = "";
     if (speciesId) {
@@ -175,6 +196,14 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
       whereString =
         "pet.status = 'NORMAL' and pet_owners.customerId = :customerId and pet_owners.isCurrentOwner = true";
     }
+    if (breedId) {
+      if (whereString) {
+        whereString += " and pet.breedId = :breedId";
+      } else {
+        whereString =
+          "pet.status = 'NORMAL' and pet_owners.customerId = :customerId and pet_owners.isCurrentOwner = true and pet.breedId = :breedId";
+      }
+    }
     if (type === "BREED") {
       whereString += " and pet.isSeed = true";
     }
@@ -183,19 +212,29 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
     } else if (gender === "MALE") {
       whereString += " and pet.gender = 'MALE'";
     }
+    const object =
+      speciesId && breedId
+        ? {
+            customerId,
+            speciesId,
+            breedId,
+          }
+        : speciesId
+        ? {
+            customerId,
+            speciesId,
+          }
+        : breedId
+        ? {
+            customerId,
+            breedId,
+          }
+        : {
+            customerId,
+          };
     return this.petsRepository
       .createQueryBuilder("pet")
-      .where(
-        whereString,
-        speciesId
-          ? {
-              customerId,
-              speciesId,
-            }
-          : {
-              customerId,
-            },
-      )
+      .where(whereString, object)
       .orderBy("pet.id", "DESC")
       .innerJoinAndSelect("pet.breed", "breed")
       .innerJoinAndSelect("breed.species", "species")

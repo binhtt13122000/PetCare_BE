@@ -89,20 +89,27 @@ export class PetsController {
     required: false,
   })
   @ApiQuery({
+    name: "breedId",
+    type: Number,
+    required: false,
+  })
+  @ApiQuery({
     name: "type",
     enum: ["BREED", "SALE"],
   })
   async getToCreatePost(
     @Query("customerId") customerId: number,
     @Query("speciesId") speciesId: number,
+    @Query("breedId") breedId: number,
     @Query("type") type: "BREED" | "SALE",
     @Query("gender") gender?: "MALE" | "FEMALE",
   ): Promise<Pet[]> {
-    return await this.petsService.getPetListWithoutBreedToCreatePostByCustomerIdAndSpeciesId(
+    return await this.petsService.getPetListWithoutBreedToCreatePostByCustomerIdAndSpeciesIdAndBreedId(
       customerId,
       type,
       gender,
       speciesId,
+      breedId,
     );
   }
 
@@ -129,6 +136,17 @@ export class PetsController {
   ): Promise<Pet> {
     try {
       const { ownerId, ...data } = body;
+      const checkExistedPetName =
+        await this.petsService.checkIsExistPetNameWithCustomerId(
+          body.name,
+          body.ownerId,
+        );
+      if (checkExistedPetName) {
+        throw new HttpException(
+          "Pet Name already exist!",
+          HttpStatus.BAD_REQUEST,
+        );
+      }
       const { url: avatar } = await uploadService.uploadFile(file);
       const petOwner: Partial<PetOwner> = {
         id: undefined,
@@ -160,6 +178,28 @@ export class PetsController {
   ): Promise<string | Pet> {
     try {
       let avatar = null;
+      const existedPet = await this.petsService.getOne(body.id, true);
+      if (!existedPet) {
+        throw new HttpException("Not found pet by id", HttpStatus.NOT_FOUND);
+      }
+      if (
+        existedPet.name.trim().toLowerCase() !== body.name.trim().toLowerCase()
+      ) {
+        const ownerId = existedPet.petOwners.find(
+          (item) => item.isCurrentOwner == true,
+        ).customerId;
+        const checkExistedPetName =
+          await this.petsService.checkIsExistPetNameWithCustomerId(
+            body.name,
+            ownerId,
+          );
+        if (checkExistedPetName) {
+          throw new HttpException(
+            "Pet Name already exist!",
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      }
       if (file) {
         const { url } = await uploadService.uploadFile(file);
         avatar = url;
