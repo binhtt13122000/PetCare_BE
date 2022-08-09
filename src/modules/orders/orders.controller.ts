@@ -509,11 +509,191 @@ export class OrdersController {
           }
           break;
         case PaymentOrderMethodEnum.CASH:
-          return await this.ordersService.update(body.id, {
-            ...order,
-            ...body,
-            status: OrderEnum.SUCCESS,
-          });
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Post("quick-payment")
+  async quicPayment(@Body() body: OrderPaymentDTO): Promise<void> {
+    try {
+      const order = await this.ordersService.findById(body.id);
+      if (!order) {
+        throw new HttpException("not found", HttpStatus.NOT_FOUND);
+      }
+      if (order.status === OrderEnum.SUCCESS) {
+        throw new HttpException("Paymented!", HttpStatus.NOT_FOUND);
+      }
+      switch (body.paymentMethod) {
+        case PaymentOrderMethodEnum.CASH:
+          const { paymentPoint, ...rest } = body;
+          try {
+            const order = await this.ordersService.findById(rest.id);
+            const orderList = await this.ordersService.getOneWithOrderDetails(
+              rest.id,
+            );
+            const customer = await this.customerService.findById(
+              rest.customerId,
+            );
+            if (!order) {
+              throw new HttpException("not found", HttpStatus.NOT_FOUND);
+            }
+            if (!orderList) {
+              throw new HttpException("not found", HttpStatus.NOT_FOUND);
+            }
+            if (!customer) {
+              throw new HttpException("not found", HttpStatus.NOT_FOUND);
+            }
+            if (order.status === OrderEnum.SUCCESS) {
+              throw new HttpException("Paymented!", HttpStatus.NOT_FOUND);
+            }
+            await Promise.all(
+              orderList.orderDetails
+                .sort((a, b) => a.id - b.id)
+                .map(async (item) => {
+                  if (item.breedTransactionId) {
+                    const findBreedTransaction =
+                      await this.breedTransactionService.findById(
+                        item.breedTransactionId,
+                      );
+                    if (findBreedTransaction) {
+                      findBreedTransaction.status =
+                        BreedingTransactionEnum.BREEDING_SUCCESS;
+                      await findBreedTransaction.save();
+                      const fullPet = await this.petService.getOne(
+                        findBreedTransaction.petFemaleId,
+                        true,
+                      );
+                      if (fullPet.specialMarkings) {
+                        await this.axiosService.setData(
+                          fullPet,
+                          "BREED",
+                          "Pet has been bred.",
+                          fullPet.specialMarkings,
+                        );
+                      }
+                    }
+                  } else if (item.petComboId) {
+                    const findPetCombo = await this.petCombosService.findById(
+                      item.petComboId,
+                    );
+                    if (findPetCombo) {
+                      findPetCombo.isDraft = false;
+                      await findPetCombo.save();
+                    }
+                  } else if (item.petId) {
+                    const findService = await this.shopService.findById(
+                      item.serviceId,
+                    );
+                    if (
+                      findService &&
+                      findService.type !== ServiceType.NORMAL
+                    ) {
+                      let petInstance: Pet;
+                      if (findService.type === ServiceType.MICROCHIP) {
+                        petInstance = await this.petService.findById(
+                          item.petId,
+                        );
+                      } else {
+                        petInstance = await this.petService.getOne(
+                          item.petId,
+                          true,
+                        );
+                      }
+                      if (petInstance) {
+                        if (
+                          findService.type === ServiceType.MICROCHIP &&
+                          item.microchip
+                        ) {
+                          petInstance.specialMarkings = item.microchip;
+                          await petInstance.save();
+                          petInstance = await this.petService.getOne(
+                            item.petId,
+                            true,
+                          );
+                          await this.axiosService.setData(
+                            petInstance,
+                            "CREATE",
+                            "The data of pet is init with adding microchip:" +
+                              petInstance.specialMarkings,
+                            petInstance.specialMarkings,
+                          );
+                        } else {
+                          let script = "";
+                          let healthPetRecordType: HealthPetRecordEnum | null;
+                          switch (findService.type) {
+                            case ServiceType.VACCINE:
+                              script = "The dog has been given a new vaccine";
+                              healthPetRecordType = HealthPetRecordEnum.VACCINE;
+                              break;
+                            case ServiceType.HELMINTHIC:
+                              script = "The dog has been given a new deworming";
+                              healthPetRecordType =
+                                HealthPetRecordEnum.HELMINTHIC;
+                              break;
+                            case ServiceType.TICKS:
+                              script =
+                                "The dog has been given a new tick treatment";
+                              healthPetRecordType = HealthPetRecordEnum.TICKS;
+                              break;
+                            default:
+                              break;
+                          }
+                          if (healthPetRecordType) {
+                            const healthPetRecord = {
+                              type: healthPetRecordType,
+                              dateOfInjection: order.registerTime,
+                              petId: petInstance.id,
+                              branchId: order.branchId,
+                            };
+                            if (findService.type === ServiceType.VACCINE) {
+                              await this.healthPetRecordsService.store(
+                                new HealthPetRecord({
+                                  ...healthPetRecord,
+                                  vaccineType: findService.name,
+                                  vaccineId: findService.vaccineId,
+                                }),
+                              );
+                            } else {
+                              await this.healthPetRecordsService.store(
+                                new HealthPetRecord({
+                                  ...healthPetRecord,
+                                }),
+                              );
+                            }
+                            if (petInstance.specialMarkings) {
+                              await this.axiosService.setData(
+                                petInstance,
+                                "UPDATE",
+                                script,
+                                petInstance.specialMarkings,
+                              );
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }),
+            );
+            await this.ordersService.update(body.id, {
+              ...order,
+              ...rest,
+              status: OrderEnum.SUCCESS,
+              payment: body.orderTotal,
+            });
+            await this.customerService.update(customer.id, {
+              ...customer,
+              point: customer.point + body.point - paymentPoint,
+            });
+          } catch (error) {
+            throw new HttpException(error, HttpStatus.BAD_REQUEST);
+          }
+          break;
         default:
           break;
       }

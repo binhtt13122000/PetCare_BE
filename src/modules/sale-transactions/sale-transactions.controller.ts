@@ -291,6 +291,178 @@ export class SaleTransactionsController {
     }
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Post("quick-payment")
+  async quickPayment(@Body() body: SaleTransactionPayment): Promise<void> {
+    try {
+      const saleTransaction = await this.saleTransactionsService.findById(
+        body.id,
+      );
+      if (!saleTransaction) {
+        throw new HttpException("not found", HttpStatus.NOT_FOUND);
+      }
+      if (saleTransaction.status !== SaleTransactionEnum.CREATED) {
+        throw new HttpException("status error", HttpStatus.BAD_REQUEST);
+      }
+      switch (body.paymentMethod) {
+        case PaymentOrderMethodEnum.VNPAY:
+          // const ipAddr: string = req.socket.remoteAddress;
+          // const url = vnpayService.generatePaymentUrl(
+          //   format(new Date(), "yyyyMMddHHmmss") + body.id,
+          //   query.returnUrl,
+          //   body.transactionTotal,
+          //   ipAddr.split(":").pop() || "127.0.0.1",
+          //   query.message,
+          //   query.locale,
+          //   "NCB",
+          //   undefined,
+          // );
+          // if (url) {
+          //   this.cacheManager.set(
+          //     "sale_transaction_id_" + body.id,
+          //     JSON.stringify(body),
+          //     {
+          //       ttl: 600,
+          //     },
+          //   );
+          //   return { url };
+          // }
+          try {
+            const saleTransaction = await this.saleTransactionsService.findById(
+              body.id,
+            );
+            if (!saleTransaction) {
+              throw new HttpException("not found", HttpStatus.NOT_FOUND);
+            }
+            const buyer = await this.customerService.findById(
+              saleTransaction.buyerId,
+            );
+            const seller = await this.customerService.findById(
+              saleTransaction.sellerId,
+            );
+            const pet = await this.petsService.findById(saleTransaction.petId);
+            const post = await this.postService.findById(
+              saleTransaction.postId,
+            );
+            if (!buyer) {
+              throw new HttpException("not found", HttpStatus.NOT_FOUND);
+            }
+            if (!seller) {
+              throw new HttpException("not found", HttpStatus.NOT_FOUND);
+            }
+            const accountSellerInstance =
+              await this.userService.findByPhoneNumber(
+                seller.phoneNumber || "",
+              );
+            if (saleTransaction.status !== SaleTransactionEnum.CREATED) {
+              throw new HttpException("status error", HttpStatus.BAD_REQUEST);
+            }
+            if (!pet) {
+              throw new HttpException("not found pet", HttpStatus.BAD_REQUEST);
+            }
+            if (!post) {
+              throw new HttpException("not found post", HttpStatus.BAD_REQUEST);
+            }
+            const {
+              message,
+              transactionTotal,
+              paymentMethod,
+              ...updateSaleTransaction
+            } = body;
+            await this.saleTransactionsService.update(body.id, {
+              ...saleTransaction,
+              ...updateSaleTransaction,
+              status: SaleTransactionEnum.SUCCESS,
+            });
+            await this.petsService.update(pet.id, {
+              ...pet,
+              status: PetEnum.NORMAL,
+            });
+            await this.postService.update(post.id, {
+              ...post,
+              status: PostEnum.CLOSED,
+            });
+            await this.customerService.update(buyer.id, {
+              ...buyer,
+              point: buyer.point + body.point,
+            });
+            await this.customerService.update(seller.id, {
+              ...seller,
+              point: seller.point + body.point,
+            });
+            const roomList = await this.roomService.findAllRoomAvailableByPost(
+              saleTransaction.postId,
+            );
+            if (roomList && roomList.length > 0) {
+              await Promise.all(
+                roomList.map(async (item) => {
+                  item.status = RoomStatusEnum.CLOSED;
+                  item.newestMessage =
+                    item.buyerId === saleTransaction.buyerId
+                      ? message
+                      : "We sincerely apologize. The post has made the transaction. We hope to receive your understanding and look forward to continuing to serve you in future transactions.";
+                  item.newestMessageTime = body.transactionTime;
+                  item.isSellerMessage = true;
+                  const updatedRoom = await this.roomService.updateRoom(item);
+                  const createdMessage = await this.messageService.create({
+                    content:
+                      item.buyerId === saleTransaction.buyerId
+                        ? message
+                        : "We sincerely apologize. The post has made the transaction. We hope to receive your understanding and look forward to continuing to serve you in future transactions.",
+                    createdTime: body.transactionTime,
+                    isSellerMessage: true,
+                    type: MessageEnum.NORMAL,
+                    room: item._id,
+                  });
+                  this.chatGateway.server
+                    .in(item._id.valueOf())
+                    .emit("updatedRoom", updatedRoom);
+                  this.chatGateway.server
+                    .in(item._id.valueOf())
+                    .emit("chatToClient", createdMessage);
+                }),
+              );
+            }
+            this.petOwnerService.updateAllByPetId(saleTransaction.petId);
+            this.petOwnerService.store(
+              new PetOwner({
+                customerId: saleTransaction.buyerId,
+                isCurrentOwner: true,
+                petId: saleTransaction.petId,
+                date: body.transactionTime,
+              }),
+            );
+            await this.notificationProducerService.sendMessage(
+              {
+                body: "Buyer has successfully paid. See information details now.>>>>",
+                title: "Successful Sale Transaction.",
+                type: NotificationEnum.SUCCESS_SALE_TRANSACTION,
+                metadata: String(saleTransaction.id),
+              },
+              accountSellerInstance.id,
+            );
+
+            if (pet.specialMarkings) {
+              const fullDataPet = await this.petsService.getOne(pet.id, true);
+              await this.axiosService.setData(
+                fullDataPet,
+                "CHANGE_OWNER",
+                "The pet has new owner.",
+                pet.specialMarkings,
+              );
+            }
+          } catch (error) {
+            throw new HttpException(error, HttpStatus.BAD_REQUEST);
+          }
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
   @Get("vnpay/vnpay_return")
   vnPayReturn(@Req() req: Request): void {
     vnpayService.vnpayReturn(
