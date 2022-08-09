@@ -119,8 +119,6 @@ export class ChatGateway {
 
   @SubscribeMessage("chatToServer")
   async handleMessage(client: Socket, message: MessageDTO): Promise<void> {
-    // eslint-disable-next-line no-console
-    console.log(client);
     if (!message.room) {
       const postInstance = await this.postService.findById(
         message.postId || "",

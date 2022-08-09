@@ -519,7 +519,7 @@ export class OrdersController {
   }
 
   @Post("quick-payment")
-  async quicPayment(@Body() body: OrderPaymentDTO): Promise<void> {
+  async quicPayment(@Body() body: OrderPaymentDTO): Promise<string> {
     try {
       const order = await this.ordersService.findById(body.id);
       if (!order) {
@@ -690,6 +690,7 @@ export class OrdersController {
               ...customer,
               point: customer.point + body.point - paymentPoint,
             });
+            return "ok";
           } catch (error) {
             throw new HttpException(error, HttpStatus.BAD_REQUEST);
           }
@@ -874,9 +875,6 @@ export class OrdersController {
       },
       () => {
         throw new BadRequestException("USER_CANCEL_REQUEST");
-        // eslint-disable-next-line no-console
-        console.log("Payment Failed");
-        // this.cacheManager.del("order_id_" + id);
       },
     );
   }
