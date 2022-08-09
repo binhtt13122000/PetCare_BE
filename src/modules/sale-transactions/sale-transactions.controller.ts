@@ -293,7 +293,7 @@ export class SaleTransactionsController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post("quick-payment")
-  async quickPayment(@Body() body: SaleTransactionPayment): Promise<void> {
+  async quickPayment(@Body() body: SaleTransactionPayment): Promise<string> {
     try {
       const saleTransaction = await this.saleTransactionsService.findById(
         body.id,
@@ -306,27 +306,6 @@ export class SaleTransactionsController {
       }
       switch (body.paymentMethod) {
         case PaymentOrderMethodEnum.VNPAY:
-          // const ipAddr: string = req.socket.remoteAddress;
-          // const url = vnpayService.generatePaymentUrl(
-          //   format(new Date(), "yyyyMMddHHmmss") + body.id,
-          //   query.returnUrl,
-          //   body.transactionTotal,
-          //   ipAddr.split(":").pop() || "127.0.0.1",
-          //   query.message,
-          //   query.locale,
-          //   "NCB",
-          //   undefined,
-          // );
-          // if (url) {
-          //   this.cacheManager.set(
-          //     "sale_transaction_id_" + body.id,
-          //     JSON.stringify(body),
-          //     {
-          //       ttl: 600,
-          //     },
-          //   );
-          //   return { url };
-          // }
           try {
             const saleTransaction = await this.saleTransactionsService.findById(
               body.id,
@@ -451,10 +430,10 @@ export class SaleTransactionsController {
                 pet.specialMarkings,
               );
             }
+            return "ok";
           } catch (error) {
             throw new HttpException(error, HttpStatus.BAD_REQUEST);
           }
-          break;
         default:
           break;
       }
