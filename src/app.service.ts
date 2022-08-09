@@ -37,13 +37,6 @@ export class AppService {
 
   private readonly logger = new Logger(AppService.name);
 
-  @Cron("45 * * * * *")
-  handleCron(): void {
-    // eslint-disable-next-line no-console
-    console.log(new Date());
-    this.logger.debug("Called when the current second is 45");
-  }
-
   //Run Schedule after 00:05:00am each day  to check expired ticket yesterday.
   @Cron("0 5 0 * * *", {
     name: "checkExpiredTicketsYesterday",
