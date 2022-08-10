@@ -9,10 +9,19 @@ export class ShopService extends BaseService<Service, ServiceRepository> {
     super(serviceRepository);
   }
 
-  getAll(): Promise<Service[]> {
-    return this.serviceRepository.find({
-      relations: ["serviceFees", "vaccine"],
-    });
+  getAll(speciesId: number): Promise<Service[]> {
+    if (speciesId) {
+      return this.serviceRepository.find({
+        relations: ["serviceFees", "vaccine"],
+        where: {
+          speciesId: speciesId,
+        },
+      });
+    } else {
+      return this.serviceRepository.find({
+        relations: ["serviceFees", "vaccine"],
+      });
+    }
   }
 
   getOne(id: number): Promise<Service> {

@@ -15,6 +15,7 @@ import { ComboService } from "./combo-service.entity";
 import { PetComboService } from "../pet_service/pet-combo-service.entity";
 import { ServiceType } from "src/enum/index";
 import { Vaccine } from "../pet_service/vaccine.entity";
+import { Species } from "../pet_service/species.entity";
 
 @Entity("service")
 export class Service extends BaseEntity {
@@ -56,6 +57,13 @@ export class Service extends BaseEntity {
   @ManyToOne(() => Vaccine, (vaccine) => vaccine.services)
   @JoinColumn({ name: "vaccineId", referencedColumnName: "id" })
   vaccine: Vaccine;
+
+  @Column({ name: "speciesId", nullable: true })
+  speciesId: number;
+
+  @ManyToOne(() => Species, (species) => species.services)
+  @JoinColumn({ name: "speciesId", referencedColumnName: "id" })
+  species: Species;
 
   @OneToMany(
     () => PetComboService,

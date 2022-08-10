@@ -9,9 +9,10 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   UseGuards,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiQuery, ApiTags } from "@nestjs/swagger";
 import { ShopService } from "./services.service";
 import { CreateServiceDTO } from "./dto/create-service.dto";
 import { Service } from "src/entities/service/service.entity";
@@ -35,10 +36,15 @@ export class ServicesController {
     private readonly ticketService: TicketsService,
   ) {}
 
+  @ApiQuery({
+    name: "speciesId",
+    type: Number,
+    required: false,
+  })
   @Get()
-  async getService(): Promise<Service[]> {
+  async getService(@Query("speciesId") speciesId: number): Promise<Service[]> {
     try {
-      return await this.shopService.getAll();
+      return await this.shopService.getAll(speciesId);
     } catch (error) {
       throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }

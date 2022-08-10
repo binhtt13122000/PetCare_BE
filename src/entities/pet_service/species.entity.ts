@@ -7,6 +7,7 @@ import {
 } from "typeorm";
 import { IsString, IsBoolean } from "class-validator";
 import { Breed } from "./breed.entity";
+import { Service } from "src/entities/service/service.entity";
 
 @Entity("species")
 export class Species extends BaseEntity {
@@ -27,8 +28,11 @@ export class Species extends BaseEntity {
   @Column({ type: "bool" })
   @IsBoolean()
   isInject: boolean;
-  @OneToMany(() => Breed, (breed) => breed.id)
+  @OneToMany(() => Breed, (breed) => breed.species)
   breeds: Breed[];
+
+  @OneToMany(() => Service, (service) => service.species)
+  services: Service[];
 
   constructor(partial: Partial<Species>) {
     super();

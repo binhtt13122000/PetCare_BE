@@ -25,4 +25,7 @@ export class CreateServiceDTO {
   type: ServiceType;
   @ApiProperty()
   vaccineId?: number;
+
+  @ApiProperty()
+  speciesId: number;
 }
