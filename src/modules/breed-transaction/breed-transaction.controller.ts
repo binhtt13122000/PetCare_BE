@@ -545,29 +545,30 @@ export class BreedTransactionController {
       breedingTransaction.postId,
     );
     if (roomList && roomList.length > 0) {
-      const message =
-        "We sincerely apologize. The post has made the transaction. We hope to receive your understanding and look forward to continuing to serve you in future transactions.";
       roomList.forEach(async (item) => {
-        if (item.buyerId !== breedingTransaction.ownerPetFemaleId) {
-          item.status = RoomStatusEnum.CLOSED;
-          item.newestMessage = message;
-          item.newestMessageTime = body.dateOfBreeding;
-          item.isSellerMessage = true;
-          const createdMessage = await this.messageService.create({
-            content: message,
-            createdTime: body.dateOfBreeding,
-            isSellerMessage: true,
-            type: MessageEnum.NORMAL,
-            room: item._id,
-          });
-          const updatedRoom = await this.roomService.updateRoom(item);
-          this.chatGateway.server
-            .in(item._id.valueOf())
-            .emit("updatedRoom", updatedRoom);
-          this.chatGateway.server
-            .in(item._id.valueOf())
-            .emit("chatToClient", createdMessage);
+        let message =
+          "We sincerely apologize. The post has made the transaction. We hope to receive your understanding and look forward to continuing to serve you in future transactions.";
+        if (item.buyerId === breedingTransaction.ownerPetFemaleId) {
+          message = "Congratulations! You have made a successful transaction";
         }
+        item.status = RoomStatusEnum.CLOSED;
+        item.newestMessage = message;
+        item.newestMessageTime = body.dateOfBreeding;
+        item.isSellerMessage = true;
+        const createdMessage = await this.messageService.create({
+          content: message,
+          createdTime: body.dateOfBreeding,
+          isSellerMessage: true,
+          type: MessageEnum.NORMAL,
+          room: item._id,
+        });
+        const updatedRoom = await this.roomService.updateRoom(item);
+        this.chatGateway.server
+          .in(item._id.valueOf())
+          .emit("updatedRoom", updatedRoom);
+        this.chatGateway.server
+          .in(item._id.valueOf())
+          .emit("chatToClient", createdMessage);
       });
     }
     const breedTransactionUpdated = await this.breedTransactionService.update(
