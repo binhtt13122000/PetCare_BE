@@ -17,6 +17,7 @@ import { BreedingTransaction } from "../transaction_service/breeding-transaction
 import { GenderEnum, PetEnum } from "src/enum";
 import { PetCombo } from "./pet-combo.entity";
 import { OrderDetail } from "../order_service/order-detail.entity";
+import { ServiceTicket } from "../service/service-ticket.entity";
 
 @Entity("pet")
 export class Pet extends BaseEntity {
@@ -72,6 +73,9 @@ export class Pet extends BaseEntity {
 
   @OneToMany(() => SaleTransaction, (saleTransaction) => saleTransaction.pet)
   saleTransactions: SaleTransaction[];
+
+  @OneToMany(() => ServiceTicket, (serviceTicket) => serviceTicket.pet)
+  serviceTickets: ServiceTicket[];
 
   @OneToMany(
     () => BreedingTransaction,

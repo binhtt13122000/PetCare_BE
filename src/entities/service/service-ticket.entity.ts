@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { Service } from "src/entities/service/service.entity";
 import { Ticket } from "./ticket.entity";
+import { Pet } from "../pet_service/pet.entity";
 
 @Entity("service_ticket")
 export class ServiceTicket extends BaseEntity {
@@ -25,6 +26,12 @@ export class ServiceTicket extends BaseEntity {
   @ManyToOne(() => Ticket, (ticket) => ticket.serviceTickets, {})
   @JoinColumn({ name: "ticketId", referencedColumnName: "id" })
   ticket: Ticket;
+
+  @Column({ name: "petId", nullable: true })
+  petId: number;
+  @ManyToOne(() => Pet, (pet) => pet.serviceTickets, {})
+  @JoinColumn({ name: "petId", referencedColumnName: "id" })
+  pet: Pet;
 
   constructor(partial: Partial<ServiceTicket>) {
     super();
