@@ -27,6 +27,9 @@ export class TicketsService extends BaseService<Ticket, TicketsRepository> {
       relations: [
         "serviceTickets",
         "serviceTickets.service",
+        "serviceTickets.pet",
+        "serviceTickets.pet.breed",
+        "serviceTickets.pet.breed.species",
         "serviceTickets.service.serviceFees",
         "customer",
         "branch",
