@@ -42,7 +42,13 @@ export class TicketsService extends BaseService<Ticket, TicketsRepository> {
       where: {
         id: id,
       },
-      relations: ["serviceTickets", "serviceTickets.service"],
+      relations: [
+        "serviceTickets",
+        "serviceTickets.service",
+        "serviceTickets.pet",
+        "serviceTickets.pet.breed",
+        "serviceTickets.pet.breed.species",
+      ],
     });
   }
 
