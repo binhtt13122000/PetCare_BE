@@ -15,7 +15,6 @@ import { PetsRepository } from "./pets.repository";
 import { Cache } from "cache-manager";
 import { CreateChainDTO } from "./dto/create-chain.dto";
 import { AxiosService } from "src/shared/axios/axios.service";
-import { Raw } from "typeorm";
 
 @Injectable()
 export class PetsService extends BaseService<Pet, PetsRepository> {
