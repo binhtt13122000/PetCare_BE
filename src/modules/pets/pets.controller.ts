@@ -141,7 +141,7 @@ export class PetsController {
           body.name,
           body.ownerId,
         );
-      if (checkExistedPetName) {
+      if (checkExistedPetName && checkExistedPetName.length > 0) {
         throw new HttpException(
           "Pet Name already exist!",
           HttpStatus.BAD_REQUEST,
@@ -193,7 +193,7 @@ export class PetsController {
             body.name,
             ownerId,
           );
-        if (checkExistedPetName) {
+        if (checkExistedPetName && checkExistedPetName.length > 0) {
           throw new HttpException(
             "Pet Name already exist!",
             HttpStatus.BAD_REQUEST,

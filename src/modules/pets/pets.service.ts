@@ -29,7 +29,7 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
   async checkIsExistPetNameWithCustomerId(
     name: string,
     customerId: number,
-  ): Promise<boolean> {
+  ): Promise<Pet[]> {
     const result = await this.petsRepository
       .createQueryBuilder("pet")
       .where(
@@ -42,7 +42,7 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
       .orderBy("pet.id", "DESC")
       .innerJoin("pet.petOwners", "pet_owners")
       .getMany();
-    return result.length > 0 ? true : false;
+    return result;
   }
 
   async getChain(id: number): Promise<{ key: string; value: ChainData[] }> {
