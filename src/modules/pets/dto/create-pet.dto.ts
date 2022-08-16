@@ -18,8 +18,6 @@ export class CreatePetDTO {
   description: string;
 
   @ApiProperty()
-  @IsBoolean()
-  @Type(() => Boolean)
   isSeed: boolean;
 
   @ApiProperty({ enum: PetEnum })
