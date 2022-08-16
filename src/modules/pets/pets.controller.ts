@@ -203,11 +203,11 @@ export class PetsController {
       if (file) {
         const { url } = await uploadService.uploadFile(file);
         avatar = url;
-        await this.fileProducerService.deleteFile(body.avatar);
+        await this.fileProducerService.deleteFile(existedPet.avatar);
       }
       const pet: Partial<Pet> = {
         ...body,
-        avatar: file ? avatar : body.avatar,
+        avatar: file ? avatar : existedPet.avatar,
       };
       return this.petsService.updatePet(pet);
     } catch (error) {
