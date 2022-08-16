@@ -353,8 +353,11 @@ export class SaleTransactionsController {
                 pet.name,
                 saleTransaction.buyerId,
               );
-            if (checkExistedPetName && checkExistedPetName.length > 0) {
-              pet.name = `${pet.name}-${checkExistedPetName.length}(NEW)`;
+            if (checkExistedPetName) {
+              pet.name = `${pet.name}-${format(
+                new Date(),
+                "dd-MM-yyyy HH:mm:ss",
+              )}(NEW)`;
             }
             await this.saleTransactionsService.update(body.id, {
               ...saleTransaction,
