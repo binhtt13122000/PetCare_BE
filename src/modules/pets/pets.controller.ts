@@ -207,6 +207,7 @@ export class PetsController {
       }
       const pet: Partial<Pet> = {
         ...body,
+        isSeed: String(body.isSeed) === "true",
         avatar: file ? avatar : existedPet.avatar,
       };
       return this.petsService.updatePet(pet);
