@@ -32,9 +32,6 @@ export class UpdateCustomerDTO {
   file: Express.Multer.File;
 
   @ApiProperty()
-  avatar: string;
-
-  @ApiProperty()
   @IsString()
   bankName: string;
 
