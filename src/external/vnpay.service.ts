@@ -37,6 +37,8 @@ export class VnPayService {
     vnp_Params["vnp_ReturnUrl"] = returnUrl;
     vnp_Params["vnp_IpAddr"] = ipAddress;
     vnp_Params["vnp_CreateDate"] = createDate;
+    // eslint-disable-next-line no-console
+    console.log(createDate);
     if (bankCode !== undefined && bankCode !== "") {
       vnp_Params["vnp_BankCode"] = bankCode;
     }
