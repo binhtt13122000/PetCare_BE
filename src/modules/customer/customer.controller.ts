@@ -56,7 +56,7 @@ export class CustomerController {
     }
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   @Put()
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(FileInterceptor("file"))
@@ -73,11 +73,11 @@ export class CustomerController {
       if (file) {
         const { url } = await uploadService.uploadFile(file);
         avatar = url;
-        await this.fileProducerService.deleteFile(body.avatar);
+        await this.fileProducerService.deleteFile(updatedCustomer.avatar);
       }
       const customer: Partial<Customer> = {
         ...body,
-        avatar: file ? avatar : body.avatar,
+        avatar: file ? avatar : updatedCustomer.avatar,
       };
       return await this.customerService.update(customer.id, {
         ...updatedCustomer,

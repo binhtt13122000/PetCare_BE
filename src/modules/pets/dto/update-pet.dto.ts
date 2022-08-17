@@ -5,7 +5,4 @@ export class UpdatePetDTO extends OmitType(CreatePetDTO, ["ownerId"] as const) {
   @ApiProperty()
   @Type(() => Number)
   id: number;
-
-  @ApiProperty()
-  avatar: string;
 }

@@ -27,6 +27,9 @@ export class TicketsService extends BaseService<Ticket, TicketsRepository> {
       relations: [
         "serviceTickets",
         "serviceTickets.service",
+        "serviceTickets.pet",
+        "serviceTickets.pet.breed",
+        "serviceTickets.pet.breed.species",
         "serviceTickets.service.serviceFees",
         "customer",
         "branch",
@@ -39,7 +42,13 @@ export class TicketsService extends BaseService<Ticket, TicketsRepository> {
       where: {
         id: id,
       },
-      relations: ["serviceTickets", "serviceTickets.service"],
+      relations: [
+        "serviceTickets",
+        "serviceTickets.service",
+        "serviceTickets.pet",
+        "serviceTickets.pet.breed",
+        "serviceTickets.pet.breed.species",
+      ],
     });
   }
 

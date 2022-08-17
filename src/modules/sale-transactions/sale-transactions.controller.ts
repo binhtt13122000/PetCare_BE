@@ -348,6 +348,17 @@ export class SaleTransactionsController {
               paymentMethod,
               ...updateSaleTransaction
             } = body;
+            const checkExistedPetName =
+              await this.petsService.checkIsExistPetNameWithCustomerId(
+                pet.name,
+                saleTransaction.buyerId,
+              );
+            if (checkExistedPetName) {
+              pet.name = `${pet.name}-${format(
+                new Date(),
+                "dd-MM-yyyy HH:mm:ss",
+              )}(NEW)`;
+            }
             await this.saleTransactionsService.update(body.id, {
               ...saleTransaction,
               ...updateSaleTransaction,
