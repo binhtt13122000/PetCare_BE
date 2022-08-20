@@ -563,6 +563,7 @@ export class OrdersController {
                     if (findBreedTransaction) {
                       findBreedTransaction.status =
                         BreedingTransactionEnum.BREEDING_SUCCESS;
+                      findBreedTransaction.paymentTime = rest.paymentTime;
                       await findBreedTransaction.save();
                       const fullPet = await this.petService.getOne(
                         findBreedTransaction.petFemaleId,
@@ -746,6 +747,7 @@ export class OrdersController {
                   if (findBreedTransaction) {
                     findBreedTransaction.status =
                       BreedingTransactionEnum.BREEDING_SUCCESS;
+                    findBreedTransaction.paymentTime = rest.paymentTime;
                     await findBreedTransaction.save();
                     const fullPet = await this.petService.getOne(
                       findBreedTransaction.petFemaleId,
