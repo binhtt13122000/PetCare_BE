@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import qs from "qs";
 import crypto from "crypto";
 import { Request } from "express";
+import { getSpecificDateAgoWithNumberDays } from "src/common/utils";
 export class VnPayService {
   generatePaymentUrl(
     vnp_TxnRef: string,
@@ -17,7 +18,7 @@ export class VnPayService {
     const tmnCode = configService.getVnPayTmn();
     const secretKey = configService.getVnPayHashSecret();
     let vnpUrl = configService.getVnPayUrl();
-    const date = new Date();
+    const date = getSpecificDateAgoWithNumberDays(0);
 
     const createDate = format(date, "yyyyMMddHHmmss");
 
@@ -37,6 +38,8 @@ export class VnPayService {
     vnp_Params["vnp_ReturnUrl"] = returnUrl;
     vnp_Params["vnp_IpAddr"] = ipAddress;
     vnp_Params["vnp_CreateDate"] = createDate;
+    // eslint-disable-next-line no-console
+    console.log(createDate);
     if (bankCode !== undefined && bankCode !== "") {
       vnp_Params["vnp_BankCode"] = bankCode;
     }
