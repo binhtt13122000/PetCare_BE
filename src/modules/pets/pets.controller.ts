@@ -84,13 +84,13 @@ export class PetsController {
   }
 
   @Put("update-microchip")
-  async updateMicrochip(@Body() body: UpdateMicrochipDTO): Promise<void> {
+  async updateMicrochip(@Body() body: UpdateMicrochipDTO): Promise<Pet> {
     const petInstance = await this.petsService.findById(body.id);
     if (!petInstance) {
       throw new HttpException("Not found pet by id", HttpStatus.NOT_FOUND);
     }
     petInstance.specialMarkings = body.specialMarkings;
-    petInstance.save();
+    return petInstance.save();
   }
 
   @Get("fetch-pet")
