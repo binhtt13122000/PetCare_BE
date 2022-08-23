@@ -91,6 +91,30 @@ export class PetsController {
     if (!petInstance) {
       throw new HttpException("Not found pet by id", HttpStatus.NOT_FOUND);
     }
+    const data = await this.axiosService.getHistory(
+      petInstance.specialMarkings,
+    );
+    if (data) {
+      const promises = data?.value?.map((item) => {
+        return this.axiosService.clone(
+          item.content,
+          item.type,
+          body.specialMarkings,
+          new Date(item.date),
+        );
+      });
+      const pet = await this.petsService.getOne(body.id, true);
+      promises.push(
+        this.axiosService.setData(
+          pet,
+          "CHANGE_MICROCHIP",
+          "Change new microchip for pet at " + body.branchName,
+          body.specialMarkings,
+        ),
+      );
+      await Promise.all(promises);
+      await this.axiosService.remove(petInstance.specialMarkings);
+    }
     petInstance.specialMarkings = body.specialMarkings;
     return petInstance.save();
   }

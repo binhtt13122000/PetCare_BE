@@ -5,4 +5,6 @@ export class UpdateMicrochipDTO {
   id: number;
   @ApiProperty()
   specialMarkings: string;
+  @ApiProperty()
+  branchName: string;
 }

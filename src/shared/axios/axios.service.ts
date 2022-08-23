@@ -41,4 +41,38 @@ export class AxiosService {
       return null;
     }
   }
+
+  async remove(specialMarking: string): Promise<void> {
+    try {
+      const response = await lastValueFrom(
+        this.httpService.get("/api/delAsset/" + specialMarking),
+      );
+      return response.data;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async clone<T>(
+    content: T,
+    type: string,
+    no: string,
+    date: Date,
+  ): Promise<string> {
+    try {
+      const response = await lastValueFrom(
+        this.httpService.post("/api/setData", {
+          no: no,
+          content: {
+            ...content,
+          },
+          type: type,
+          date: date,
+        }),
+      );
+      return response.data;
+    } catch (error) {
+      return null;
+    }
+  }
 }
