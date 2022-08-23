@@ -88,10 +88,7 @@ export class TicketsController {
       );
       if (tickets && tickets.length > 0) {
         tickets.forEach((item) => {
-          if (
-            item.startTime <= body.endTime &&
-            body.startTime <= item.endTime
-          ) {
+          if (item.startTime < body.endTime && body.startTime < item.endTime) {
             throw new HttpException(
               "Conflict time with another ticket!",
               HttpStatus.CONFLICT,
