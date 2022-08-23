@@ -82,6 +82,23 @@ export class TicketsController {
       const accountBranchInstance = await this.userService.findByPhoneNumber(
         branchInstance.phoneNumber || "",
       );
+      const tickets = await this.ticketsService.getTicketsByBranchId(
+        body.branchId,
+        body.meetingDate,
+      );
+      if (tickets && tickets.length > 0) {
+        tickets.forEach((item) => {
+          if (
+            item.startTime <= body.endTime &&
+            body.startTime <= item.endTime
+          ) {
+            throw new HttpException(
+              "Conflict time with another ticket!",
+              HttpStatus.CONFLICT,
+            );
+          }
+        });
+      }
       let typeNotification = "";
       typeNotification = NotificationEnum.CREATED_TICKET;
       const ticketInstance = await this.ticketsService.store(body);
