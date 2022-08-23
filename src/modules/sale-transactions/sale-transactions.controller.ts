@@ -354,10 +354,27 @@ export class SaleTransactionsController {
                 saleTransaction.buyerId,
               );
             if (checkExistedPetName) {
-              pet.name = `${pet.name}-${format(
-                new Date(),
-                "dd-MM-yyyy HH:mm:ss",
-              )}(NEW)`;
+              const petsBuyer = await this.petsService.getPetListByCustomerId(
+                buyer.id,
+              );
+              let namePet = `${pet.name}-1`;
+              if (petsBuyer && petsBuyer.length > 0) {
+                petsBuyer.some((item) => {
+                  if (
+                    item.name
+                      .trim()
+                      .toLocaleLowerCase()
+                      .startsWith(`${pet.name.trim().toLocaleLowerCase}-`)
+                  ) {
+                    const split = item.name.split("-");
+                    if (split.length === 2 && split[1].match(/^\d+$/)) {
+                      namePet = `${pet.name}-${Number(split[1] + 1)}`;
+                      return true;
+                    }
+                  }
+                });
+              }
+              pet.name = namePet;
             }
             await this.saleTransactionsService.update(body.id, {
               ...saleTransaction,
