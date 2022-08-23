@@ -30,6 +30,7 @@ import { CreateChainDTO } from "./dto/create-chain.dto";
 import { Cache } from "cache-manager";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { UpdateMicrochipDTO } from "./dto/update-micro.dto";
 
 @Controller("pets")
 @ApiTags("pets")
@@ -80,6 +81,16 @@ export class PetsController {
   @Put("create-chain")
   async createChain(@Body() body: CreateChainDTO): Promise<string> {
     return this.petsService.createChain(body);
+  }
+
+  @Put("update-microchip")
+  async updateMicrochip(@Body() body: UpdateMicrochipDTO): Promise<void> {
+    const petInstance = await this.petsService.findById(body.id);
+    if (!petInstance) {
+      throw new HttpException("Not found pet by id", HttpStatus.NOT_FOUND);
+    }
+    petInstance.specialMarkings = body.specialMarkings;
+    petInstance.save();
   }
 
   @Get("fetch-pet")
