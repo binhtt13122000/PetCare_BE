@@ -31,6 +31,7 @@ import { Cache } from "cache-manager";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { UpdateMicrochipDTO } from "./dto/update-micro.dto";
+import { AxiosService } from "src/shared/axios/axios.service";
 
 @Controller("pets")
 @ApiTags("pets")
@@ -38,6 +39,7 @@ export class PetsController {
   constructor(
     private readonly petsService: PetsService,
     private readonly fileProducerService: FileProducerService,
+    private readonly axiosService: AxiosService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 

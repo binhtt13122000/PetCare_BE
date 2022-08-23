@@ -18,6 +18,7 @@ const blockchainServer = configService.getBlockchainServer();
       redis: {
         host: configService.getRedisServer(),
         port: 6379,
+        password: configService.getRedisPassword(),
       },
     }),
     BullModule.registerQueue(

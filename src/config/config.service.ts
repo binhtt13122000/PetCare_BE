@@ -43,6 +43,10 @@ class ConfigService {
     return this.getValue("REDIS_SERVER", true);
   }
 
+  public getRedisPassword(): string {
+    return this.getValue("REDIS_PASSWORD", true);
+  }
+
   public getVnPayTmn(): string {
     return this.getValue("VNPAY_TMN_CODE", true);
   }
