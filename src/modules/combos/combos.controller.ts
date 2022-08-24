@@ -31,7 +31,7 @@ export class CombosController {
 
   @Get()
   async getAll(): Promise<Combo[]> {
-    return await this.combosService.index();
+    return await this.combosService.getAll();
   }
 
   @ApiParam({

@@ -10,6 +10,12 @@ export class CombosService extends BaseService<Combo, CombosRepository> {
     super(combosRepository);
   }
 
+  getAll(): Promise<Combo[]> {
+    return this.combosRepository.find({
+      relations: ["comboServices", "comboServices.service"],
+    });
+  }
+
   findOne(id: number): Promise<Combo> {
     return this.combosRepository.findOne({
       where: {
