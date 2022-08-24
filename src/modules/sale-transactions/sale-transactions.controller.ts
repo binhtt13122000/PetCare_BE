@@ -359,6 +359,7 @@ export class SaleTransactionsController {
               );
               let namePet = `${pet.name}-1`;
               if (petsBuyer && petsBuyer.length > 0) {
+                let maxNumber = 1;
                 petsBuyer.some((item) => {
                   if (
                     item.name
@@ -367,10 +368,13 @@ export class SaleTransactionsController {
                       .startsWith(`${pet.name.trim().toLowerCase()}-`)
                   ) {
                     const split = item.name.split("-");
-                    const testMatch = split[1].match(/^\d+$/);
-                    if (split.length === 2 && testMatch != null) {
-                      namePet = `${pet.name}-${Number(split[1] + 1)}`;
-                      return true;
+                    const testMatch = split[split.length - 1].match(/^\d+$/);
+                    if (testMatch != null) {
+                      const convertNumber = Number(split[split.length - 1]);
+                      if (convertNumber > maxNumber) {
+                        maxNumber = convertNumber;
+                        namePet = `${pet.name}-${convertNumber + 1}`;
+                      }
                     }
                   }
                 });
