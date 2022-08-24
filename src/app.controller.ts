@@ -59,10 +59,12 @@ export class AppController {
   }
 
   @Get("configurations/:key")
-  getPolicy(
+  async getPolicy(
     @Param("key") key: string,
   ): Promise<FirebaseFirestore.DocumentData> {
-    return getFirestore().collection("configurations").doc(key).get();
+    return (
+      await getFirestore().collection("configurations").doc(key).get()
+    ).data();
   }
 
   @Post("/deep-link/:id")

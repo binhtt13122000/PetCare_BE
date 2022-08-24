@@ -21,6 +21,7 @@ import { SaleTransactionsService } from "./modules/sale-transactions/sale-transa
 import { TicketsService } from "./modules/tickets/tickets.service";
 import { UserService } from "./modules/users/user.service";
 import { NotificationProducerService } from "./shared/notification/notification.producer.service";
+import { getFirestore } from "firebase-admin/firestore";
 
 @Injectable()
 export class AppService {
@@ -43,7 +44,20 @@ export class AppService {
     timeZone: "Asia/Ho_Chi_Minh",
   })
   async handleCronCheckExpiredTicket(): Promise<void> {
-    const DAYS = 1;
+    let DAYS = 1;
+    try {
+      const payload = (
+        await getFirestore()
+          .collection("configurations")
+          .doc("expiredTicketTime")
+          .get()
+      ).data();
+      if (!isNaN(+payload["expiredTicketTime"])) {
+        DAYS = +payload["expiredTicketTime"];
+      }
+    } catch (error) {
+      DAYS = 1;
+    }
     const yesterday = getSpecificDateAgoWithNumberDays(DAYS);
     const ticketList =
       await this.ticketService.getTicketAvailableInSpecificDate(
@@ -63,7 +77,20 @@ export class AppService {
     timeZone: "Asia/Ho_Chi_Minh",
   })
   async handleCronCheckExpiredSaleTransactions(): Promise<void> {
-    const DAYS = 3;
+    let DAYS = 3;
+    try {
+      const payload = (
+        await getFirestore()
+          .collection("configurations")
+          .doc("expiredSaleTransaction")
+          .get()
+      ).data();
+      if (!isNaN(+payload["expiredSaleTransaction"])) {
+        DAYS = +payload["expiredSaleTransaction"];
+      }
+    } catch (error) {
+      DAYS = 3;
+    }
     const dateWithThreeDaysAgo = getSpecificDateAgoWithNumberDays(DAYS);
     const saleTransactionList =
       await this.saleTransactionService.getSaleTransactionAvailableInSpecificDate(
@@ -83,7 +110,20 @@ export class AppService {
     timeZone: "Asia/Ho_Chi_Minh",
   })
   async handleCronCheckExpiredBreedingTransactionsAtStatusCreated(): Promise<void> {
-    const DAYS = 3;
+    let DAYS = 3;
+    try {
+      const payload = (
+        await getFirestore()
+          .collection("configurations")
+          .doc("expiredBreedTransactionAtCreated")
+          .get()
+      ).data();
+      if (!isNaN(+payload["expiredBreedTransactionAtCreated"])) {
+        DAYS = +payload["expiredBreedTransactionAtCreated"];
+      }
+    } catch (error) {
+      DAYS = 3;
+    }
     const dateWithThreeDaysAgo = getSpecificDateAgoWithNumberDays(DAYS);
     const breedingTransactionList =
       await this.breedingTransactionService.getBreedingTransactionsAvailableInSpecificDate(
@@ -104,7 +144,20 @@ export class AppService {
     timeZone: "Asia/Ho_Chi_Minh",
   })
   async handleCronCheckExpiredBreedingTransactionsAtStatusBreedingRequested(): Promise<void> {
-    const DAYS = 3;
+    let DAYS = 3;
+    try {
+      const payload = (
+        await getFirestore()
+          .collection("configurations")
+          .doc("expiredBreedTransactionAtRequested")
+          .get()
+      ).data();
+      if (!isNaN(+payload["expiredBreedTransactionAtRequested"])) {
+        DAYS = +payload["expiredBreedTransactionAtRequested"];
+      }
+    } catch (error) {
+      DAYS = 3;
+    }
     const dateWithThreeDaysAgo = getSpecificDateAgoWithNumberDays(DAYS);
     const breedingTransactionList =
       await this.breedingTransactionService.getBreedingTransactionsAvailableInSpecificDate(
