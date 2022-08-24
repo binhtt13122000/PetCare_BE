@@ -188,6 +188,8 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
     breedId?: number,
   ): Promise<Pet[]> {
     let whereString = "";
+    const twoYearsAgo = new Date();
+    twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
     if (speciesId) {
       whereString =
         "pet.status = 'NORMAL' and pet_owners.customerId = :customerId and pet_owners.isCurrentOwner = true and breed.speciesId = :speciesId";
@@ -203,8 +205,9 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
           "pet.status = 'NORMAL' and pet_owners.customerId = :customerId and pet_owners.isCurrentOwner = true and pet.breedId = :breedId";
       }
     }
+
     if (type === "BREED") {
-      whereString += " and pet.isSeed = true";
+      whereString += ` and pet.isSeed = true and pet.dob <= ${twoYearsAgo}`;
     }
     if (gender === "FEMALE") {
       whereString += " and pet.gender = 'FEMALE'";
