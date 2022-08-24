@@ -7,14 +7,26 @@ import {
   NotFoundException,
   Inject,
   CACHE_MANAGER,
+  Body,
 } from "@nestjs/common";
 import { AppService } from "./app.service";
-import { ApiQuery } from "@nestjs/swagger";
+import { ApiProperty, ApiQuery } from "@nestjs/swagger";
 import { map } from "rxjs";
 import { HttpService } from "@nestjs/axios";
 import { PetsService } from "./modules/pets/pets.service";
 import { Cache } from "cache-manager";
 import { v4 } from "uuid";
+import { getFirestore } from "firebase-admin/firestore";
+
+class PolicyDTO {
+  @ApiProperty()
+  name: string;
+}
+
+class PostPolicyDTO extends PolicyDTO {
+  @ApiProperty()
+  value: string;
+}
 
 @Controller()
 export class AppController {
@@ -34,11 +46,23 @@ export class AppController {
     return this.appService.isExist(table, field, value);
   }
 
-  @Get()
-  findAll(): unknown {
-    return this.httpService
-      .get("http://139.59.227.101:3000/api/getAllAssets")
-      .pipe(map((response) => response.data));
+  @Post("configurations")
+  setPolicy(
+    @Body() body: PostPolicyDTO,
+  ): Promise<FirebaseFirestore.WriteResult> {
+    return getFirestore()
+      .collection("configurations")
+      .doc(body.name)
+      .set({
+        [body.name]: body.value,
+      });
+  }
+
+  @Get("configurations/:key")
+  getPolicy(
+    @Param("key") key: string,
+  ): Promise<FirebaseFirestore.DocumentData> {
+    return getFirestore().collection("configurations").doc(key).get();
   }
 
   @Post("/deep-link/:id")
