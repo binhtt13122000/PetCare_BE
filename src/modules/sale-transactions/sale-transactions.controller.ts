@@ -363,11 +363,12 @@ export class SaleTransactionsController {
                   if (
                     item.name
                       .trim()
-                      .toLocaleLowerCase()
-                      .startsWith(`${pet.name.trim().toLocaleLowerCase}-`)
+                      .toLowerCase()
+                      .startsWith(`${pet.name.trim().toLowerCase()}-`)
                   ) {
                     const split = item.name.split("-");
-                    if (split.length === 2 && split[1].match(/^\d+$/)) {
+                    const testMatch = split[1].match(/^\d+$/);
+                    if (split.length === 2 && testMatch != null) {
                       namePet = `${pet.name}-${Number(split[1] + 1)}`;
                       return true;
                     }
