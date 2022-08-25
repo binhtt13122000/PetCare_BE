@@ -47,24 +47,44 @@ export class AppController {
   }
 
   @Post("configurations")
-  setPolicy(
+  setConfig(
     @Body() body: PostPolicyDTO,
   ): Promise<FirebaseFirestore.WriteResult> {
     return getFirestore()
       .collection("configurations")
-      .doc(body.name)
-      .set({
-        [body.name]: body.value,
-      });
+      .doc("configurations")
+      .set(
+        {
+          [body.name]: body.value,
+        },
+        {
+          merge: true,
+        },
+      );
+  }
+
+  @Get("configurations")
+  async getAllConfigs(): Promise<FirebaseFirestore.DocumentData> {
+    return (
+      await getFirestore()
+        .collection("configurations")
+        .doc("configurations")
+        .get()
+    ).data();
   }
 
   @Get("configurations/:key")
-  async getPolicy(
-    @Param("key") key: string,
-  ): Promise<FirebaseFirestore.DocumentData> {
-    return (
-      await getFirestore().collection("configurations").doc(key).get()
+  async getConfig(@Param("key") key: string): Promise<string> {
+    const data = (
+      await getFirestore()
+        .collection("configurations")
+        .doc("configurations")
+        .get()
     ).data();
+    if (data) {
+      return data[key];
+    }
+    return null;
   }
 
   @Post("/deep-link/:id")
