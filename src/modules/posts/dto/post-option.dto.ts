@@ -51,6 +51,9 @@ export class PostsOptionDto extends OmitType(PageOptionsDto, ["filtering"]) {
   @ApiProperty({ required: false })
   breedName?: string;
 
+  @ApiProperty({ required: false })
+  title?: string;
+
   @ApiPropertyOptional({
     minimum: 0,
     maximum: 20,
