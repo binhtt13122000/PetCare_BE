@@ -180,6 +180,22 @@ export class PostsController {
     ) {
       instance.status = body.status;
       return await instance.save();
+    } else if (
+      instance.status === PostEnum.PUBLISHED &&
+      body.status === PostEnum.CLOSED
+    ) {
+      instance.status = body.status;
+      const postChanged = await instance.save();
+      await this.notificationProducerService.sendMessage(
+        {
+          body: "Your post have been closed. See information details now.>>>>",
+          title: "Closed your post",
+          type: NotificationEnum.CLOSED_POST,
+          metadata: String(postChanged.id),
+        },
+        accountByPhoneNumber.id,
+      );
+      return postChanged;
     } else {
       throw new BadRequestException(
         "The current status of the post cannot be changed!",
