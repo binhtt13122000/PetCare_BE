@@ -31,6 +31,9 @@ export class AuthService {
     role?: RoleIndexEnum,
   ): Promise<Account | null> {
     const user = await this.userService.validate(phoneNumber);
+    if (!user) {
+      return null;
+    }
     if (!role) {
       return user;
     }
