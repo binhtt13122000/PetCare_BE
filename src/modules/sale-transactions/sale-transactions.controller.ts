@@ -341,8 +341,6 @@ export class SaleTransactionsController {
             if (!post) {
               throw new HttpException("not found post", HttpStatus.BAD_REQUEST);
             }
-            const ticketOwnerSeller =
-              await this.ticketService.getTicketsByUserId(seller.id);
             const {
               message,
               transactionTotal,
@@ -463,10 +461,6 @@ export class SaleTransactionsController {
                 "The pet has new owner.",
                 pet.specialMarkings,
               );
-            }
-            if (ticketOwnerSeller) {
-              ticketOwnerSeller.status = TicketStatusEnum.CANCELED;
-              ticketOwnerSeller.save();
             }
             return "ok";
           } catch (error) {
