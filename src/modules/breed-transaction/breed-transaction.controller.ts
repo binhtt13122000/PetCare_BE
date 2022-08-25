@@ -123,6 +123,9 @@ export class BreedTransactionController {
     if (!breedTransaction) {
       throw new NotFoundException("not found");
     }
+    if (breedTransaction.status !== BreedingTransactionEnum.CREATED) {
+      throw new BadRequestException("Can not change current breed status!");
+    }
     const petMale = await this.petsService.findById(breedTransaction.petMaleId);
     if (!petMale) {
       throw new NotFoundException("not found pet male");
@@ -490,6 +493,11 @@ export class BreedTransactionController {
     if (!breedingTransaction) {
       throw new NotFoundException("not found breeding transaction");
     }
+    if (
+      breedingTransaction.status !== BreedingTransactionEnum.BREEDING_REQUESTED
+    ) {
+      throw new BadRequestException("Can not change current breed status!");
+    }
     const petMale = await this.petsService.findById(
       breedingTransaction.petMaleId,
     );
@@ -611,6 +619,9 @@ export class BreedTransactionController {
     );
     if (!breedingTransaction) {
       throw new NotFoundException("not found breeding transaction");
+    }
+    if (breedingTransaction.status !== BreedingTransactionEnum.IN_PROGRESS) {
+      throw new BadRequestException("Can not change current breed status!");
     }
     const buyer = await this.customerService.findById(
       breedingTransaction.ownerPetFemaleId,
