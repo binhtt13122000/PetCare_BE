@@ -8,6 +8,7 @@ import { CustomerModule } from "../customer/customer.module";
 import { SharedModule } from "src/shared/shared.module";
 import { BranchesModule } from "../branches/branches.module";
 import { AuthModule } from "../auth/auth.module";
+import { PetsModule } from "../pets/pets.module";
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AuthModule } from "../auth/auth.module";
     UserModule,
     CustomerModule,
     SharedModule,
+    PetsModule,
   ],
   providers: [TicketsService],
   controllers: [TicketsController],
