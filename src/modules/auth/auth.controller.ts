@@ -120,6 +120,7 @@ export class AuthController {
     name: "role",
     type: "enum",
     enum: RoleIndexEnum,
+    required: false,
   })
   async isExistPhoneNumber(
     @Param("phoneNumber") phoneNumber: string,
@@ -132,7 +133,7 @@ export class AuthController {
       );
       return !!user;
     } catch (error) {
-      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+      return false;
     }
   }
 
