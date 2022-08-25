@@ -29,6 +29,7 @@ import {
   PostEnum,
   RoomStatusEnum,
   SaleTransactionEnum,
+  TicketStatusEnum,
 } from "src/enum";
 import { Request } from "express";
 import { vnpayService } from "src/external/vnpay.service";
@@ -46,13 +47,12 @@ import { PetOwner } from "src/entities/pet_service/pet-owner.entity";
 import { PetsService } from "../pets/pets.service";
 import { UserService } from "../users/user.service";
 import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
-import { BranchesService } from "../branches/branches.service";
 import { getSpecificDateAgoWithNumberDays } from "src/common/utils";
-import { HttpService } from "@nestjs/axios";
 import { ResponseSaleTransaction } from "./dtos/response-sale-transaction.dto";
 import { AxiosService } from "src/shared/axios/axios.service";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { TicketsService } from "../tickets/tickets.service";
 
 @Controller("sale-transactions")
 @ApiTags("sale-transactions")
@@ -68,10 +68,9 @@ export class SaleTransactionsController {
     private readonly petOwnerService: PetOwnerService,
     private readonly petsService: PetsService,
     private readonly userService: UserService,
-    private readonly branchService: BranchesService,
+    private readonly ticketService: TicketsService,
     private readonly notificationProducerService: NotificationProducerService,
     private readonly axiosService: AxiosService,
-    private httpService: HttpService,
   ) {}
 
   @Get()

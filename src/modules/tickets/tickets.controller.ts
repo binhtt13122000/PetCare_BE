@@ -15,12 +15,13 @@ import {
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { Ticket } from "src/entities/service/ticket.entity";
-import { NotificationEnum, TicketStatusEnum } from "src/enum";
+import { NotificationEnum, PetEnum, TicketStatusEnum } from "src/enum";
 import { NotificationProducerService } from "src/shared/notification/notification.producer.service";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { BranchesService } from "../branches/branches.service";
 import { CustomerService } from "../customer/customer.service";
+import { PetsService } from "../pets/pets.service";
 import { UserService } from "../users/user.service";
 import ChangeStatusTicketDTO from "./dtos/change-status-ticket.dto";
 import { CreateTicketDTO } from "./dtos/create-ticket.dto";
@@ -34,6 +35,7 @@ export class TicketsController {
     private readonly customerService: CustomerService,
     private readonly userService: UserService,
     private readonly branchService: BranchesService,
+    private readonly petService: PetsService,
     private notificationProducerService: NotificationProducerService,
   ) {}
 
@@ -93,6 +95,19 @@ export class TicketsController {
               "Conflict time with another ticket!",
               HttpStatus.CONFLICT,
             );
+          }
+        });
+      }
+      if (body && body.serviceTickets.length > 0) {
+        body.serviceTickets.forEach(async (item) => {
+          if (item.petId) {
+            const pet = await this.petService.findById(item.petId);
+            if (pet && pet.status !== PetEnum.NORMAL) {
+              throw new HttpException(
+                "Your pet exists in another post!",
+                HttpStatus.BAD_REQUEST,
+              );
+            }
           }
         });
       }

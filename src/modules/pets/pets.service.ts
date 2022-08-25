@@ -207,7 +207,7 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
     }
 
     if (type === "BREED") {
-      whereString += ` and pet.isSeed = true and pet.dob <= ${oneYearAgo}`;
+      whereString += " and pet.isSeed = true and pet.dob <= :requiredDate";
     }
     if (gender === "FEMALE") {
       whereString += " and pet.gender = 'FEMALE'";
@@ -220,19 +220,23 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
             customerId,
             speciesId,
             breedId,
+            requiredDate: oneYearAgo,
           }
         : speciesId
         ? {
             customerId,
             speciesId,
+            requiredDate: oneYearAgo,
           }
         : breedId
         ? {
             customerId,
             breedId,
+            requiredDate: oneYearAgo,
           }
         : {
             customerId,
+            requiredDate: oneYearAgo,
           };
     return this.petsRepository
       .createQueryBuilder("pet")
