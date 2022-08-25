@@ -174,6 +174,12 @@ export class PostsController {
         accountByPhoneNumber.id,
       );
       return postChanged;
+    } else if (
+      instance.status === PostEnum.CANCELED &&
+      body.status === PostEnum.REQUESTED
+    ) {
+      instance.status = body.status;
+      return await instance.save();
     } else {
       throw new BadRequestException(
         "The current status of the post cannot be changed!",
