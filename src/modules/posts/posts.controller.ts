@@ -186,7 +186,10 @@ export class PostsController {
       body.status === PostEnum.REQUESTED
     ) {
       instance.status = body.status;
-      return await instance.save();
+      const postChanged = await instance.save();
+      petInstance.status = PetEnum.IN_POST;
+      await petInstance.save();
+      return postChanged;
     } else if (
       instance.status === PostEnum.PUBLISHED &&
       body.status === PostEnum.CLOSED
