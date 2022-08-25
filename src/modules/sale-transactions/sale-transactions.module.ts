@@ -16,6 +16,7 @@ import { BranchesModule } from "../branches/branches.module";
 import { HttpModule } from "@nestjs/axios";
 import { configService } from "src/config/config.service";
 import { AuthModule } from "../auth/auth.module";
+import { TicketsModule } from "../tickets/tickets.module";
 
 const blockchainServer = configService.getBlockchainServer();
 @Module({
@@ -32,6 +33,7 @@ const blockchainServer = configService.getBlockchainServer();
     PetsModule,
     UserModule,
     SharedModule,
+    TicketsModule,
     HttpModule.register({
       baseURL: blockchainServer,
     }),
