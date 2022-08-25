@@ -14,6 +14,7 @@ import {
   NotFoundException,
   Patch,
   UseGuards,
+  BadRequestException,
 } from "@nestjs/common";
 import { PostsService } from "./posts.service";
 import { PetsService } from "../pets/pets.service";
@@ -145,33 +146,39 @@ export class PostsController {
     if (!accountByPhoneNumber) {
       throw new NotFoundException("Can not found user!");
     }
-    instance.status = body.status;
     let bodyNotification = "",
       titleNotification = "",
       typeNotification = "";
-    if (body.status === PostEnum.PUBLISHED) {
-      bodyNotification =
-        "Your post have been verified. See information details now.>>>>";
-      titleNotification = "Verified your post";
-      typeNotification = NotificationEnum.CONFIRM_POST;
-    } else if (body.status === PostEnum.REJECTED) {
-      bodyNotification =
-        "Your post have been rejected. See information details now.>>>>";
-      titleNotification = "Rejected your post!";
-      instance.reasonReject = body.reasonReject;
-      typeNotification = NotificationEnum.REJECT_POST;
+    if (instance.status === PostEnum.REQUESTED) {
+      instance.status = body.status;
+      if (body.status === PostEnum.PUBLISHED) {
+        bodyNotification =
+          "Your post have been verified. See information details now.>>>>";
+        titleNotification = "Verified your post";
+        typeNotification = NotificationEnum.CONFIRM_POST;
+      } else if (body.status === PostEnum.REJECTED) {
+        bodyNotification =
+          "Your post have been rejected. See information details now.>>>>";
+        titleNotification = "Rejected your post!";
+        instance.reasonReject = body.reasonReject;
+        typeNotification = NotificationEnum.REJECT_POST;
+      }
+      const postChanged = await instance.save();
+      await this.notificationProducerService.sendMessage(
+        {
+          body: bodyNotification,
+          title: titleNotification,
+          type: typeNotification,
+          metadata: String(postChanged.id),
+        },
+        accountByPhoneNumber.id,
+      );
+      return postChanged;
+    } else {
+      throw new BadRequestException(
+        "The current status of the post cannot be changed!",
+      );
     }
-    const postChanged = await instance.save();
-    await this.notificationProducerService.sendMessage(
-      {
-        body: bodyNotification,
-        title: titleNotification,
-        type: typeNotification,
-        metadata: String(postChanged.id),
-      },
-      accountByPhoneNumber.id,
-    );
-    return postChanged;
   }
 
   @Get("/fetch-post")
