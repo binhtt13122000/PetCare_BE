@@ -65,6 +65,7 @@ export class AppController {
 
   @Get("configurations")
   async getAllConfigs(): Promise<FirebaseFirestore.DocumentData> {
+    const t = await this.appService.handleCronCheckExpiredTicket();
     return (
       await getFirestore()
         .collection("configurations")

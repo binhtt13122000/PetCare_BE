@@ -49,9 +49,10 @@ export class AppService {
       const payload = (
         await getFirestore()
           .collection("configurations")
-          .doc("expiredTicketTime")
+          .doc("configurations")
           .get()
       ).data();
+
       if (!isNaN(+payload["expiredTicketTime"])) {
         DAYS = +payload["expiredTicketTime"];
       }
@@ -82,9 +83,10 @@ export class AppService {
       const payload = (
         await getFirestore()
           .collection("configurations")
-          .doc("expiredSaleTransaction")
+          .doc("configurations")
           .get()
       ).data();
+
       if (!isNaN(+payload["expiredSaleTransaction"])) {
         DAYS = +payload["expiredSaleTransaction"];
       }
@@ -115,7 +117,7 @@ export class AppService {
       const payload = (
         await getFirestore()
           .collection("configurations")
-          .doc("expiredBreedTransactionAtCreated")
+          .doc("configurations")
           .get()
       ).data();
       if (!isNaN(+payload["expiredBreedTransactionAtCreated"])) {
@@ -149,7 +151,7 @@ export class AppService {
       const payload = (
         await getFirestore()
           .collection("configurations")
-          .doc("expiredBreedTransactionAtRequested")
+          .doc("configurations")
           .get()
       ).data();
       if (!isNaN(+payload["expiredBreedTransactionAtRequested"])) {
