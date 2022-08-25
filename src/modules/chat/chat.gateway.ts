@@ -120,44 +120,54 @@ export class ChatGateway {
   @SubscribeMessage("chatToServer")
   async handleMessage(client: Socket, message: MessageDTO): Promise<void> {
     if (!message.room) {
-      const postInstance = await this.postService.findById(
-        message.postId || "",
+      const room = await this.roomService.findByBuyerAndPost(
+        message.buyerId,
+        message.postId,
       );
-      const sellerInstance = await this.customerService.findById(
-        message.sellerId,
-      );
-      const accountSellerInstance = await this.userService.findByPhoneNumber(
-        sellerInstance.phoneNumber,
-      );
-      const createdRoom = await this.roomService.create({
-        createdTime: message.createdTime,
-        isSellerMessage: false,
-        newestMessage: message.content,
-        newestMessageTime: message.createdTime,
-        buyerId: message.buyerId,
-        postId: message.postId,
-        sellerId: message.sellerId,
-        status: RoomStatusEnum.CREATED,
-        type: message.roomType,
-      });
-      const createdMessage = await this.messageService.create({
-        ...message,
-        room: createdRoom._id,
-      });
-      client.join(createdRoom._id.valueOf());
-      this.server
-        .in(createdRoom._id.valueOf())
-        .emit("chatToClient", createdMessage);
+      if (room) {
+        this.server.in(room._id.valueOf()).emit("chatToClient", {
+          error: "Room is existed!",
+        });
+      } else {
+        const postInstance = await this.postService.findById(
+          message.postId || "",
+        );
+        const sellerInstance = await this.customerService.findById(
+          message.sellerId,
+        );
+        const accountSellerInstance = await this.userService.findByPhoneNumber(
+          sellerInstance.phoneNumber,
+        );
+        const createdRoom = await this.roomService.create({
+          createdTime: message.createdTime,
+          isSellerMessage: false,
+          newestMessage: message.content,
+          newestMessageTime: message.createdTime,
+          buyerId: message.buyerId,
+          postId: message.postId,
+          sellerId: message.sellerId,
+          status: RoomStatusEnum.CREATED,
+          type: message.roomType,
+        });
+        const createdMessage = await this.messageService.create({
+          ...message,
+          room: createdRoom._id,
+        });
+        client.join(createdRoom._id.valueOf());
+        this.server
+          .in(createdRoom._id.valueOf())
+          .emit("chatToClient", createdMessage);
 
-      await this.notificationProducerService.sendMessage(
-        {
-          body: `${postInstance.title} - ${postInstance.transactionTotal}`,
-          title: "A New Message",
-          type: NotificationEnum.NEW_ROOM_CREATED,
-          metadata: String(createdRoom._id),
-        },
-        accountSellerInstance.id,
-      );
+        await this.notificationProducerService.sendMessage(
+          {
+            body: `${postInstance.title} - ${postInstance.transactionTotal}`,
+            title: "A New Message",
+            type: NotificationEnum.NEW_ROOM_CREATED,
+            metadata: String(createdRoom._id),
+          },
+          accountSellerInstance.id,
+        );
+      }
     } else {
       const room = await this.roomService.findById(message.room);
       if (!room) {
