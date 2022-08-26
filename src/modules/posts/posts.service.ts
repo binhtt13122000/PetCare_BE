@@ -108,7 +108,12 @@ export class PostsService extends BaseService<Post, PostsRepository> {
     // ];
 
     // Query Builder inner join and select properties in table post, pet, breed and species
-
+    let titleSearch = "";
+    if (!pageOptionsDto.title) {
+      titleSearch = "%%";
+    } else {
+      titleSearch = `%${pageOptionsDto.title.trim()}%`;
+    }
     queryBuilder
       .innerJoinAndSelect("post.pet", "pet")
       .innerJoinAndSelect("post.medias", "medias")
@@ -117,44 +122,84 @@ export class PostsService extends BaseService<Post, PostsRepository> {
 
     if (pageOptionsDto.notCustomerId) {
       if (pageOptionsDto.status) {
-        queryBuilder.where("post.customerId != :id" + AND + queryStatus, {
-          id: pageOptionsDto.notCustomerId,
-          status: pageOptionsDto.status,
-        });
+        queryBuilder.where(
+          "post.customerId != :id and LOWER(post.title) LIKE LOWER(:title) " +
+            AND +
+            queryStatus,
+          {
+            id: pageOptionsDto.notCustomerId,
+            title: titleSearch,
+            status: pageOptionsDto.status,
+          },
+        );
       } else if (pageOptionsDto.type) {
-        queryBuilder.where("post.customerId != :id" + AND + queryType, {
-          id: pageOptionsDto.notCustomerId,
-          type: pageOptionsDto.type,
-        });
+        queryBuilder.where(
+          "post.customerId != :id and LOWER(post.title) LIKE LOWER(:title) " +
+            AND +
+            queryType,
+          {
+            id: pageOptionsDto.notCustomerId,
+            title: titleSearch,
+            type: pageOptionsDto.type,
+          },
+        );
       } else {
-        queryBuilder.where("post.customerId != :id", {
-          id: pageOptionsDto.notCustomerId,
-        });
+        queryBuilder.where(
+          "post.customerId != :id and LOWER(post.title) LIKE LOWER(:title) ",
+          {
+            id: pageOptionsDto.notCustomerId,
+            title: titleSearch,
+          },
+        );
       }
     } else if (pageOptionsDto.customerId) {
       if (pageOptionsDto.status) {
-        queryBuilder.where("post.customerId = :id" + AND + queryStatus, {
-          id: pageOptionsDto.customerId,
-          status: pageOptionsDto.status,
-        });
+        queryBuilder.where(
+          "post.customerId = :id and LOWER(post.title) LIKE LOWER(:title) " +
+            AND +
+            queryStatus,
+          {
+            id: pageOptionsDto.customerId,
+            title: titleSearch,
+            status: pageOptionsDto.status,
+          },
+        );
       } else if (pageOptionsDto.type) {
-        queryBuilder.where("post.customerId = :id" + AND + queryType, {
-          id: pageOptionsDto.customerId,
-          type: pageOptionsDto.type,
-        });
+        queryBuilder.where(
+          "post.customerId = :id and LOWER(post.title) LIKE LOWER(:title) " +
+            AND +
+            queryType,
+          {
+            id: pageOptionsDto.customerId,
+            title: titleSearch,
+            type: pageOptionsDto.type,
+          },
+        );
       } else {
-        queryBuilder.where("post.customerId = :id ", {
-          id: pageOptionsDto.customerId,
-        });
+        queryBuilder.where(
+          "post.customerId = :id and LOWER(post.title) LIKE LOWER(:title) ",
+          {
+            id: pageOptionsDto.customerId,
+            title: titleSearch,
+          },
+        );
       }
     } else if (pageOptionsDto.status) {
-      queryBuilder.where(queryStatus, {
-        status: pageOptionsDto.status,
-      });
+      queryBuilder.where(
+        queryStatus + AND + " LOWER(post.title) LIKE LOWER(:title) ",
+        {
+          status: pageOptionsDto.status,
+          title: titleSearch,
+        },
+      );
     } else if (pageOptionsDto.type) {
-      queryBuilder.where(queryType, {
-        type: pageOptionsDto.type,
-      });
+      queryBuilder.where(
+        queryType + AND + " LOWER(post.title) LIKE LOWER(:title) ",
+        {
+          type: pageOptionsDto.type,
+          title: titleSearch,
+        },
+      );
     }
 
     // Sort createTime, transactionTotal

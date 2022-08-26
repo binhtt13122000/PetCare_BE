@@ -146,6 +146,10 @@ export class PostsController {
     if (!accountByPhoneNumber) {
       throw new NotFoundException("Can not found user!");
     }
+    const petInstance = await this.petsService.findById(instance.petId);
+    if (!petInstance) {
+      throw new NotFoundException("Can not found pet!");
+    }
     let bodyNotification = "",
       titleNotification = "",
       typeNotification = "";
@@ -162,6 +166,9 @@ export class PostsController {
         titleNotification = "Rejected your post!";
         instance.reasonReject = body.reasonReject;
         typeNotification = NotificationEnum.REJECT_POST;
+      } else if (body.status === PostEnum.CANCELED) {
+        petInstance.status = PetEnum.NORMAL;
+        await petInstance.save();
       }
       const postChanged = await instance.save();
       await this.notificationProducerService.sendMessage(
@@ -169,6 +176,33 @@ export class PostsController {
           body: bodyNotification,
           title: titleNotification,
           type: typeNotification,
+          metadata: String(postChanged.id),
+        },
+        accountByPhoneNumber.id,
+      );
+      return postChanged;
+    } else if (
+      instance.status === PostEnum.CANCELED &&
+      body.status === PostEnum.REQUESTED
+    ) {
+      instance.status = body.status;
+      const postChanged = await instance.save();
+      petInstance.status = PetEnum.IN_POST;
+      await petInstance.save();
+      return postChanged;
+    } else if (
+      instance.status === PostEnum.PUBLISHED &&
+      body.status === PostEnum.CLOSED
+    ) {
+      instance.status = body.status;
+      const postChanged = await instance.save();
+      petInstance.status = PetEnum.NORMAL;
+      await petInstance.save();
+      await this.notificationProducerService.sendMessage(
+        {
+          body: "Your post have been closed. See information details now.>>>>",
+          title: "Closed your post",
+          type: NotificationEnum.CLOSED_POST,
           metadata: String(postChanged.id),
         },
         accountByPhoneNumber.id,
