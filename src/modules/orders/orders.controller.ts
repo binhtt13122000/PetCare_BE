@@ -877,6 +877,7 @@ export class OrdersController {
               }),
           );
           this.cacheManager.del("order_id_" + id);
+          rest.point = Math.floor(rest.point);
           await this.ordersService.update(updatedOrder.id, {
             ...order,
             ...rest,
@@ -885,7 +886,9 @@ export class OrdersController {
           });
           await this.customerService.update(customer.id, {
             ...customer,
-            point: customer.point + updatedOrder.point - paymentPoint,
+            point: Math.floor(
+              customer.point + updatedOrder.point - paymentPoint,
+            ),
           });
         } catch (error) {
           throw new HttpException(error, HttpStatus.BAD_REQUEST);
