@@ -34,6 +34,7 @@ import {
   OrderServiceType,
   OrderTypeCreated,
   PaymentOrderMethodEnum,
+  PetEnum,
   ServiceType,
   TicketStatusEnum,
 } from "src/enum";
@@ -561,6 +562,13 @@ export class OrdersController {
                         item.breedTransactionId,
                       );
                     if (findBreedTransaction) {
+                      const petInstance = await this.petService.findById(
+                        findBreedTransaction.petFemaleId,
+                      );
+                      if (petInstance) {
+                        petInstance.status = PetEnum.NORMAL;
+                        petInstance.save();
+                      }
                       findBreedTransaction.status =
                         BreedingTransactionEnum.BREEDING_SUCCESS;
                       findBreedTransaction.paymentTime = rest.paymentTime;
@@ -681,6 +689,7 @@ export class OrdersController {
                   }
                 }),
             );
+            order.status = OrderEnum.SUCCESS;
             await this.ordersService.update(body.id, {
               ...order,
               ...rest,
@@ -695,7 +704,6 @@ export class OrdersController {
           } catch (error) {
             throw new HttpException(error, HttpStatus.BAD_REQUEST);
           }
-          break;
         default:
           break;
       }
@@ -745,6 +753,13 @@ export class OrdersController {
                       item.breedTransactionId,
                     );
                   if (findBreedTransaction) {
+                    const petInstance = await this.petService.findById(
+                      findBreedTransaction.petFemaleId,
+                    );
+                    if (petInstance) {
+                      petInstance.status = PetEnum.NORMAL;
+                      petInstance.save();
+                    }
                     findBreedTransaction.status =
                       BreedingTransactionEnum.BREEDING_SUCCESS;
                     findBreedTransaction.paymentTime = rest.paymentTime;
