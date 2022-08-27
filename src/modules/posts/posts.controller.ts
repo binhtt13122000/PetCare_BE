@@ -92,6 +92,10 @@ export class PostsController {
         "Can not to create a post, because you currently have an uncompleted ticket!",
       );
     }
+    const pet = await this.petsService.findById(body.petId);
+    if (pet.status !== PetEnum.NORMAL) {
+      throw new BadRequestException("Can not create post!");
+    }
     const medias: Media[] = await Promise.all(
       files?.map(async (value) => {
         const { url, type } = await uploadService.uploadFile(value);
@@ -102,7 +106,6 @@ export class PostsController {
       }),
     );
 
-    const pet = await this.petsService.findById(body.petId);
     pet.status = PetEnum.IN_POST;
     await this.petsService.update(body.petId, pet);
     const postCreated = await this.postsService.store(
@@ -175,6 +178,9 @@ export class PostsController {
     const petInstance = await this.petsService.findById(instance.petId);
     if (!petInstance) {
       throw new NotFoundException("Can not found pet!");
+    }
+    if (petInstance.status === PetEnum.DELETED) {
+      throw new BadRequestException("Pet have been deleted!");
     }
     let bodyNotification = "",
       titleNotification = "",

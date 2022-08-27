@@ -11,6 +11,7 @@ import {
   BreedingTransactionEnum,
   NotificationEnum,
   OrderEnum,
+  PetEnum,
   SaleTransactionEnum,
   TicketStatusEnum,
 } from "./enum";
@@ -22,6 +23,7 @@ import { TicketsService } from "./modules/tickets/tickets.service";
 import { UserService } from "./modules/users/user.service";
 import { NotificationProducerService } from "./shared/notification/notification.producer.service";
 import { getFirestore } from "firebase-admin/firestore";
+import { PetsService } from "./modules/pets/pets.service";
 
 @Injectable()
 export class AppService {
@@ -31,6 +33,7 @@ export class AppService {
     private readonly saleTransactionService: SaleTransactionsService,
     private readonly breedingTransactionService: BreedTransactionService,
     private readonly petComboServicesService: PetComboServicesService,
+    private readonly petsService: PetsService,
     private readonly orderService: OrdersService,
     private readonly userService: UserService,
     private notificationProducerService: NotificationProducerService,
@@ -100,6 +103,11 @@ export class AppService {
       );
     if (saleTransactionList && saleTransactionList.length > 0) {
       saleTransactionList.forEach(async (item) => {
+        const petInstance = await this.petsService.findById(item.petId);
+        if (petInstance) {
+          petInstance.status = PetEnum.NORMAL;
+          petInstance.save();
+        }
         item.status = SaleTransactionEnum.EXPIRED;
         await item.save();
       });
@@ -134,6 +142,18 @@ export class AppService {
       );
     if (breedingTransactionList && breedingTransactionList.length > 0) {
       breedingTransactionList.forEach(async (item) => {
+        const petFemaleInstance = await this.petsService.findById(
+          item.petFemaleId,
+        );
+        if (petFemaleInstance) {
+          petFemaleInstance.status = PetEnum.NORMAL;
+          petFemaleInstance.save();
+        }
+        const petMaleInstance = await this.petsService.findById(item.petMaleId);
+        if (petMaleInstance) {
+          petMaleInstance.status = PetEnum.NORMAL;
+          petMaleInstance.save();
+        }
         item.status = BreedingTransactionEnum.EXPIRED;
         await item.save();
       });
@@ -168,6 +188,18 @@ export class AppService {
       );
     if (breedingTransactionList && breedingTransactionList.length > 0) {
       breedingTransactionList.forEach(async (item) => {
+        const petFemaleInstance = await this.petsService.findById(
+          item.petFemaleId,
+        );
+        if (petFemaleInstance) {
+          petFemaleInstance.status = PetEnum.NORMAL;
+          petFemaleInstance.save();
+        }
+        const petMaleInstance = await this.petsService.findById(item.petMaleId);
+        if (petMaleInstance) {
+          petMaleInstance.status = PetEnum.NORMAL;
+          petMaleInstance.save();
+        }
         item.status = BreedingTransactionEnum.BREEDING_EXPIRED;
         await item.save();
       });
