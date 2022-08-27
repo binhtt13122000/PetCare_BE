@@ -690,6 +690,7 @@ export class OrdersController {
                 }),
             );
             order.status = OrderEnum.SUCCESS;
+            rest.point = Math.floor(rest.point);
             await this.ordersService.update(body.id, {
               ...order,
               ...rest,
@@ -698,7 +699,7 @@ export class OrdersController {
             });
             await this.customerService.update(customer.id, {
               ...customer,
-              point: customer.point + body.point - paymentPoint,
+              point: Math.floor(customer.point + body.point - paymentPoint),
             });
             return "ok";
           } catch (error) {
