@@ -160,12 +160,16 @@ export class PostsController {
           "Your post have been verified. See information details now.>>>>";
         titleNotification = "Verified your post";
         typeNotification = NotificationEnum.CONFIRM_POST;
+        petInstance.status = PetEnum.IN_POST;
+        await petInstance.save();
       } else if (body.status === PostEnum.REJECTED) {
         bodyNotification =
           "Your post have been rejected. See information details now.>>>>";
         titleNotification = "Rejected your post!";
         instance.reasonReject = body.reasonReject;
         typeNotification = NotificationEnum.REJECT_POST;
+        petInstance.status = PetEnum.NORMAL;
+        await petInstance.save();
       } else if (body.status === PostEnum.CANCELED) {
         petInstance.status = PetEnum.NORMAL;
         await petInstance.save();
@@ -187,6 +191,20 @@ export class PostsController {
     ) {
       instance.status = body.status;
       const postChanged = await instance.save();
+      petInstance.status = PetEnum.IN_POST;
+      await petInstance.save();
+      return postChanged;
+    } else if (
+      instance.status === PostEnum.REJECTED &&
+      body.status === PostEnum.REQUESTED
+    ) {
+      instance.status = body.status;
+      const postChanged = await instance.save();
+      if (petInstance.status !== PetEnum.NORMAL) {
+        throw new BadRequestException(
+          "Can not reopen post! Your pet have been exist in another post.",
+        );
+      }
       petInstance.status = PetEnum.IN_POST;
       await petInstance.save();
       return postChanged;
