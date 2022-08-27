@@ -6,6 +6,8 @@ import { PostsRepository } from "./posts.repository";
 import { Post as PostEntity } from "src/entities/transaction_service/post.entity";
 import { PageMetaDto } from "src/common/page-meta.dto";
 import { PostsOptionDto } from "./dto/post-option.dto";
+import { PostEnum } from "src/enum";
+import { In } from "typeorm";
 
 @Injectable()
 export class PostsService extends BaseService<Post, PostsRepository> {
@@ -31,6 +33,20 @@ export class PostsService extends BaseService<Post, PostsRepository> {
     return this.postsRepository.findOne({
       where: { id: id },
       relations: ["medias", "customer"],
+    });
+  }
+
+  getPostsByPetId(petId: number): Promise<Post[]> {
+    return this.postsRepository.find({
+      where: {
+        petId: petId,
+        status: In([
+          PostEnum.CANCELED,
+          PostEnum.PUBLISHED,
+          PostEnum.REJECTED,
+          PostEnum.REQUESTED,
+        ]),
+      },
     });
   }
 

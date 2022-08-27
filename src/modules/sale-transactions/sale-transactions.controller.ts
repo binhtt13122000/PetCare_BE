@@ -341,6 +341,9 @@ export class SaleTransactionsController {
             if (!post) {
               throw new HttpException("not found post", HttpStatus.BAD_REQUEST);
             }
+            const postsWithPetId = await this.postService.getPostsByPetId(
+              pet.id,
+            );
             const {
               message,
               transactionTotal,
@@ -358,7 +361,7 @@ export class SaleTransactionsController {
               );
               let namePet = `${pet.name}-1`;
               if (petsBuyer && petsBuyer.length > 0) {
-                let maxNumber = 1;
+                let maxNumber = 0;
                 petsBuyer.some((item) => {
                   if (
                     item.name
@@ -443,6 +446,14 @@ export class SaleTransactionsController {
                 date: body.transactionTime,
               }),
             );
+            if (postsWithPetId && postsWithPetId.length > 0) {
+              await Promise.all(
+                postsWithPetId.map(async (item) => {
+                  item.status = PostEnum.CLOSED;
+                  item.save();
+                }),
+              );
+            }
             await this.notificationProducerService.sendMessage(
               {
                 body: "Buyer has successfully paid. See information details now.>>>>",
