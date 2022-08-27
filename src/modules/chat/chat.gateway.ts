@@ -125,6 +125,7 @@ export class ChatGateway {
         message.postId,
       );
       if (room) {
+        client.join(room._id.valueOf());
         this.server.in(room._id.valueOf()).emit("chatToClient", {
           error: "Room is existed!",
         });

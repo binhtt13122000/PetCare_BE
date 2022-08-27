@@ -72,7 +72,7 @@ export class TicketsService extends BaseService<Ticket, TicketsRepository> {
         customerId: customerId,
         status: TicketStatusEnum.CREATED,
       },
-      relations: ["branch"],
+      relations: ["branch", "serviceTickets"],
     });
   }
 

@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { SharedModule } from "src/shared/shared.module";
 import { CustomerModule } from "../customer/customer.module";
 import { MessagesModule } from "../messages/messages.module";
@@ -14,7 +14,7 @@ import { ChatGateway } from "./chat.gateway";
     UserModule,
     SharedModule,
     CustomerModule,
-    PostsModule,
+    forwardRef(() => PostsModule),
   ],
   providers: [ChatGateway],
   exports: [ChatGateway],

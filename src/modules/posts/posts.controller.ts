@@ -24,7 +24,7 @@ import { Post as PostEntity } from "src/entities/transaction_service/post.entity
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { Media } from "src/entities/transaction_service/media.entity";
 import { uploadService } from "src/external/uploadFile.service";
-import { NotificationEnum, PetEnum, PostEnum } from "src/enum";
+import { NotificationEnum, PetEnum, PostEnum, RoomStatusEnum } from "src/enum";
 import { UpdatePostDTO } from "./dto/update-post.dto";
 import { PageDto } from "src/common/page.dto";
 import { PostsOptionDto } from "./dto/post-option.dto";
@@ -37,6 +37,13 @@ import { NotificationProducerService } from "src/shared/notification/notificatio
 import { BranchesService } from "../branches/branches.service";
 import { RolesGuard } from "../auth/guards/roles.guard";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { RoomsService } from "../rooms/rooms.service";
+import { MessagesService } from "../messages/messages.service";
+import { MessageEnum } from "src/schemas/message.schema";
+import { ChatGateway } from "../chat/chat.gateway";
+import { getSpecificDateAgoWithNumberDays } from "src/common/utils";
+import { CustomerService } from "../customer/customer.service";
+import { TicketsService } from "../tickets/tickets.service";
 @ApiTags("posts")
 @Controller("posts")
 export class PostsController {
@@ -47,7 +54,12 @@ export class PostsController {
     private readonly userService: UserService,
     private readonly branchService: BranchesService,
     private fileProducerService: FileProducerService,
+    private readonly roomService: RoomsService,
+    private readonly messageService: MessagesService,
+    private readonly chatGateway: ChatGateway,
+    private readonly customerService: CustomerService,
     private notificationProducerService: NotificationProducerService,
+    private readonly ticketService: TicketsService,
   ) {}
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -59,6 +71,12 @@ export class PostsController {
     files: Array<Express.Multer.File>,
     @Body() body: CreatePostDTO,
   ): Promise<PostEntity> {
+    const customerInstance = await this.customerService.findById(
+      body.customerId,
+    );
+    if (!customerInstance) {
+      throw new NotFoundException("Can not found customer!");
+    }
     const branchInstance = await this.branchService.findById(body.branchId);
     if (!branchInstance) {
       throw new NotFoundException("Can not found branch!");
@@ -66,6 +84,14 @@ export class PostsController {
     const accountBranchInstance = await this.userService.findByPhoneNumber(
       branchInstance.phoneNumber || "",
     );
+    const ticketsOwnerCustomer = await this.ticketService.getTicketsByUserId(
+      customerInstance.id,
+    );
+    if (ticketsOwnerCustomer) {
+      throw new BadRequestException(
+        "Can not to create a post, because you currently have an uncompleted ticket!",
+      );
+    }
     const medias: Media[] = await Promise.all(
       files?.map(async (value) => {
         const { url, type } = await uploadService.uploadFile(value);
@@ -216,6 +242,36 @@ export class PostsController {
       const postChanged = await instance.save();
       petInstance.status = PetEnum.NORMAL;
       await petInstance.save();
+      const roomList = await this.roomService.findAllRoomAvailableByPost(
+        instance.id,
+      );
+      if (roomList && roomList.length > 0) {
+        const currentDate = getSpecificDateAgoWithNumberDays(0);
+        await Promise.all(
+          roomList.map(async (item) => {
+            item.status = RoomStatusEnum.CLOSED;
+            item.newestMessage =
+              "We sincerely apologize. The post has been closed. We hope to receive your understanding and look forward to continuing to serve you in future transactions.";
+            item.newestMessageTime = currentDate;
+            item.isSellerMessage = true;
+            const updatedRoom = await this.roomService.updateRoom(item);
+            const createdMessage = await this.messageService.create({
+              content:
+                "We sincerely apologize. The post has been closed. We hope to receive your understanding and look forward to continuing to serve you in future transactions.",
+              createdTime: currentDate,
+              isSellerMessage: true,
+              type: MessageEnum.NORMAL,
+              room: item._id,
+            });
+            this.chatGateway.server
+              .in(item._id.valueOf())
+              .emit("updatedRoom", updatedRoom);
+            this.chatGateway.server
+              .in(item._id.valueOf())
+              .emit("chatToClient", createdMessage);
+          }),
+        );
+      }
       await this.notificationProducerService.sendMessage(
         {
           body: "Your post have been closed. See information details now.>>>>",

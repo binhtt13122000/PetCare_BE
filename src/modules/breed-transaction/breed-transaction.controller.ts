@@ -61,6 +61,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { uploadService } from "src/external/uploadFile.service";
 import { ResponseBreedingTransaction } from "./dtos/response-breed-transaction.dto";
 import { TicketsService } from "../tickets/tickets.service";
+import { AxiosService } from "src/shared/axios/axios.service";
 
 @Controller("breed-transactions")
 @ApiTags("breed-transactions")
@@ -77,6 +78,7 @@ export class BreedTransactionController {
     private readonly userService: UserService,
     private readonly notificationProducerService: NotificationProducerService,
     private readonly ticketService: TicketsService,
+    private readonly axiosService: AxiosService,
   ) {}
 
   @Get()
@@ -158,6 +160,7 @@ export class BreedTransactionController {
     const roomList = await this.roomService.findAllRoomAvailableByPost(
       breedTransaction.postId,
     );
+    // await this.axiosService.setData()
     if (roomList && roomList.length > 0) {
       await Promise.all(
         roomList.map(async (item) => {
