@@ -221,6 +221,11 @@ export class PostsController {
       instance.status === PostEnum.CANCELED &&
       body.status === PostEnum.REQUESTED
     ) {
+      if (petInstance.status !== PetEnum.NORMAL) {
+        throw new BadRequestException(
+          "Can not reopen post! Your pet have been exist in another post.",
+        );
+      }
       instance.status = body.status;
       const postChanged = await instance.save();
       petInstance.status = PetEnum.IN_POST;
