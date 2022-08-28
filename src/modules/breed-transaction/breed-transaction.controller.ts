@@ -160,7 +160,24 @@ export class BreedTransactionController {
     const roomList = await this.roomService.findAllRoomAvailableByPost(
       breedTransaction.postId,
     );
-    // await this.axiosService.setData()
+    if (petFemale.specialMarkings) {
+      const petFemaleFull = await this.petsService.getOne(petFemale.id, true);
+      await this.axiosService.setData(
+        petFemaleFull,
+        "HAVE_BREED",
+        "This pet have a breeding transaction with no center support",
+        petFemale.specialMarkings,
+      );
+    }
+    if (petMale.specialMarkings) {
+      const petMaleFull = await this.petsService.getOne(petMale.id, true);
+      await this.axiosService.setData(
+        petMaleFull,
+        "HAVE_BREED",
+        "This pet have a breeding transaction  with no center support",
+        petMale.specialMarkings,
+      );
+    }
     if (roomList && roomList.length > 0) {
       await Promise.all(
         roomList.map(async (item) => {
@@ -552,6 +569,24 @@ export class BreedTransactionController {
       ...post,
       status: PostEnum.CLOSED,
     });
+    if (petFemale.specialMarkings) {
+      const petFemaleFull = await this.petsService.getOne(petFemale.id, true);
+      await this.axiosService.setData(
+        petFemaleFull,
+        "HAVE_BREED",
+        "This pet have a breeding transaction in a branch",
+        petFemale.specialMarkings,
+      );
+    }
+    if (petMale.specialMarkings) {
+      const petMaleFull = await this.petsService.getOne(petMale.id, true);
+      await this.axiosService.setData(
+        petMaleFull,
+        "HAVE_BREED",
+        "This pet have a breeding transaction in a branch",
+        petMale.specialMarkings,
+      );
+    }
     const roomList = await this.roomService.findAllRoomAvailableByPost(
       breedingTransaction.postId,
     );
@@ -778,6 +813,12 @@ export class BreedTransactionController {
     if (!buyer) {
       throw new NotFoundException("not found buyer");
     }
+    const petFemale = await this.petsService.findById(
+      breedingTransaction.petFemaleId,
+    );
+    if (!petFemale) {
+      throw new NotFoundException("not found pet female");
+    }
     const accountBuyerInstance = await this.userService.findByPhoneNumber(
       buyer.phoneNumber || "",
     );
@@ -813,6 +854,15 @@ export class BreedTransactionController {
       },
       accountBuyerInstance.id,
     );
+    if (petFemale.specialMarkings && body.isSuccess) {
+      const petFemaleFull = await this.petsService.getOne(petFemale.id, true);
+      await this.axiosService.setData(
+        petFemaleFull,
+        "HAVE_PREGNANT",
+        "This pet have a baby",
+        petFemale.specialMarkings,
+      );
+    }
     return breedTransactionUpdated;
   }
 
