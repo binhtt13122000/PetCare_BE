@@ -578,12 +578,12 @@ export class OrdersController {
                         true,
                       );
                       if (fullPet.specialMarkings) {
-                        await this.axiosService.setData(
-                          fullPet,
-                          "BREED",
-                          "Pet has been bred.",
-                          fullPet.specialMarkings,
-                        );
+                        // await this.axiosService.setData(
+                        //   fullPet,
+                        //   "BREED",
+                        //   "Pet has been bred.",
+                        //   fullPet.specialMarkings,
+                        // );
                       }
                     }
                   } else if (item.petComboId) {
@@ -770,12 +770,12 @@ export class OrdersController {
                       true,
                     );
                     if (fullPet.specialMarkings) {
-                      await this.axiosService.setData(
-                        fullPet,
-                        "BREED",
-                        "Pet has been bred.",
-                        fullPet.specialMarkings,
-                      );
+                      // await this.axiosService.setData(
+                      //   fullPet,
+                      //   "BREED",
+                      //   "Pet has been bred.",
+                      //   fullPet.specialMarkings,
+                      // );
                     }
                   }
                 } else if (item.petComboId) {
