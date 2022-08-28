@@ -231,7 +231,6 @@ export class OrdersController {
                   realTime: undefined,
                 });
               } else {
-                next += itemComboService.nextEvent;
                 const ts = new Date(registerTime);
                 ts.setDate(ts.getDate() + next);
                 await this.petComboServicesService.store({
@@ -243,6 +242,7 @@ export class OrdersController {
                   realTime: undefined,
                 });
               }
+              next += itemComboService.nextEvent;
             });
             return {
               totalPrice: combo.price,
