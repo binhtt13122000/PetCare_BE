@@ -214,7 +214,9 @@ export class OrdersController {
               breedTransaction &&
               breedTransaction.timeToCheckBreeding
             ) {
-              registerTime = breedTransaction.timeToCheckBreeding;
+              const time = new Date(item.registerTime);
+              time.setDate(time.getDate() + 10);
+              registerTime = time;
             }
             const createPetCombo = await this.petCombosService.store({
               ...petCombo,
@@ -251,7 +253,7 @@ export class OrdersController {
                 }
                 next += itemComboService.nextEvent;
               });
-            Promise.all(arr).then((response) => {
+            Promise.all(arr).then(() => {
               // eslint-disable-next-line no-console
               console.log("success");
             });
