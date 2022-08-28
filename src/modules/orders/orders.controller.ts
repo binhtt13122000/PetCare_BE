@@ -208,19 +208,22 @@ export class OrdersController {
                   ? breedTransaction.id
                   : null,
             };
-
+            let registerTime = item.registerTime;
+            if (
+              combo.type === ComboTypeEnum.BREED &&
+              breedTransaction &&
+              breedTransaction.timeToCheckBreeding
+            ) {
+              registerTime = breedTransaction.timeToCheckBreeding;
+            }
             const createPetCombo = await this.petCombosService.store({
               ...petCombo,
               isDraft: true,
             });
             comboService.forEach(async (itemComboService, index) => {
-              next += itemComboService.nextEvent;
-
-              const ts = new Date(item.registerTime);
-              ts.setDate(ts.getDate() + next);
               if (index == 0) {
                 await this.petComboServicesService.store({
-                  workingTime: item.registerTime,
+                  workingTime: registerTime,
                   isCompleted: false,
                   serviceId: itemComboService.serviceId,
                   petComboId: createPetCombo.id,
@@ -228,6 +231,8 @@ export class OrdersController {
                   realTime: undefined,
                 });
               } else {
+                const ts = new Date(registerTime);
+                ts.setDate(ts.getDate() + next);
                 await this.petComboServicesService.store({
                   workingTime: ts,
                   isCompleted: false,
@@ -237,6 +242,7 @@ export class OrdersController {
                   realTime: undefined,
                 });
               }
+              next += itemComboService.nextEvent;
             });
             return {
               totalPrice: combo.price,
