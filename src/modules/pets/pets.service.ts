@@ -99,7 +99,7 @@ export class PetsService extends BaseService<Pet, PetsRepository> {
       const fullDataPet = await this.getOne(pet.id, true);
       return this.axiosService.setData(
         fullDataPet,
-        "UPDATE",
+        "UPDATE_MYSELF",
         "Customer update data of pet",
         updatePet.specialMarkings,
       );
