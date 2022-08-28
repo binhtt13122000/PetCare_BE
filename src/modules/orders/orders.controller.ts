@@ -594,18 +594,6 @@ export class OrdersController {
                         BreedingTransactionEnum.BREEDING_SUCCESS;
                       findBreedTransaction.paymentTime = rest.paymentTime;
                       await findBreedTransaction.save();
-                      const fullPet = await this.petService.getOne(
-                        findBreedTransaction.petFemaleId,
-                        true,
-                      );
-                      if (fullPet.specialMarkings) {
-                        // await this.axiosService.setData(
-                        //   fullPet,
-                        //   "BREED",
-                        //   "Pet has been bred.",
-                        //   fullPet.specialMarkings,
-                        // );
-                      }
                     }
                   } else if (item.petComboId) {
                     const findPetCombo = await this.petCombosService.findById(
@@ -786,18 +774,6 @@ export class OrdersController {
                       BreedingTransactionEnum.BREEDING_SUCCESS;
                     findBreedTransaction.paymentTime = rest.paymentTime;
                     await findBreedTransaction.save();
-                    const fullPet = await this.petService.getOne(
-                      findBreedTransaction.petFemaleId,
-                      true,
-                    );
-                    if (fullPet.specialMarkings) {
-                      // await this.axiosService.setData(
-                      //   fullPet,
-                      //   "BREED",
-                      //   "Pet has been bred.",
-                      //   fullPet.specialMarkings,
-                      // );
-                    }
                   }
                 } else if (item.petComboId) {
                   const findPetCombo = await this.petCombosService.findById(
