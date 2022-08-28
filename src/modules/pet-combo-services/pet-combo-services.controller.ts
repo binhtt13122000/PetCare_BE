@@ -113,7 +113,7 @@ export class PetComboServicesController {
             if (pet.specialMarkings) {
               await this.axiosService.setData(
                 pet,
-                "UPDATE",
+                "UPDATE_MYSELF",
                 "The dog has been given a new vaccine",
                 pet.specialMarkings,
               );
@@ -131,7 +131,7 @@ export class PetComboServicesController {
             if (pet.specialMarkings) {
               await this.axiosService.setData(
                 pet,
-                "UPDATE",
+                "UPDATE_MYSELF",
                 "The dog has been given a new deworming",
                 pet.specialMarkings,
               );
@@ -149,7 +149,7 @@ export class PetComboServicesController {
             if (pet.specialMarkings) {
               await this.axiosService.setData(
                 pet,
-                "UPDATE",
+                "UPDATE_MYSELF",
                 "The dog has been given a new tick treatment",
                 pet.specialMarkings,
               );
