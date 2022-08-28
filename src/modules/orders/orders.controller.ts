@@ -220,29 +220,40 @@ export class OrdersController {
               ...petCombo,
               isDraft: true,
             });
-            comboService.forEach(async (itemComboService, index) => {
-              if (index == 0) {
-                await this.petComboServicesService.store({
-                  workingTime: registerTime,
-                  isCompleted: false,
-                  serviceId: itemComboService.serviceId,
-                  petComboId: createPetCombo.id,
-                  priority: itemComboService.priority,
-                  realTime: undefined,
-                });
-              } else {
-                const ts = new Date(registerTime);
-                ts.setDate(ts.getDate() + next);
-                await this.petComboServicesService.store({
-                  workingTime: ts,
-                  isCompleted: false,
-                  serviceId: itemComboService.serviceId,
-                  petComboId: createPetCombo.id,
-                  priority: itemComboService.priority,
-                  realTime: undefined,
-                });
-              }
-              next += itemComboService.nextEvent;
+            const arr = [];
+            comboService
+              .sort((a, b) => a.priority - b.priority)
+              .forEach(async (itemComboService, index) => {
+                if (index == 0) {
+                  arr.push(
+                    this.petComboServicesService.store({
+                      workingTime: registerTime,
+                      isCompleted: false,
+                      serviceId: itemComboService.serviceId,
+                      petComboId: createPetCombo.id,
+                      priority: itemComboService.priority,
+                      realTime: undefined,
+                    }),
+                  );
+                } else {
+                  const ts = new Date(registerTime);
+                  ts.setDate(ts.getDate() + next);
+                  arr.push(
+                    this.petComboServicesService.store({
+                      workingTime: ts,
+                      isCompleted: false,
+                      serviceId: itemComboService.serviceId,
+                      petComboId: createPetCombo.id,
+                      priority: itemComboService.priority,
+                      realTime: undefined,
+                    }),
+                  );
+                }
+                next += itemComboService.nextEvent;
+              });
+            Promise.all(arr).then((response) => {
+              // eslint-disable-next-line no-console
+              console.log("success");
             });
             return {
               totalPrice: combo.price,
