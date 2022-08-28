@@ -241,6 +241,7 @@ export class OrdersController {
             return {
               totalPrice: combo.price,
               price: combo.price,
+              petId: item.petId,
               petComboId: createPetCombo.id,
               quantity: 1,
             };
@@ -398,6 +399,7 @@ export class OrdersController {
               return new OrderDetail({
                 totalPrice: combo.price,
                 price: combo.price,
+                petId: item.petId,
                 petComboId: createPetCombo.id,
                 quantity: 1,
               });
